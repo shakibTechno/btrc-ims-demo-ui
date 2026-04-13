@@ -49,15 +49,10 @@ export default function MapLegend({ position = 'bottomright', showFiber = false 
            </svg>`
 
         const TOWER_ICON = `
-          <line x1="15" y1="4"  x2="15" y2="23" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-          <line x1="11" y1="4"  x2="19" y2="4"  stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-          <circle cx="15" cy="4" r="1.8" fill="white"/>
-          <line x1="7"  y1="10" x2="23" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="10" y1="16" x2="20" y2="16" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="7"  y1="10" x2="10" y2="16" stroke="white" stroke-width="0.9" stroke-linecap="round" opacity="0.8"/>
-          <line x1="23" y1="10" x2="20" y2="16" stroke="white" stroke-width="0.9" stroke-linecap="round" opacity="0.8"/>
-          <line x1="15" y1="22" x2="8"  y2="26" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="15" y1="22" x2="22" y2="26" stroke="white" stroke-width="1.5" stroke-linecap="round"/>`
+          <text x="15" y="20"
+                text-anchor="middle"
+                font-size="15"
+                font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">🗼</text>`
 
         const BTS_ICON = `
           <line x1="15" y1="15" x2="15" y2="24" stroke="white" stroke-width="2.2" stroke-linecap="round"/>

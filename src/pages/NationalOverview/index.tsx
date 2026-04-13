@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import PageWrapper        from '@/components/layout/PageWrapper'
 import FilterBar          from '@/components/filters/FilterBar'
 import BaseMap            from '@/components/map/BaseMap'
@@ -16,6 +16,13 @@ import DivisionBreakdownPanel from './DivisionBreakdownPanel'
 import { useFilteredSites }   from '@/hooks/useFilteredSites'
 import { useKPIs }            from '@/hooks/useKPIs'
 import { getNationalHourlyCounts } from '@/data/statusHistory'
+import type { AssetType } from '@/types/site'
+
+const ASSET_TOGGLES: Array<{ type: AssetType; label: string; emoji: string }> = [
+  { type: 'tower',    label: 'Tower', emoji: '🗼' },
+  { type: 'bts',      label: 'BTS',   emoji: '📡' },
+  { type: 'nttn_pop', label: 'PoP',   emoji: '🌐' },
+]
 
 // ─── NationalOverview ─────────────────────────────────────────────
 // Hero dashboard. Shows GIS map + KPIs + power + outages + history.
@@ -25,8 +32,26 @@ export default function NationalOverview() {
   const sites       = useFilteredSites()
   const kpis        = useKPIs()
   const historyData = useMemo(() => getNationalHourlyCounts(), [])
-  const [showFiber,   setShowFiber]   = useState(true)
-  const [mapView,     setMapView]     = useState<'division' | 'district'>('division')
+  const [showFiber,    setShowFiber]   = useState(true)
+  const [mapView,      setMapView]    = useState<'division' | 'district'>('division')
+  const [visibleTypes, setVisibleTypes] = useState<Set<AssetType>>(
+    () => new Set<AssetType>(['tower', 'bts', 'nttn_pop'])
+  )
+
+  const toggleAssetType = useCallback((type: AssetType) => {
+    setVisibleTypes(prev => {
+      const next = new Set(prev)
+      if (next.has(type)) next.delete(type)
+      else next.add(type)
+      return next
+    })
+  }, [])
+
+  // Map sites filtered by visible asset types (KPI counts remain unaffected)
+  const mapSites = useMemo(
+    () => sites.filter(s => visibleTypes.has(s.type)),
+    [sites, visibleTypes]
+  )
 
   return (
     <PageWrapper>
@@ -82,6 +107,32 @@ export default function NationalOverview() {
                 ))}
               </div>
 
+              {/* Asset type toggles — Tower / BTS / PoP */}
+              {ASSET_TOGGLES.map(({ type, label, emoji }) => {
+                const on = visibleTypes.has(type)
+                return (
+                  <button
+                    key={type}
+                    onClick={() => toggleAssetType(type)}
+                    title={`${on ? 'Hide' : 'Show'} ${label} sites`}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 4,
+                      padding: '4px 8px', borderRadius: 6, cursor: 'pointer',
+                      border: on ? '1px solid #64748b' : '1px solid #e2e8f0',
+                      background: on ? '#f1f5f9' : 'white',
+                      color: on ? '#334155' : '#94a3b8',
+                      fontSize: 11, fontWeight: 600, transition: 'all 0.15s',
+                    }}
+                  >
+                    <span style={{ fontSize: 13, lineHeight: 1 }}>{emoji}</span>
+                    {label}
+                    <span style={{ fontSize: 9, opacity: on ? 0.7 : 0.5 }}>
+                      {on ? 'ON' : 'OFF'}
+                    </span>
+                  </button>
+                )
+              })}
+
               {/* Fiber toggle */}
               <button
                 onClick={() => setShowFiber(v => !v)}
@@ -121,7 +172,7 @@ export default function NationalOverview() {
               : <DistrictLayer  sites={sites} />
             }
             <FiberOverlay visible={showFiber} />
-            <SiteMarkerLayer sites={sites} />
+            <SiteMarkerLayer sites={mapSites} />
             <MapLegend position="bottomright" showFiber={showFiber} />
           </BaseMap>
         </div>

@@ -39,28 +39,13 @@ const BORDER: Record<SiteStatus, string> = {
 function innerIcon(type: AssetType): string {
   switch (type) {
 
-    // ── TOWER — Lattice transmission tower ───────────────────────
-    // T-bar at top, two cross-arms (wide → narrow) with diagonal
-    // bracing, vertical mast, A-frame base with spread legs.
+    // ── TOWER — uses the 🗼 emoji (matches Total Sites KPI card icon) ──
     case 'tower':
       return `
-        <!-- Mast -->
-        <line x1="15" y1="4"  x2="15" y2="23" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-        <!-- T-bar antenna top -->
-        <line x1="11" y1="4"  x2="19" y2="4"  stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-        <!-- Aviation light -->
-        <circle cx="15" cy="4" r="1.8" fill="white"/>
-        <!-- Wide cross-arm -->
-        <line x1="7"  y1="10" x2="23" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-        <!-- Narrow cross-arm -->
-        <line x1="10" y1="16" x2="20" y2="16" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-        <!-- Diagonal braces left -->
-        <line x1="7"  y1="10" x2="10" y2="16" stroke="white" stroke-width="0.9" stroke-linecap="round" opacity="0.8"/>
-        <!-- Diagonal braces right -->
-        <line x1="23" y1="10" x2="20" y2="16" stroke="white" stroke-width="0.9" stroke-linecap="round" opacity="0.8"/>
-        <!-- A-frame base legs -->
-        <line x1="15" y1="22" x2="8"  y2="26" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="15" y1="22" x2="22" y2="26" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        <text x="15" y="20"
+              text-anchor="middle"
+              font-size="15"
+              font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">🗼</text>
       `
 
     // ── BTS — Radio base station ──────────────────────────────────
