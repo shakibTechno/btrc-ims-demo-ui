@@ -1,6 +1,6 @@
 import type { Site } from '@/types/site'
 
-// ─── 50 sites across 8 Bangladesh divisions ───────────────────────
+// ─── 58 sites across 8 Bangladesh divisions ───────────────────────
 //
 // Distribution:
 //   Dhaka        — 9 sites  (3 MNO towers, 2 BTS, 2 NTTN PoP, 2 tower co.)
@@ -11,6 +11,7 @@ import type { Site } from '@/types/site'
 //   Barisal      — 5 sites
 //   Rangpur      — 4 sites
 //   Mymensingh   — 4 sites
+//   Teletalk     — 8 additional sites (one per division, BTS + towers)
 //
 // Status: [0-34] active, [35-42] down, [43-49] degraded
 // Power:  ~50% grid, ~25% generator, ~15% battery, ~10% solar
@@ -19,7 +20,7 @@ export const SITES: Site[] = [
   // ── DHAKA DIVISION (9 sites) ──────────────────────────────────
   {
     id: 'DHK-001', name: 'Gulshan Tower North', type: 'tower',
-    operatorId: 'OP-EDOTCO', tenants: ['OP-GP', 'OP-ROBI'],
+    operatorId: 'OP-EDOTCO', tenants: ['OP-GP', 'OP-ROBI', 'OP-TT'],
     division: 'Dhaka', district: 'Dhaka', upazila: 'Gulshan',
     lat: 23.7925, lng: 90.4078, status: 'active', powerSource: 'grid',
     hasActiveOutage: false, lastSubmission: '2026-04-13T07:45:00+06:00', submissionStatus: 'on_time',
@@ -201,7 +202,7 @@ export const SITES: Site[] = [
   // ── RAJSHAHI DIVISION (6 sites) ───────────────────────────────
   {
     id: 'RAJ-001', name: 'Rajshahi City Tower', type: 'tower',
-    operatorId: 'OP-EDOTCO', tenants: ['OP-GP', 'OP-ROBI'],
+    operatorId: 'OP-EDOTCO', tenants: ['OP-GP', 'OP-ROBI', 'OP-TT'],
     division: 'Rajshahi', district: 'Rajshahi', upazila: 'Rajshahi Sadar',
     lat: 24.3745, lng: 88.6042, status: 'active', powerSource: 'grid',
     hasActiveOutage: false, lastSubmission: '2026-04-13T07:45:00+06:00', submissionStatus: 'on_time',
@@ -326,7 +327,7 @@ export const SITES: Site[] = [
   // ── RANGPUR DIVISION (4 sites) ────────────────────────────────
   {
     id: 'RNG-001', name: 'Rangpur City Tower', type: 'tower',
-    operatorId: 'OP-EDOTCO', tenants: ['OP-GP', 'OP-ROBI'],
+    operatorId: 'OP-EDOTCO', tenants: ['OP-GP', 'OP-ROBI', 'OP-TT'],
     division: 'Rangpur', district: 'Rangpur', upazila: 'Rangpur Sadar',
     lat: 25.7439, lng: 89.2752, status: 'active', powerSource: 'grid',
     hasActiveOutage: false, lastSubmission: '2026-04-13T07:45:00+06:00', submissionStatus: 'on_time',
@@ -464,6 +465,66 @@ export const SITES: Site[] = [
     division: 'Mymensingh', district: 'Kishoreganj', upazila: 'Kishoreganj Sadar',
     lat: 24.4449, lng: 90.7762, status: 'degraded', powerSource: 'grid',
     hasActiveOutage: false, lastSubmission: '2026-04-13T07:00:00+06:00', submissionStatus: 'late',
+  },
+
+  // ── TELETALK SITES (8) ────────────────────────────────────────
+  // State-owned MNO — BTS sites as operator + co-tenant on tower sites.
+  // One site per division for nationwide coverage representation.
+  {
+    id: 'TT-001', name: 'Teletalk Paltan BTS', type: 'bts',
+    operatorId: 'OP-TT', tenants: [],
+    division: 'Dhaka', district: 'Dhaka', upazila: 'Paltan',
+    lat: 23.7368, lng: 90.4126, status: 'active', powerSource: 'grid',
+    hasActiveOutage: false, lastSubmission: '2026-04-13T07:45:00+06:00', submissionStatus: 'on_time',
+  },
+  {
+    id: 'TT-002', name: 'Teletalk Nasirabad BTS', type: 'bts',
+    operatorId: 'OP-TT', tenants: [],
+    division: 'Chattogram', district: 'Chattogram', upazila: 'Panchlaish',
+    lat: 22.3602, lng: 91.8266, status: 'active', powerSource: 'grid',
+    hasActiveOutage: false, lastSubmission: '2026-04-13T07:45:00+06:00', submissionStatus: 'on_time',
+  },
+  {
+    id: 'TT-003', name: 'Teletalk Sylhet BTS', type: 'bts',
+    operatorId: 'OP-TT', tenants: [],
+    division: 'Sylhet', district: 'Sylhet', upazila: 'Sylhet Sadar',
+    lat: 24.9045, lng: 91.8611, status: 'degraded', powerSource: 'battery',
+    hasActiveOutage: true, lastSubmission: '2026-04-13T05:00:00+06:00', submissionStatus: 'late',
+  },
+  {
+    id: 'TT-004', name: 'Teletalk Rajshahi BTS', type: 'bts',
+    operatorId: 'OP-TT', tenants: [],
+    division: 'Rajshahi', district: 'Rajshahi', upazila: 'Rajshahi Sadar',
+    lat: 24.3665, lng: 88.6151, status: 'active', powerSource: 'grid',
+    hasActiveOutage: false, lastSubmission: '2026-04-13T07:30:00+06:00', submissionStatus: 'on_time',
+  },
+  {
+    id: 'TT-005', name: 'Teletalk Khulna Tower', type: 'tower',
+    operatorId: 'OP-TT', tenants: [],
+    division: 'Khulna', district: 'Khulna', upazila: 'Khulna Sadar',
+    lat: 22.8312, lng: 89.5547, status: 'active', powerSource: 'grid',
+    hasActiveOutage: false, lastSubmission: '2026-04-13T07:45:00+06:00', submissionStatus: 'on_time',
+  },
+  {
+    id: 'TT-006', name: 'Teletalk Barisal BTS', type: 'bts',
+    operatorId: 'OP-TT', tenants: [],
+    division: 'Barisal', district: 'Barishal', upazila: 'Barishal Sadar',
+    lat: 22.7082, lng: 90.3612, status: 'active', powerSource: 'grid',
+    hasActiveOutage: false, lastSubmission: '2026-04-13T07:45:00+06:00', submissionStatus: 'on_time',
+  },
+  {
+    id: 'TT-007', name: 'Teletalk Rangpur BTS', type: 'bts',
+    operatorId: 'OP-TT', tenants: [],
+    division: 'Rangpur', district: 'Rangpur', upazila: 'Rangpur Sadar',
+    lat: 25.7511, lng: 89.2638, status: 'active', powerSource: 'grid',
+    hasActiveOutage: false, lastSubmission: '2026-04-13T07:30:00+06:00', submissionStatus: 'on_time',
+  },
+  {
+    id: 'TT-008', name: 'Teletalk Mymensingh BTS', type: 'bts',
+    operatorId: 'OP-TT', tenants: [],
+    division: 'Mymensingh', district: 'Mymensingh', upazila: 'Mymensingh Sadar',
+    lat: 24.7529, lng: 90.4071, status: 'active', powerSource: 'grid',
+    hasActiveOutage: false, lastSubmission: '2026-04-13T07:45:00+06:00', submissionStatus: 'on_time',
   },
 ]
 

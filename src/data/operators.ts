@@ -4,9 +4,10 @@ import gpLogo         from '@/assets/Logo/gp-logo.png'
 import robiLogo       from '@/assets/Logo/robi-logo.png'
 import banglalinkLogo from '@/assets/Logo/banglalink-logo.png'
 import edotcoLogo     from '@/assets/Logo/edotco-logo.png'
+import teletalkLogo   from '@/assets/Logo/tt-logo.png'
 
-// ─── 5 licensed operators ─────────────────────────────────────────
-// 3 MNOs, 1 NTTN operator, 1 tower company
+// ─── 6 licensed operators ─────────────────────────────────────────
+// 4 MNOs, 1 NTTN operator, 1 tower company
 // Colors chosen to match recognizable brand palettes
 
 export const OPERATORS: Operator[] = [
@@ -45,6 +46,15 @@ export const OPERATORS: Operator[] = [
     color: '#16a34a',
     initials: 'BG',
     // No logo asset available — initials badge used as fallback
+  },
+  {
+    id: 'OP-TT',
+    name: 'Teletalk Bangladesh Limited',
+    shortName: 'Teletalk',
+    type: 'mno',
+    color: '#009FAE',
+    initials: 'TT',
+    logo: teletalkLogo,
   },
   {
     id: 'OP-EDOTCO',

@@ -222,6 +222,22 @@ export const OUTAGE_LOG: OutageIncident[] = [
     notes: 'Planned annual tower inspection. Mymensingh city site.',
   },
 
+  // ── Teletalk incidents ────────────────────────────────────────
+  {
+    id: 'OUT-031', siteId: 'TT-003', operatorId: 'OP-TT',
+    type: 'power_failure',
+    startTime: '2026-04-13T05:00:00+06:00', endTime: null,
+    durationMinutes: null, resolved: false,
+    notes: 'Sylhet flood impact — battery backup running. Site in degraded mode.',
+  },
+  {
+    id: 'OUT-032', siteId: 'TT-001', operatorId: 'OP-TT',
+    type: 'scheduled_maintenance',
+    startTime: '2026-04-09T01:00:00+06:00', endTime: '2026-04-09T04:00:00+06:00',
+    durationMinutes: 180, resolved: true,
+    notes: 'Software upgrade to 4G LTE stack. Pre-approved 3-hour window.',
+  },
+
   // ── Additional historical incidents ───────────────────────────
   {
     id: 'OUT-027', siteId: 'DHK-004', operatorId: 'OP-BGFCL',

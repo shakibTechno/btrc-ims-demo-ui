@@ -3,7 +3,7 @@ import type { DisasterScenario } from '@/types/disaster'
 // ─── Sylhet Flash Flood 2026 — active disaster scenario ──────────
 //
 // Baseline captured: 2026-04-11 06:00 UTC+6 (just before flood onset)
-// All 8 Sylhet sites were operational at baseline.
+// All 9 Sylhet sites were operational at baseline.
 //
 // Current state (2026-04-13 08:00):
 //   SYL-001  active    (restored — running on generator)
@@ -14,8 +14,9 @@ import type { DisasterScenario } from '@/types/disaster'
 //   SYL-006  DOWN      (North NTTN — fibre severed, ongoing)
 //   SYL-007  DOWN      (Bishwanath — battery depleted, ongoing)
 //   SYL-008  DEGRADED  (Sunamganj — battery at 30%, intermittent)
+//   TT-003   DEGRADED  (Sylhet Sadar — Teletalk BTS, battery backup active)
 //
-// Recovery: 4 active / 8 baseline = 50%
+// Recovery: 4 active / 9 baseline ≈ 44%
 
 export const DISASTER_SCENARIO: DisasterScenario = {
   id: 'DIS-2026-001',
@@ -27,22 +28,22 @@ export const DISASTER_SCENARIO: DisasterScenario = {
   status: 'active',
 
   baseline: {
-    totalSites: 8,
-    activeSites: 8,
+    totalSites: 9,
+    activeSites: 9,
     downSites: 0,
     degradedSites: 0,
     snapshotTime: '2026-04-11T06:00:00+06:00',
   },
 
   current: {
-    totalSites: 8,
+    totalSites: 9,
     activeSites: 4,
     downSites: 3,
-    degradedSites: 1,
+    degradedSites: 2,
     lastUpdated: '2026-04-13T08:00:00+06:00',
   },
 
-  recoveryPercent: 50,   // 4 / 8 active × 100
+  recoveryPercent: 44,   // 4 / 9 active × 100
 
   operatorImpact: [
     {
@@ -79,6 +80,13 @@ export const DISASTER_SCENARIO: DisasterScenario = {
       affectedSites: 1,
       restoredSites: 3,
       percentRestored: 75,
+    },
+    {
+      operatorId: 'OP-TT',
+      totalSitesInDistrict: 1,   // TT-003 (Sylhet Sadar BTS)
+      affectedSites: 1,
+      restoredSites: 0,
+      percentRestored: 0,
     },
   ],
 }

@@ -2,18 +2,20 @@
 //
 // Each operator submits once every 15 minutes per site they own.
 // Sites per operator (approximate from sites.ts):
-//   GP      — 9 sites  → 9 × 96 = 864 expected/day
-//   Robi    — 6 sites  → 576/day
-//   BL      — 8 sites  → 768/day
-//   BGFCL   — 8 sites  → 768/day (but degraded compliance)
-//   Edotco  — 19 sites → 1824/day
+//   GP        — 9 sites  → 9 × 96 = 864 expected/day
+//   Robi      — 6 sites  → 576/day
+//   BL        — 8 sites  → 768/day
+//   BGFCL     — 8 sites  → 768/day (but degraded compliance)
+//   Teletalk  — 8 sites  → 768/day
+//   Edotco    — 19 sites → 1824/day
 //
 // Compliance rates:
-//   GP      ~98%  — highest compliance
-//   Robi    ~92%  — good
-//   BL      ~88%  — acceptable
-//   BGFCL   ~74%  — below target (disaster sites offline)
-//   Edotco  ~95%  — strong tower operator
+//   GP        ~98%  — highest compliance
+//   Robi      ~92%  — good
+//   BL        ~88%  — acceptable
+//   BGFCL     ~74%  — below target (disaster sites offline)
+//   Teletalk  ~82%  — state-owned, improving compliance
+//   Edotco    ~95%  — strong tower operator
 
 export interface DailySubmission {
   operatorId: string
@@ -74,6 +76,10 @@ export const SUBMISSION_HISTORY: DailySubmission[] = [
   // ── BGFCL NTTN (8 sites, ~74% — Sylhet nodes offline) ─────────
   ...DATES.map(date => makeRow('OP-BGFCL', date, 768,
     date === '2026-04-11' ? 48 : date === '2026-04-12' ? 55 : 74, 0.08)),
+
+  // ── Teletalk (8 sites, ~82%) ──────────────────────────────────
+  ...DATES.map(date => makeRow('OP-TT', date, 768,
+    date === '2026-04-11' ? 68 : date === '2026-04-12' ? 74 : 82, 0.06)),
 
   // ── Edotco (19 sites, ~95%) ───────────────────────────────────
   ...DATES.map(date => makeRow('OP-EDOTCO', date, 1824,
