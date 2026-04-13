@@ -11,7 +11,7 @@ import { useFilterStore }   from '@/store/filterStore'
 import { OPERATOR_MAP } from '@/data/operators'
 import OperatorLogo     from '@/components/cards/OperatorLogo'
 import { formatTimeAgo, formatAssetType } from '@/utils/formatters'
-import type { Site } from '@/types/site'
+import type { Site, SiteStatus } from '@/types/site'
 
 // ─── SiteDirectory ────────────────────────────────────────────────
 // Searchable, sortable table of all sites.
@@ -95,9 +95,25 @@ const COLUMNS: Column<Site>[] = [
 
 export default function SiteDirectory() {
   const navigate      = useNavigate()
-  const sites         = useFilteredSites()
-  const resetFilters  = useFilterStore(s => s.resetFilters)
+  const sites          = useFilteredSites()
+  const resetFilters   = useFilterStore(s => s.resetFilters)
+  const statusFilter   = useFilterStore(s => s.statusFilter)
+  const setStatusFilter = useFilterStore(s => s.setStatusFilter)
   const [search, setSearch] = useState('')
+
+  // Toggle a status in the multi-select filter.
+  // Selecting the last remaining active status resets to null (show all).
+  function toggleStatus(status: SiteStatus) {
+    if (!statusFilter) {
+      setStatusFilter([status])
+    } else if (statusFilter.includes(status)) {
+      const next = statusFilter.filter(s => s !== status)
+      setStatusFilter(next.length > 0 ? next : null)
+    } else {
+      const next = [...statusFilter, status]
+      setStatusFilter(next.length === 3 ? null : next)
+    }
+  }
 
   // Local text search across id, name, district, division
   const filtered = useMemo(() => {
@@ -121,48 +137,85 @@ export default function SiteDirectory() {
   return (
     <PageWrapper>
       {/* ── Header ─────────────────────────────────────────────── */}
-      <div style={{
-        display: 'flex', alignItems: 'flex-end',
-        justifyContent: 'space-between', marginBottom: 12, gap: 16,
-      }}>
-        <div>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#1e293b' }}>
-            Site Directory
-          </h2>
-          <p style={{ margin: '3px 0 0', fontSize: 12, color: '#64748b' }}>
-            All monitored telecommunications infrastructure sites
-          </p>
-        </div>
-
-        {/* Status summary pills */}
-        <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-          {[
-            { label: 'Active',   count: counts.active,   color: '#22c55e', bg: '#f0fdf4' },
-            { label: 'Degraded', count: counts.degraded, color: '#f59e0b', bg: '#fffbeb' },
-            { label: 'Down',     count: counts.down,     color: '#ef4444', bg: '#fef2f2' },
-          ].map(s => (
-            <div key={s.label} style={{
-              display: 'flex', alignItems: 'center', gap: 5,
-              padding: '5px 10px', borderRadius: 7,
-              background: s.bg, border: `1px solid ${s.color}33`,
-            }}>
-              <span style={{ width: 7, height: 7, borderRadius: '50%',
-                background: s.color, flexShrink: 0 }} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: s.color }}>{s.count}</span>
-              <span style={{ fontSize: 11, color: '#64748b' }}>{s.label}</span>
-            </div>
-          ))}
-        </div>
+      <div style={{ marginBottom: 12 }}>
+        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#1e293b' }}>
+          Site Directory
+        </h2>
+        <p style={{ margin: '3px 0 0', fontSize: 12, color: '#64748b' }}>
+          All monitored telecommunications infrastructure sites
+        </p>
       </div>
 
-      {/* ── Filters + search row ────────────────────────────────── */}
+      {/* ── Filters + status toggles + search — all in one row ── */}
       <div style={{
         display: 'flex', alignItems: 'center',
         gap: 8, marginBottom: 12, flexWrap: 'wrap',
       }}>
         <FilterBar show={{ period: false }} />
 
-        <div style={{ marginLeft: 'auto', position: 'relative' }}>
+        {/* Divider */}
+        <div style={{ width: 1, height: 24, background: '#e2e8f0', flexShrink: 0 }} />
+
+        {/* Status filter label */}
+        <span style={{ fontSize: 11, fontWeight: 600, color: '#64748b', flexShrink: 0 }}>
+          Status:
+        </span>
+
+        {/* Status toggle pills */}
+        {([
+          { status: 'active'   as SiteStatus, label: 'Active',   count: counts.active,   color: '#22c55e', bg: '#f0fdf4', border: '#22c55e55' },
+          { status: 'degraded' as SiteStatus, label: 'Degraded', count: counts.degraded, color: '#f59e0b', bg: '#fffbeb', border: '#f59e0b55' },
+          { status: 'down'     as SiteStatus, label: 'Down',     count: counts.down,     color: '#ef4444', bg: '#fef2f2', border: '#ef444455' },
+        ]).map(s => {
+          const isActive = !statusFilter || statusFilter.includes(s.status)
+          return (
+            <button
+              key={s.label}
+              onClick={() => toggleStatus(s.status)}
+              title={isActive && statusFilter ? `Remove ${s.label} filter` : `Show ${s.label} only`}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                background: isActive ? s.bg : 'white',
+                border: isActive ? `1px solid ${s.border}` : '1px solid #e2e8f0',
+                opacity: isActive ? 1 : 0.5,
+                transition: 'all 0.15s', outline: 'none',
+              }}
+            >
+              <span style={{
+                width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
+                background: isActive ? s.color : '#cbd5e1',
+              }} />
+              <span style={{ fontSize: 12, fontWeight: 700, color: isActive ? s.color : '#94a3b8' }}>
+                {s.count}
+              </span>
+              <span style={{ fontSize: 11, color: isActive ? '#475569' : '#94a3b8' }}>
+                {s.label}
+              </span>
+            </button>
+          )
+        })}
+
+        {/* Clear status filter */}
+        {statusFilter && (
+          <button
+            onClick={() => setStatusFilter(null)}
+            style={{
+              padding: '4px 8px', borderRadius: 6, cursor: 'pointer',
+              border: '1px solid #fca5a5', background: '#fef2f2',
+              fontSize: 11, fontWeight: 600, color: '#ef4444',
+              transition: 'all 0.15s', outline: 'none',
+            }}
+          >
+            ✕ Clear
+          </button>
+        )}
+
+      </div>
+
+      {/* ── Search row ──────────────────────────────────────────── */}
+      <div style={{ marginBottom: 10 }}>
+        <div style={{ position: 'relative', display: 'inline-block' }}>
           <input
             type="text"
             placeholder="Search ID, name, district…"
@@ -172,16 +225,14 @@ export default function SiteDirectory() {
               height: 32, padding: '0 10px 0 30px', fontSize: 12,
               borderRadius: 6, border: '1px solid #e2e8f0',
               background: 'white', color: '#374151', outline: 'none',
-              width: 220,
+              width: 260,
             }}
           />
           <span style={{
             position: 'absolute', left: 9, top: '50%',
             transform: 'translateY(-50%)', fontSize: 13, color: '#94a3b8',
             pointerEvents: 'none',
-          }}>
-            🔍
-          </span>
+          }}>🔍</span>
           {search && (
             <button
               onClick={() => setSearch('')}
@@ -199,6 +250,9 @@ export default function SiteDirectory() {
       {/* ── Result count ───────────────────────────────────────── */}
       <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 8 }}>
         Showing {filtered.length} of {sites.length} sites
+        {statusFilter && (
+          <span> — status: <strong style={{ color: '#475569' }}>{statusFilter.join(', ')}</strong></span>
+        )}
         {search && <span> matching "<strong style={{ color: '#475569' }}>{search}</strong>"</span>}
       </div>
 
