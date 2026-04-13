@@ -108,4 +108,16 @@ const divisionsJson = processFile('bgd_admin1.geojson', 0.004, p => ({
 writeFileSync(resolve(OUT, 'bd-divisions.geojson'), divisionsJson)
 console.log('  → bd-divisions.geojson', (divisionsJson.length / 1024).toFixed(1), 'KB')
 
+// ── admin2: district polygons (64 districts) ──────────────────────
+console.log('Processing admin2 (districts)…')
+const districtsJson = processFile('bgd_admin2.geojson', 0.003, p => ({
+  name:     p.adm2_name,
+  division: p.adm1_name,
+  pcode:    p.adm2_pcode,
+  lat:      p.center_lat,
+  lon:      p.center_lon,
+}))
+writeFileSync(resolve(OUT, 'bd-districts.geojson'), districtsJson)
+console.log('  → bd-districts.geojson', (districtsJson.length / 1024).toFixed(1), 'KB')
+
 console.log('Done.')

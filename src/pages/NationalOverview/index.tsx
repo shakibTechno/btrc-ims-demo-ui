@@ -4,6 +4,7 @@ import FilterBar          from '@/components/filters/FilterBar'
 import BaseMap            from '@/components/map/BaseMap'
 import SiteMarkerLayer    from '@/components/map/SiteMarkerLayer'
 import DivisionLayer      from '@/components/map/DivisionLayer'
+import DistrictLayer     from '@/components/map/DistrictLayer'
 import FiberOverlay       from '@/components/map/FiberOverlay'
 import MapLegend          from '@/components/map/MapLegend'
 import StatusHistoryChart from '@/components/charts/StatusHistoryChart'
@@ -24,7 +25,8 @@ export default function NationalOverview() {
   const sites       = useFilteredSites()
   const kpis        = useKPIs()
   const historyData = useMemo(() => getNationalHourlyCounts(), [])
-  const [showFiber, setShowFiber] = useState(true)
+  const [showFiber,   setShowFiber]   = useState(true)
+  const [mapView,     setMapView]     = useState<'division' | 'district'>('division')
 
   return (
     <PageWrapper>
@@ -57,7 +59,29 @@ export default function NationalOverview() {
               Infrastructure Map
             </span>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+
+              {/* Division / District toggle */}
+              <div style={{
+                display: 'flex', borderRadius: 6, overflow: 'hidden',
+                border: '1px solid #e2e8f0', fontSize: 11, fontWeight: 600,
+              }}>
+                {(['division', 'district'] as const).map(view => (
+                  <button
+                    key={view}
+                    onClick={() => setMapView(view)}
+                    style={{
+                      padding: '4px 10px', cursor: 'pointer', border: 'none',
+                      background: mapView === view ? '#1d4ed8' : 'white',
+                      color:      mapView === view ? 'white'   : '#64748b',
+                      transition: 'all 0.15s', textTransform: 'capitalize',
+                    }}
+                  >
+                    {view}
+                  </button>
+                ))}
+              </div>
+
               {/* Fiber toggle */}
               <button
                 onClick={() => setShowFiber(v => !v)}
@@ -71,7 +95,6 @@ export default function NationalOverview() {
                   fontSize: 11, fontWeight: 600, transition: 'all 0.15s',
                 }}
               >
-                {/* Fiber icon: two nodes connected by a line */}
                 <svg width="14" height="10" viewBox="0 0 14 10" fill="none"
                      stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                   <circle cx="2"  cy="5" r="1.5" fill="currentColor" stroke="none"/>
@@ -93,7 +116,10 @@ export default function NationalOverview() {
 
           {/* flex:1 + minHeight:0 lets BaseMap grow to fill the card */}
           <BaseMap height="100%" style={{ flex: 1, minHeight: 0 }}>
-            <DivisionLayer sites={sites} />
+            {mapView === 'division'
+              ? <DivisionLayer  sites={sites} />
+              : <DistrictLayer  sites={sites} />
+            }
             <FiberOverlay visible={showFiber} />
             <SiteMarkerLayer sites={sites} />
             <MapLegend position="bottomright" showFiber={showFiber} />
