@@ -1,79 +1,188 @@
-// ─── Pre-built site marker icons ─────────────────────────────────
-// All 9 combinations of status × asset type built once at module load.
-// Using L.divIcon (HTML-based) instead of CircleMarker so we can
-// apply CSS animations for pulsing on degraded/down sites.
+// ─── Site marker icons — teardrop map pins ────────────────────────
+//
+// Three completely distinct icon designs, one per asset type:
+//
+//   tower    — Lattice transmission tower: vertical mast, T-bar antenna,
+//              wide cross-arms with diagonal bracing, spread A-frame legs.
+//              Visual language: TALL VERTICAL STRUCTURE.
+//
+//   bts      — Radio base station: short pole, horizontal antenna bar,
+//              three bold concentric broadcast arcs fanning upward.
+//              Visual language: WIRELESS BROADCAST WAVES (like WiFi symbol).
+//
+//   nttn_pop — NTTN Point of Presence: solid central hub circle with eight
+//              radiating spokes to endpoint dots — a network topology star.
+//              Visual language: MULTI-POINT NETWORK NODE.
+//
+// Pin shape: teardrop (circle top, pointed tip at bottom)
+//   ViewBox  : 0 0 30 42
+//   Circle   : center (15,13)  radius 11
+//   Tip      : (15,40)
+//   Icon area: (7,4) → (23,22)
 
 import L from 'leaflet'
 import type { SiteStatus, AssetType } from '@/types/site'
 
-const STATUS_COLOR: Record<SiteStatus, string> = {
+const FILL: Record<SiteStatus, string> = {
   active:   '#22c55e',
   degraded: '#f59e0b',
   down:     '#ef4444',
 }
+const BORDER: Record<SiteStatus, string> = {
+  active:   '#15803d',
+  degraded: '#92400e',
+  down:     '#991b1b',
+}
 
-// SVG shape per asset type — inline so no external file dependency
-function shapeSvg(type: AssetType, color: string): string {
-  const s = color
-  const w = 'white'
+// ── Inner icons ───────────────────────────────────────────────────
+
+function innerIcon(type: AssetType): string {
   switch (type) {
+
+    // ── TOWER — Lattice transmission tower ───────────────────────
+    // T-bar at top, two cross-arms (wide → narrow) with diagonal
+    // bracing, vertical mast, A-frame base with spread legs.
     case 'tower':
-      // Upward triangle — tower co. / passive infrastructure
-      return `<svg width="16" height="14" viewBox="0 0 16 14" xmlns="http://www.w3.org/2000/svg" style="display:block">
-        <polygon points="8,1 15,13 1,13" fill="${s}" stroke="${w}" stroke-width="1.5" stroke-linejoin="round"/>
-      </svg>`
+      return `
+        <!-- Mast -->
+        <line x1="15" y1="4"  x2="15" y2="23" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+        <!-- T-bar antenna top -->
+        <line x1="11" y1="4"  x2="19" y2="4"  stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+        <!-- Aviation light -->
+        <circle cx="15" cy="4" r="1.8" fill="white"/>
+        <!-- Wide cross-arm -->
+        <line x1="7"  y1="10" x2="23" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Narrow cross-arm -->
+        <line x1="10" y1="16" x2="20" y2="16" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+        <!-- Diagonal braces left -->
+        <line x1="7"  y1="10" x2="10" y2="16" stroke="white" stroke-width="0.9" stroke-linecap="round" opacity="0.8"/>
+        <!-- Diagonal braces right -->
+        <line x1="23" y1="10" x2="20" y2="16" stroke="white" stroke-width="0.9" stroke-linecap="round" opacity="0.8"/>
+        <!-- A-frame base legs -->
+        <line x1="15" y1="22" x2="8"  y2="26" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="15" y1="22" x2="22" y2="26" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      `
 
+    // ── BTS — Radio base station ──────────────────────────────────
+    // Short mounting pole, horizontal antenna bar, three concentric
+    // arc waves fanning upward (largest arc nearly fills circle top).
+    // Looks like the universal WiFi / broadcast symbol.
     case 'bts':
-      // Circle — active radio base station
-      return `<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" style="display:block">
-        <circle cx="7" cy="7" r="5.5" fill="${s}" stroke="${w}" stroke-width="1.5"/>
-      </svg>`
+      return `
+        <!-- Mounting pole -->
+        <line x1="15" y1="15" x2="15" y2="24" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- Antenna bar -->
+        <line x1="10" y1="15" x2="20" y2="15" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- Antenna center dot -->
+        <circle cx="15" cy="15" r="2" fill="white"/>
+        <!-- Broadcast arc 1 — closest -->
+        <path d="M12,12.5 A4,4 0 0,1 18,12.5"
+              stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <!-- Broadcast arc 2 — medium -->
+        <path d="M9.5,9.5 A7,7 0 0,1 20.5,9.5"
+              stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <!-- Broadcast arc 3 — far -->
+        <path d="M7,6.5 A9.5,9.5 0 0,1 23,6.5"
+              stroke="white" stroke-width="1.3" fill="none" stroke-linecap="round" opacity="0.4"/>
+      `
 
+    // ── NTTN PoP — Network Point of Presence ──────────────────────
+    // Filled central hub circle with 8 radiating spokes to endpoint
+    // dots — a network star topology. Looks nothing like tower/BTS.
     case 'nttn_pop':
-      // Diamond (rotated square) — NTTN point of presence
-      return `<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" style="display:block">
-        <rect x="2.5" y="2.5" width="9" height="9" rx="1" fill="${s}" stroke="${w}" stroke-width="1.5" transform="rotate(45 7 7)"/>
-      </svg>`
+      return `
+        <!-- Hub circle (solid) -->
+        <circle cx="15" cy="13" r="3.8" fill="white"/>
+        <!-- 8 radial spokes + endpoint dots -->
+        <!-- North -->
+        <line x1="15" y1="9.2" x2="15" y2="5"    stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="15" cy="4.5" r="1.5" fill="white"/>
+        <!-- NE -->
+        <line x1="17.7" y1="10.3" x2="20.5" y2="7"  stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="21" cy="6.5"  r="1.5" fill="white"/>
+        <!-- East -->
+        <line x1="18.8" y1="13" x2="23" y2="13"   stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="23.5" cy="13" r="1.5" fill="white"/>
+        <!-- SE -->
+        <line x1="17.7" y1="15.7" x2="20.5" y2="19" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="21" cy="19.5" r="1.5" fill="white"/>
+        <!-- South -->
+        <line x1="15" y1="16.8" x2="15" y2="22"   stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="15" cy="22.5" r="1.5" fill="white"/>
+        <!-- SW -->
+        <line x1="12.3" y1="15.7" x2="9.5" y2="19" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="9" cy="19.5"  r="1.5" fill="white"/>
+        <!-- West -->
+        <line x1="11.2" y1="13" x2="7" y2="13"    stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="6.5" cy="13"  r="1.5" fill="white"/>
+        <!-- NW -->
+        <line x1="12.3" y1="10.3" x2="9.5" y2="7"  stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="9" cy="6.5"   r="1.5" fill="white"/>
+      `
   }
 }
 
-// Pulse ring behind the icon for non-active sites
+// ── Pulse ring (degraded / down) ──────────────────────────────────
 function pulseHtml(color: string, fast: boolean): string {
-  const dur = fast ? '1.2s' : '2s'
+  const dur = fast ? '1.1s' : '1.9s'
   return `<div style="
-    position:absolute;top:50%;left:50%;
+    position:absolute;top:13px;left:15px;
     transform:translate(-50%,-50%);
-    width:14px;height:14px;border-radius:50%;
+    width:22px;height:22px;border-radius:50%;
     background:${color};
     animation:sitePulse ${dur} ease-out infinite;
     pointer-events:none;
   "></div>`
 }
 
-function buildIcon(status: SiteStatus, type: AssetType): L.DivIcon {
-  const color   = STATUS_COLOR[status]
-  const pulse   = status !== 'active' ? pulseHtml(color, status === 'down') : ''
-  const shape   = shapeSvg(type, color)
+// ── Assemble full pin HTML ────────────────────────────────────────
+const PIN_PATH = 'M15,40 C11,31 4,26 4,13 A11,11 0 1,1 26,13 C26,26 19,31 15,40 Z'
 
+function pinHtml(status: SiteStatus, type: AssetType): string {
+  const fill   = FILL[status]
+  const border = BORDER[status]
+  const pulse  = status !== 'active' ? pulseHtml(fill, status === 'down') : ''
+
+  return `
+    <div style="position:relative;width:30px;height:42px;">
+      ${pulse}
+      <svg width="30" height="42" viewBox="0 0 30 42"
+           xmlns="http://www.w3.org/2000/svg"
+           style="display:block;overflow:visible;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));">
+        <!-- Teardrop pin body -->
+        <path d="${PIN_PATH}" fill="${fill}" stroke="${border}" stroke-width="1.3"/>
+        <!-- Top-left gloss highlight -->
+        <path d="M9,8 Q11,5 15,7"
+              stroke="rgba(255,255,255,0.55)" stroke-width="2.5"
+              fill="none" stroke-linecap="round"/>
+        <!-- Asset-type icon -->
+        ${innerIcon(type)}
+      </svg>
+    </div>
+  `
+}
+
+// ── L.DivIcon factory ─────────────────────────────────────────────
+function buildIcon(status: SiteStatus, type: AssetType): L.DivIcon {
   return L.divIcon({
-    className:   '',          // suppress leaflet's default white-box class
-    iconSize:    [24, 24],
-    iconAnchor:  [12, 12],
-    popupAnchor: [0, -14],
-    html: `<div style="
-      position:relative;width:24px;height:24px;
-      display:flex;align-items:center;justify-content:center;
-    ">${pulse}${shape}</div>`,
+    className:   '',
+    iconSize:    [30, 42],
+    iconAnchor:  [15, 42],    // pin tip points to exact location
+    popupAnchor: [0, -44],
+    html: pinHtml(status, type),
   })
 }
 
-// ── Static lookup table — built once, reused per render ───────────
+// ── Static 3×3 lookup built once at module load ───────────────────
 const STATUSES: SiteStatus[] = ['active', 'degraded', 'down']
 const TYPES:    AssetType[]  = ['tower', 'bts', 'nttn_pop']
 
-export const SITE_ICONS: Record<SiteStatus, Record<AssetType, L.DivIcon>> = Object.fromEntries(
-  STATUSES.map(s => [
-    s,
-    Object.fromEntries(TYPES.map(t => [t, buildIcon(s, t)])) as Record<AssetType, L.DivIcon>,
-  ])
-) as Record<SiteStatus, Record<AssetType, L.DivIcon>>
+export const SITE_ICONS: Record<SiteStatus, Record<AssetType, L.DivIcon>> =
+  Object.fromEntries(
+    STATUSES.map(s => [
+      s,
+      Object.fromEntries(
+        TYPES.map(t => [t, buildIcon(s, t)])
+      ) as Record<AssetType, L.DivIcon>,
+    ])
+  ) as Record<SiteStatus, Record<AssetType, L.DivIcon>>
