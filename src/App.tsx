@@ -1,24 +1,23 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 
-import Sidebar       from '@/components/layout/Sidebar'
-import TopBar        from '@/components/layout/TopBar'
-import ErrorBoundary from '@/components/shared/ErrorBoundary'
+import Sidebar           from '@/components/layout/Sidebar'
+import TopBar            from '@/components/layout/TopBar'
+import ErrorBoundary     from '@/components/shared/ErrorBoundary'
 import { useSimulation } from '@/hooks/useSimulation'
-
-// ─── SimulationRunner ─────────────────────────────────────────────
-// Mounts one interval timer for the live data simulation.
-// Placed inside BrowserRouter so hooks have router context if needed.
-function SimulationRunner() {
-  useSimulation(10_000)
-  return null
-}
-
+import { useAuthStore }  from '@/store/authStore'
+import Login             from '@/pages/Login'
 import NationalOverview  from '@/pages/NationalOverview'
 import OperatorDashboard from '@/pages/OperatorDashboard'
 import SiteDirectory     from '@/pages/SiteDirectory'
 import SiteDetail        from '@/pages/SiteDetail'
 import DisasterResponse  from '@/pages/DisasterResponse'
+
+// ─── SimulationRunner ─────────────────────────────────────────────
+function SimulationRunner() {
+  useSimulation(10_000)
+  return null
+}
 
 // ─── Page title mapping ───────────────────────────────────────────
 const PAGE_TITLES: Record<string, string> = {
@@ -31,6 +30,18 @@ const PAGE_TITLES: Record<string, string> = {
 function getPageTitle(pathname: string): string {
   if (pathname.startsWith('/sites/')) return 'Site Detail'
   return PAGE_TITLES[pathname] ?? 'BTRC IMS'
+}
+
+// ─── Protected route ──────────────────────────────────────────────
+// Redirects to /login if not authenticated, passing the attempted
+// path in location.state so Login can redirect back after sign-in.
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const user     = useAuthStore(s => s.user)
+  const location = useLocation()
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />
+  }
+  return <>{children}</>
 }
 
 // ─── Layout shell ─────────────────────────────────────────────────
@@ -69,7 +80,14 @@ export default function App() {
   return (
     <BrowserRouter>
       <SimulationRunner />
-      <Layout />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/*" element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        } />
+      </Routes>
     </BrowserRouter>
   )
 }
