@@ -8,7 +8,7 @@
 //   highlightDivision — shade the entire division in disaster color
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { GeoJSON, Marker, useMapEvents } from 'react-leaflet'
+import { GeoJSON, Marker } from 'react-leaflet'
 import L from 'leaflet'
 import type { Feature, FeatureCollection } from 'geojson'
 import type { Site } from '@/types/site'
@@ -102,18 +102,8 @@ interface DistrictCentroid {
   status:   DistrictStatus
 }
 
-// Zoom-aware label visibility — labels only at zoom ≥ 8
-function useMapZoom() {
-  const [zoom, setZoom] = useState(7)
-  useMapEvents({
-    zoomend: (e) => setZoom(e.target.getZoom()),
-  })
-  return zoom
-}
-
 export default function DistrictLayer({ sites, highlightDivision }: Props) {
   const [geoData, setGeoData] = useState<FeatureCollection | null>(null)
-  const zoom = useMapZoom()
 
   useEffect(() => {
     fetch('/data/bd-districts.geojson')
@@ -172,8 +162,8 @@ export default function DistrictLayer({ sites, highlightDivision }: Props) {
         style={styleFunc as () => L.PathOptions}
       />
 
-      {/* ── District name labels (only at zoom ≥ 8) ──────── */}
-      {zoom >= 8 && centroids.map(c => (
+      {/* ── District name labels (always visible) ────────── */}
+      {centroids.map(c => (
         <Marker
           key={c.name}
           position={[c.lat, c.lon]}
