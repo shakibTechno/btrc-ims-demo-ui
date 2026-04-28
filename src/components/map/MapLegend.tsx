@@ -10,9 +10,11 @@ import { STATUS_COLORS } from '@/utils/statusColors'
 interface Props {
   position?:  'bottomright' | 'bottomleft' | 'topright' | 'topleft'
   showFiber?: boolean
+  showOPGW?:  boolean
+  showBahon?: boolean
 }
 
-export default function MapLegend({ position = 'bottomright', showFiber = false }: Props) {
+export default function MapLegend({ position = 'bottomright', showFiber = false, showOPGW = false, showBahon = false }: Props) {
   const map        = useMap()
   const controlRef = useRef<L.Control | null>(null)
 
@@ -107,6 +109,54 @@ export default function MapLegend({ position = 'bottomright', showFiber = false 
           `).join('')}
         ` : ''
 
+        const opgwSection = showOPGW ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">OPGW</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#eab308" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#eab308" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#eab308" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">400 kV T/L</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#16a34a" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#16a34a" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">230 kV T/L</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 3"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#3b82f6" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#3b82f6" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">UG Cable</span>
+          </div>
+        ` : ''
+
+        const bahonSection = showBahon ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Bahon Ltd</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#06b6d4" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#06b6d4" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#06b6d4" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">Overhead (OH)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#78350f" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 3"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#78350f" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#78350f" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">Underground (UG)</span>
+          </div>
+        ` : ''
+
         div.innerHTML = `
           <div style="font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;">Status</div>
           ${statusRows.map(r => `
@@ -123,6 +173,8 @@ export default function MapLegend({ position = 'bottomright', showFiber = false 
             </div>
           `).join('')}
           ${fiberSection}
+          ${opgwSection}
+          ${bahonSection}
         `
 
         L.DomEvent.disableClickPropagation(div)
@@ -135,7 +187,7 @@ export default function MapLegend({ position = 'bottomright', showFiber = false 
     controlRef.current = control
 
     return () => { control.remove() }
-  }, [map, position, showFiber])
+  }, [map, position, showFiber, showOPGW, showBahon])
 
   return null
 }

@@ -6,6 +6,8 @@ import SiteMarkerLayer    from '@/components/map/SiteMarkerLayer'
 import DivisionLayer      from '@/components/map/DivisionLayer'
 import DistrictLayer     from '@/components/map/DistrictLayer'
 import FiberOverlay       from '@/components/map/FiberOverlay'
+import OPGWOverlay        from '@/components/map/OPGWOverlay'
+import BahonOverlay       from '@/components/map/BahonOverlay'
 import MapLegend          from '@/components/map/MapLegend'
 import StatusHistoryChart from '@/components/charts/StatusHistoryChart'
 import SectionHeader      from '@/components/shared/SectionHeader'
@@ -33,6 +35,8 @@ export default function NationalOverview() {
   const kpis        = useKPIs()
   const historyData = useMemo(() => getNationalHourlyCounts(), [])
   const [showFiber,    setShowFiber]   = useState(true)
+  const [showOPGW,     setShowOPGW]    = useState(false)
+  const [showBahon,    setShowBahon]   = useState(false)
   const [mapView,      setMapView]    = useState<'division' | 'district'>('division')
   const [visibleTypes, setVisibleTypes] = useState<Set<AssetType>>(
     () => new Set<AssetType>(['tower', 'bts', 'nttn_pop'])
@@ -159,6 +163,59 @@ export default function NationalOverview() {
                 }
               </button>
 
+              {/* OPGW toggle */}
+              <button
+                onClick={() => setShowOPGW(v => !v)}
+                title={showOPGW ? 'Hide OPGW transmission lines' : 'Show OPGW transmission lines'}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                  border: showOPGW ? '1px solid #eab308' : '1px solid #e2e8f0',
+                  background: showOPGW ? '#fefce8' : 'white',
+                  color: showOPGW ? '#854d0e' : '#64748b',
+                  fontSize: 11, fontWeight: 600, transition: 'all 0.15s',
+                }}
+              >
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" strokeLinecap="round">
+                  <line x1="1" y1="9" x2="4" y2="1" stroke="currentColor" strokeWidth="1.6"/>
+                  <line x1="4" y1="1" x2="7" y2="5" stroke="currentColor" strokeWidth="1.6"/>
+                  <line x1="7" y1="5" x2="10" y2="1" stroke="currentColor" strokeWidth="1.6"/>
+                  <line x1="10" y1="1" x2="13" y2="9" stroke="currentColor" strokeWidth="1.6"/>
+                  <line x1="1" y1="9" x2="13" y2="9" stroke="currentColor" strokeWidth="1.2" strokeOpacity="0.5"/>
+                </svg>
+                OPGW
+                {showOPGW
+                  ? <span style={{ fontSize: 9, opacity: 0.7 }}>ON</span>
+                  : <span style={{ fontSize: 9, opacity: 0.5 }}>OFF</span>
+                }
+              </button>
+
+              {/* Bahon toggle */}
+              <button
+                onClick={() => setShowBahon(v => !v)}
+                title={showBahon ? 'Hide Bahon fiber network' : 'Show Bahon fiber network'}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                  border: showBahon ? '1px solid #06b6d4' : '1px solid #e2e8f0',
+                  background: showBahon ? '#ecfeff' : 'white',
+                  color: showBahon ? '#0e7490' : '#64748b',
+                  fontSize: 11, fontWeight: 600, transition: 'all 0.15s',
+                }}
+              >
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none"
+                     stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <circle cx="2"  cy="5" r="1.5" fill="currentColor" stroke="none"/>
+                  <circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/>
+                  <line x1="3.5" y1="5" x2="10.5" y2="5"/>
+                </svg>
+                Bahon
+                {showBahon
+                  ? <span style={{ fontSize: 9, opacity: 0.7 }}>ON</span>
+                  : <span style={{ fontSize: 9, opacity: 0.5 }}>OFF</span>
+                }
+              </button>
+
               <span style={{ fontSize: 11, color: '#94a3b8' }}>
                 {sites.length} site{sites.length !== 1 ? 's' : ''}
               </span>
@@ -172,8 +229,10 @@ export default function NationalOverview() {
               : <DistrictLayer  sites={sites} />
             }
             <FiberOverlay visible={showFiber} />
+            <OPGWOverlay visible={showOPGW} />
+            <BahonOverlay visible={showBahon} />
             <SiteMarkerLayer sites={mapSites} />
-            <MapLegend position="bottomright" showFiber={showFiber} />
+            <MapLegend position="bottomright" showFiber={showFiber} showOPGW={showOPGW} showBahon={showBahon} />
           </BaseMap>
         </div>
 
