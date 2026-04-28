@@ -42,12 +42,6 @@ export default function Login() {
     }, 350)
   }
 
-  function fillDemo(u: string, p: string) {
-    setUsername(u)
-    setPassword(p)
-    clearError()
-  }
-
   return (
     <div style={{
       minHeight: '100vh',
@@ -188,29 +182,22 @@ export default function Login() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
               {DEMO_ACCOUNTS.map(a => (
-                <button
+                <div
                   key={a.username}
-                  type="button"
-                  onClick={() => fillDemo(a.username, a.password)}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '5px 10px', borderRadius: 6, cursor: 'pointer',
-                    background: username === a.username ? '#eff6ff' : 'white',
-                    border: username === a.username ? '1px solid #bfdbfe' : '1px solid #e2e8f0',
-                    transition: 'all 0.12s', textAlign: 'left',
+                    padding: '5px 10px', borderRadius: 6,
+                    background: 'white', border: '1px solid #e2e8f0',
                   }}
                 >
                   <span style={{ fontSize: 11, fontWeight: 600, color: '#334155' }}>
                     {a.username}
                   </span>
                   <span style={{ fontSize: 10, color: '#94a3b8' }}>
-                    {a.role} · {a.password}
+                    {a.role}
                   </span>
-                </button>
+                </div>
               ))}
-            </div>
-            <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 8, textAlign: 'center' }}>
-              Click a row to fill credentials
             </div>
           </div>
         </div>
