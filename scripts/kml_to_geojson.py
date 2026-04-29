@@ -1,8 +1,15 @@
 """Convert multi-layer KML to a single GeoJSON FeatureCollection."""
-import xml.etree.ElementTree as ET
 import json
 import sys
 import os
+
+# Prefer lxml (handles malformed/namespace-loose KML); fall back to stdlib
+try:
+    from lxml import etree as ET
+    USE_LXML = True
+except ImportError:
+    import xml.etree.ElementTree as ET
+    USE_LXML = False
 
 KML_NS = "http://www.opengis.net/kml/2.2"
 
@@ -44,7 +51,11 @@ def folder_name(folder, ns):
     return name_elem.text.strip() if name_elem is not None else "Unknown"
 
 def kml_to_geojson(kml_path):
-    tree = ET.parse(kml_path)
+    if USE_LXML:
+        parser = ET.XMLParser(recover=True)
+        tree   = ET.parse(kml_path, parser)
+    else:
+        tree = ET.parse(kml_path)
     root = tree.getroot()
 
     # Strip namespace from tag if present

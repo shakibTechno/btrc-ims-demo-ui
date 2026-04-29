@@ -12,9 +12,11 @@ interface Props {
   showFiber?: boolean
   showOPGW?:  boolean
   showBahon?: boolean
+  showIS3?:    boolean
+  showFHLFON?: boolean
 }
 
-export default function MapLegend({ position = 'bottomright', showFiber = false, showOPGW = false, showBahon = false }: Props) {
+export default function MapLegend({ position = 'bottomright', showFiber = false, showOPGW = false, showBahon = false, showIS3 = false, showFHLFON = false }: Props) {
   const map        = useMap()
   const controlRef = useRef<L.Control | null>(null)
 
@@ -157,6 +159,86 @@ export default function MapLegend({ position = 'bottomright', showFiber = false,
           </div>
         ` : ''
 
+        const is3Section = showIS3 ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">IS3 FHL</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#dc2626" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#dc2626" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">48 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#0d9488" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#0d9488" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#0d9488" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">24 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#c026d3" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="5 3"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#c026d3" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#c026d3" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">Messenger</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#ca8a04" stroke-width="1.2" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#ca8a04" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#ca8a04" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">12 Core</span>
+          </div>
+        ` : ''
+
+        const fhlfonSection = showFHLFON ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">FHLFON</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#3730a3" stroke-width="3.0" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#3730a3" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#3730a3" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">HC (≥216 core)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#4338ca" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#4338ca" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#4338ca" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">48 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#6366f1" stroke-width="1.6" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#6366f1" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#6366f1" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">24 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#818cf8" stroke-width="1.2" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#818cf8" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#818cf8" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">12 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#1e1b4b;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #1e1b4b;"></span>
+            <span style="color:#334155">CO Hub</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#4338ca;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #4338ca;"></span>
+            <span style="color:#334155">BTS Hub</span>
+          </div>
+        ` : ''
+
         div.innerHTML = `
           <div style="font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;">Status</div>
           ${statusRows.map(r => `
@@ -175,6 +257,8 @@ export default function MapLegend({ position = 'bottomright', showFiber = false,
           ${fiberSection}
           ${opgwSection}
           ${bahonSection}
+          ${is3Section}
+          ${fhlfonSection}
         `
 
         L.DomEvent.disableClickPropagation(div)
@@ -187,7 +271,7 @@ export default function MapLegend({ position = 'bottomright', showFiber = false,
     controlRef.current = control
 
     return () => { control.remove() }
-  }, [map, position, showFiber, showOPGW, showBahon])
+  }, [map, position, showFiber, showOPGW, showBahon, showIS3, showFHLFON])
 
   return null
 }

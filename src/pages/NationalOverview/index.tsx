@@ -8,6 +8,8 @@ import DistrictLayer     from '@/components/map/DistrictLayer'
 import FiberOverlay       from '@/components/map/FiberOverlay'
 import OPGWOverlay        from '@/components/map/OPGWOverlay'
 import BahonOverlay       from '@/components/map/BahonOverlay'
+import IS3Overlay         from '@/components/map/IS3Overlay'
+import FHLFONOverlay      from '@/components/map/FHLFONOverlay'
 import MapLegend          from '@/components/map/MapLegend'
 import StatusHistoryChart from '@/components/charts/StatusHistoryChart'
 import SectionHeader      from '@/components/shared/SectionHeader'
@@ -37,6 +39,8 @@ export default function NationalOverview() {
   const [showFiber,    setShowFiber]   = useState(true)
   const [showOPGW,     setShowOPGW]    = useState(false)
   const [showBahon,    setShowBahon]   = useState(false)
+  const [showIS3,      setShowIS3]     = useState(false)
+  const [showFHLFON,   setShowFHLFON]  = useState(false)
   const [mapView,      setMapView]    = useState<'division' | 'district'>('division')
   const [visibleTypes, setVisibleTypes] = useState<Set<AssetType>>(
     () => new Set<AssetType>(['tower', 'bts', 'nttn_pop'])
@@ -216,6 +220,58 @@ export default function NationalOverview() {
                 }
               </button>
 
+              {/* IS3 toggle */}
+              <button
+                onClick={() => setShowIS3(v => !v)}
+                title={showIS3 ? 'Hide IS3 FHL fiber network' : 'Show IS3 FHL fiber network'}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                  border: showIS3 ? '1px solid #7c3aed' : '1px solid #e2e8f0',
+                  background: showIS3 ? '#f5f3ff' : 'white',
+                  color: showIS3 ? '#5b21b6' : '#64748b',
+                  fontSize: 11, fontWeight: 600, transition: 'all 0.15s',
+                }}
+              >
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none"
+                     stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <circle cx="2"  cy="5" r="1.5" fill="currentColor" stroke="none"/>
+                  <circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/>
+                  <line x1="3.5" y1="5" x2="10.5" y2="5"/>
+                </svg>
+                IS3 FHL
+                {showIS3
+                  ? <span style={{ fontSize: 9, opacity: 0.7 }}>ON</span>
+                  : <span style={{ fontSize: 9, opacity: 0.5 }}>OFF</span>
+                }
+              </button>
+
+              {/* FHLFON toggle */}
+              <button
+                onClick={() => setShowFHLFON(v => !v)}
+                title={showFHLFON ? 'Hide FHLFON fiber network' : 'Show FHLFON fiber network'}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                  border: showFHLFON ? '1px solid #4338ca' : '1px solid #e2e8f0',
+                  background: showFHLFON ? '#eef2ff' : 'white',
+                  color: showFHLFON ? '#3730a3' : '#64748b',
+                  fontSize: 11, fontWeight: 600, transition: 'all 0.15s',
+                }}
+              >
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none"
+                     stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <circle cx="2"  cy="5" r="1.5" fill="currentColor" stroke="none"/>
+                  <circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/>
+                  <line x1="3.5" y1="5" x2="10.5" y2="5"/>
+                </svg>
+                FHLFON
+                {showFHLFON
+                  ? <span style={{ fontSize: 9, opacity: 0.7 }}>ON</span>
+                  : <span style={{ fontSize: 9, opacity: 0.5 }}>OFF</span>
+                }
+              </button>
+
               <span style={{ fontSize: 11, color: '#94a3b8' }}>
                 {sites.length} site{sites.length !== 1 ? 's' : ''}
               </span>
@@ -231,8 +287,10 @@ export default function NationalOverview() {
             <FiberOverlay visible={showFiber} />
             <OPGWOverlay visible={showOPGW} />
             <BahonOverlay visible={showBahon} />
+            <IS3Overlay visible={showIS3} />
+            <FHLFONOverlay visible={showFHLFON} />
             <SiteMarkerLayer sites={mapSites} />
-            <MapLegend position="bottomright" showFiber={showFiber} showOPGW={showOPGW} showBahon={showBahon} />
+            <MapLegend position="bottomright" showFiber={showFiber} showOPGW={showOPGW} showBahon={showBahon} showIS3={showIS3} showFHLFON={showFHLFON} />
           </BaseMap>
         </div>
 
