@@ -9,16 +9,17 @@ import AssetTypeSelect from './AssetTypeSelect'
 // Reads hasActiveFilters() from Zustand to show/hide reset.
 
 interface Props {
-  /** Which filter groups to show (default: all) */
   show?: {
     period?:   boolean
     location?: boolean
     operator?: boolean
     asset?:    boolean
   }
+  direction?: 'row' | 'column'
+  compact?:   boolean
 }
 
-export default function FilterBar({ show = {} }: Props) {
+export default function FilterBar({ show = {}, direction = 'row', compact }: Props) {
   const {
     period:   showPeriod   = true,
     location: showLocation = true,
@@ -26,14 +27,25 @@ export default function FilterBar({ show = {} }: Props) {
     asset:    showAsset    = true,
   } = show
 
+  const isColumn = direction === 'column'
   const hasActive   = useFilterStore(s => s.hasActiveFilters())
   const resetFilters = useFilterStore(s => s.resetFilters)
 
   return (
     <div style={{
-      display: 'flex', alignItems: 'center', flexWrap: 'wrap',
-      gap: 8, padding: '8px 0',
+      display: 'flex',
+      flexDirection: isColumn ? 'column' : 'row',
+      alignItems: isColumn ? 'stretch' : 'center',
+      flexWrap: isColumn ? 'nowrap' : 'wrap',
+      gap: isColumn ? 6 : 8,
+      padding: isColumn ? '4px 0' : '8px 0',
     }}>
+      {isColumn && (
+        <div style={{ fontSize: 9, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+          Filters
+        </div>
+      )}
+
       {showPeriod && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 500 }}>Period</span>
@@ -41,13 +53,13 @@ export default function FilterBar({ show = {} }: Props) {
         </div>
       )}
 
-      {showPeriod && (showLocation || showOperator || showAsset) && (
+      {showPeriod && !isColumn && (showLocation || showOperator || showAsset) && (
         <div style={{ width: 1, height: 24, background: '#e2e8f0', flexShrink: 0 }} />
       )}
 
-      {showLocation && <DistrictSelect />}
-      {showOperator && <OperatorSelect />}
-      {showAsset    && <AssetTypeSelect />}
+      {showLocation && <DistrictSelect compact={compact} />}
+      {showOperator && <OperatorSelect compact={compact} />}
+      {showAsset    && <AssetTypeSelect compact={compact} />}
 
       {hasActive && (
         <button

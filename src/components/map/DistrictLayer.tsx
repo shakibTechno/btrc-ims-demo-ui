@@ -55,6 +55,11 @@ const DISTRICT_STYLE: Record<DistrictStatus, L.PathOptions> = {
   },
 }
 
+const NEUTRAL_STYLE: L.PathOptions = {
+  fillColor: 'transparent', fillOpacity: 0,
+  color: '#94a3b8', weight: 1.2, opacity: 0.75,
+}
+
 const HIGHLIGHT_STYLE: L.PathOptions = {
   fillColor: '#ef4444', fillOpacity: 0.20,
   color: '#ef4444', weight: 2, opacity: 1,
@@ -62,13 +67,14 @@ const HIGHLIGHT_STYLE: L.PathOptions = {
 }
 
 // ── Label DivIcon ─────────────────────────────────────────────────
-function makeLabelIcon(name: string, status: DistrictStatus): L.DivIcon {
+function makeLabelIcon(name: string, status: DistrictStatus, heatmap: boolean): L.DivIcon {
   const colors: Record<DistrictStatus, string> = {
     active:   '#14532d',
     degraded: '#78350f',
     down:     '#7f1d1d',
     empty:    '#64748b',
   }
+  const color = heatmap ? colors[status] : '#94a3b8'
   return L.divIcon({
     className: '',
     iconSize:  [0, 0],
@@ -76,7 +82,7 @@ function makeLabelIcon(name: string, status: DistrictStatus): L.DivIcon {
     html: `<span style="
       display:inline-block;
       font:600 8px/1 system-ui,sans-serif;
-      color:${colors[status]};
+      color:${color};
       text-shadow:0 1px 3px rgba(255,255,255,0.97),0 0 6px rgba(255,255,255,0.8);
       white-space:nowrap;
       pointer-events:none;
@@ -92,6 +98,7 @@ function makeLabelIcon(name: string, status: DistrictStatus): L.DivIcon {
 interface Props {
   sites:              Site[]
   highlightDivision?: string
+  heatmap?:           boolean
 }
 
 interface DistrictCentroid {
@@ -102,7 +109,7 @@ interface DistrictCentroid {
   status:   DistrictStatus
 }
 
-export default function DistrictLayer({ sites, highlightDivision }: Props) {
+export default function DistrictLayer({ sites, highlightDivision, heatmap = false }: Props) {
   const [geoData, setGeoData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
@@ -138,12 +145,13 @@ export default function DistrictLayer({ sites, highlightDivision }: Props) {
 
   // Style function — stable ref via useCallback
   const styleFunc = useCallback((feature?: Feature) => {
-    if (!feature) return DISTRICT_STYLE.empty
+    if (!feature) return NEUTRAL_STYLE
     const name = feature.properties?.name as string
     const div  = feature.properties?.division as string
     if (highlightDivision && div === highlightDivision) return HIGHLIGHT_STYLE
+    if (!heatmap) return NEUTRAL_STYLE
     return DISTRICT_STYLE[distStats[name] ?? 'empty']
-  }, [distStats, highlightDivision])
+  }, [distStats, highlightDivision, heatmap])
 
   // Rekey forces GeoJSON remount when status distribution changes
   const statsKey = useMemo(
@@ -167,7 +175,7 @@ export default function DistrictLayer({ sites, highlightDivision }: Props) {
         <Marker
           key={c.name}
           position={[c.lat, c.lon]}
-          icon={makeLabelIcon(c.name, c.status)}
+          icon={makeLabelIcon(c.name, c.status, heatmap)}
           interactive={false}
           zIndexOffset={-1000}
         />

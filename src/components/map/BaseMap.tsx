@@ -70,12 +70,11 @@ export default function BaseMap({
         <InvalidateSize />
         <FullscreenControl />
 
-        {/* CartoDB Positron — muted, label-light tiles, no API key required */}
+        {/* OpenStreetMap standard — natural colours (green land, blue water, roads) */}
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
-          subdomains="abcd"
-          maxZoom={20}
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          maxZoom={19}
         />
 
         {/* Bangladesh border highlight + world dimmer */}

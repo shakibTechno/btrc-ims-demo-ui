@@ -17,10 +17,10 @@ function TrendArrow({ trend, trendValue }: { trend: 'up' | 'down' | 'neutral'; t
   const color = trend === 'up' ? '#22c55e' : trend === 'down' ? '#ef4444' : '#94a3b8'
   const arrow = trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 4 }}>
-      <span style={{ color, fontSize: 12, fontWeight: 700 }}>{arrow}</span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginTop: 2 }}>
+      <span style={{ color, fontSize: 8, fontWeight: 700 }}>{arrow}</span>
       {trendValue && (
-        <span style={{ color: '#94a3b8', fontSize: 11 }}>{trendValue}</span>
+        <span style={{ color: '#94a3b8', fontSize: 8 }}>{trendValue}</span>
       )}
     </div>
   )
@@ -34,26 +34,26 @@ export default function KPICard({
   return (
     <div style={{
       background: 'white',
-      borderRadius: 8,
+      borderRadius: 4,
       border: '1px solid #e2e8f0',
-      borderLeft: accentColor ? `3px solid ${accentColor}` : '1px solid #e2e8f0',
-      padding: isSmall ? '10px 14px' : '14px 16px',
+      borderLeft: accentColor ? `2px solid ${accentColor}` : '1px solid #e2e8f0',
+      padding: isSmall ? '4px 6px' : '6px 7px',
       boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
       display: 'flex', flexDirection: 'column',
       minWidth: 0,
     }}>
       {/* Title row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-        <span style={{ fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+        <span style={{ fontSize: 8, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           {title}
         </span>
-        {icon && <span style={{ fontSize: isSmall ? 16 : 20 }}>{icon}</span>}
+        {icon && <span style={{ fontSize: isSmall ? 9 : 11 }}>{icon}</span>}
       </div>
 
       {/* Value */}
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
         <span style={{
-          fontSize: isSmall ? 22 : 28,
+          fontSize: isSmall ? 13 : 16,
           fontWeight: 700,
           color: accentColor ?? '#1e293b',
           lineHeight: 1,
@@ -62,14 +62,14 @@ export default function KPICard({
           {value}
         </span>
         {unit && (
-          <span style={{ fontSize: isSmall ? 12 : 14, fontWeight: 500, color: '#94a3b8' }}>
+          <span style={{ fontSize: isSmall ? 8 : 9, fontWeight: 500, color: '#94a3b8' }}>
             {unit}
           </span>
         )}
       </div>
 
       {subtitle && (
-        <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 3 }}>{subtitle}</div>
+        <div style={{ fontSize: 8, color: '#94a3b8', marginTop: 1 }}>{subtitle}</div>
       )}
 
       {trend && (

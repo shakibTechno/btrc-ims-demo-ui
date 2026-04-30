@@ -1,13 +1,13 @@
 import { useFilterStore } from '@/store/filterStore'
 import { SITES, DIVISIONS } from '@/data/sites'
 
-const SELECT_STYLE: React.CSSProperties = {
-  height: 32, padding: '0 8px', fontSize: 12, borderRadius: 6,
-  border: '1px solid #e2e8f0', background: 'white', color: '#374151',
-  cursor: 'pointer', outline: 'none', minWidth: 120,
+function selectStyle(compact?: boolean): React.CSSProperties {
+  return compact
+    ? { height: 20, padding: '0 5px', fontSize: 10, borderRadius: 4, border: '1px solid #e2e8f0', background: 'white', color: '#374151', cursor: 'pointer', outline: 'none', minWidth: 90 }
+    : { height: 32, padding: '0 8px', fontSize: 12, borderRadius: 6, border: '1px solid #e2e8f0', background: 'white', color: '#374151', cursor: 'pointer', outline: 'none', minWidth: 120 }
 }
 
-export default function DistrictSelect() {
+export default function DistrictSelect({ compact }: { compact?: boolean }) {
   const division    = useFilterStore(s => s.division)
   const district    = useFilterStore(s => s.district)
   const setDivision = useFilterStore(s => s.setDivision)
@@ -24,7 +24,7 @@ export default function DistrictSelect() {
       <select
         value={division ?? ''}
         onChange={e => setDivision(e.target.value || null)}
-        style={SELECT_STYLE}
+        style={selectStyle(compact)}
         aria-label="Division"
       >
         <option value="">All Divisions</option>
@@ -36,7 +36,7 @@ export default function DistrictSelect() {
         <select
           value={district ?? ''}
           onChange={e => setDistrict(e.target.value || null)}
-          style={SELECT_STYLE}
+          style={selectStyle(compact)}
           aria-label="District"
         >
           <option value="">All Districts</option>

@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import BaseMap         from '@/components/map/BaseMap'
 import SiteMarkerLayer from '@/components/map/SiteMarkerLayer'
 import DivisionLayer   from '@/components/map/DivisionLayer'
-import FiberOverlay    from '@/components/map/FiberOverlay'
 import MapLegend       from '@/components/map/MapLegend'
 import { useSiteStore } from '@/store/siteStore'
 import type { DisasterStats } from '@/hooks/useDisasterStats'
@@ -79,10 +78,8 @@ export default function AffectedSitesMap({ stats }: Props) {
           sites={allSites}
           highlightDivision={scenario.affectedDivision}
         />
-        {/* Fiber always on in disaster view — cut Sylhet route is key evidence */}
-        <FiberOverlay visible />
         <SiteMarkerLayer sites={sylhetSites} />
-        <MapLegend position="bottomright" showFiber />
+        <MapLegend position="bottomright" />
       </BaseMap>
     </div>
   )

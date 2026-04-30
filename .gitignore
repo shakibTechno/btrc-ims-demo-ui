@@ -26,3 +26,7 @@ public/data/bd-highways.geojson
 *.njsproj
 *.sln
 *.sw?
+
+# Large raw GIS source files (use GeoJSON outputs in public/data/ instead)
+MapData/FHLFON/
+MapData/Bahon Limited Shape Files/

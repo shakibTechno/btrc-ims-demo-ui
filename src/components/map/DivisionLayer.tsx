@@ -53,6 +53,12 @@ const DIVISION_STYLE: Record<DivisionStatus, L.PathOptions> = {
   },
 }
 
+// Neutral style when heatmap is off (border only, no status colour)
+const NEUTRAL_STYLE: L.PathOptions = {
+  fillColor: 'transparent', fillOpacity: 0,
+  color: '#94a3b8', weight: 1, opacity: 0.55,
+}
+
 // Boost the highlighted division (disaster zone)
 const HIGHLIGHT_STYLE: L.PathOptions = {
   fillColor: '#ef4444', fillOpacity: 0.22,
@@ -61,14 +67,14 @@ const HIGHLIGHT_STYLE: L.PathOptions = {
 }
 
 // ── Label DivIcon ─────────────────────────────────────────────────
-function makeLabelIcon(name: string, status: DivisionStatus, highlighted: boolean): L.DivIcon {
+function makeLabelIcon(name: string, status: DivisionStatus, highlighted: boolean, heatmap: boolean): L.DivIcon {
   const colors: Record<DivisionStatus, string> = {
     active:   '#166534',
     degraded: '#92400e',
     down:     '#991b1b',
     empty:    '#475569',
   }
-  const color = highlighted ? '#991b1b' : colors[status]
+  const color = highlighted ? '#991b1b' : heatmap ? colors[status] : '#64748b'
 
   return L.divIcon({
     className: '',
@@ -94,6 +100,7 @@ function makeLabelIcon(name: string, status: DivisionStatus, highlighted: boolea
 interface Props {
   sites:              Site[]
   highlightDivision?: string
+  heatmap?:           boolean
 }
 
 interface DivisionCentroid {
@@ -103,7 +110,7 @@ interface DivisionCentroid {
   status: DivisionStatus
 }
 
-export default function DivisionLayer({ sites, highlightDivision }: Props) {
+export default function DivisionLayer({ sites, highlightDivision, heatmap = false }: Props) {
   const [geoData, setGeoData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
@@ -154,6 +161,7 @@ export default function DivisionLayer({ sites, highlightDivision }: Props) {
         style={(feature: Feature) => {
           const name = feature.properties?.name as string
           if (highlightDivision && name === highlightDivision) return HIGHLIGHT_STYLE
+          if (!heatmap) return NEUTRAL_STYLE
           return DIVISION_STYLE[divStats[name] ?? 'empty']
         }}
       />
@@ -163,7 +171,7 @@ export default function DivisionLayer({ sites, highlightDivision }: Props) {
         <Marker
           key={c.name}
           position={[c.lat, c.lon]}
-          icon={makeLabelIcon(c.name, c.status, c.name === highlightDivision)}
+          icon={makeLabelIcon(c.name, c.status, c.name === highlightDivision, heatmap)}
           interactive={false}
           zIndexOffset={-1000}
         />

@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { SITES } from '@/data/sites'
 import { OPERATORS } from '@/data/operators'
+import { useAuthStore } from '@/store/authStore'
 
 // ─── Nav item config ──────────────────────────────────────────────
 interface NavItem {
@@ -110,6 +112,97 @@ function SidebarOperators() {
   )
 }
 
+// ─── Sidebar user menu ────────────────────────────────────────────
+function SidebarUserMenu() {
+  const user   = useAuthStore(s => s.user)
+  const logout = useAuthStore(s => s.logout)
+  const [open, setOpen] = useState(false)
+
+  if (!user) return null
+
+  const roleColor: Record<string, string> = {
+    admin: '#7c3aed', viewer: '#0284c7', operator: '#059669',
+  }
+  const color = roleColor[user.role] ?? '#64748b'
+
+  return (
+    <div style={{ padding: '10px 12px', borderTop: '1px solid #1e293b', flexShrink: 0, position: 'relative' }}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 8, width: '100%',
+          padding: '7px 10px', borderRadius: 7, cursor: 'pointer',
+          border: '1px solid rgba(255,255,255,0.07)',
+          background: open ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.03)',
+          transition: 'all 0.12s', outline: 'none',
+        }}
+      >
+        <div style={{
+          width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+          background: color,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'white', fontSize: 10, fontWeight: 700,
+        }}>
+          {user.initials}
+        </div>
+        <div style={{ flex: 1, textAlign: 'left', overflow: 'hidden' }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: '#e2e8f0', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {user.displayName}
+          </div>
+          <div style={{ fontSize: 9, color: '#475569', textTransform: 'capitalize', marginTop: 1 }}>
+            {user.role}
+          </div>
+        </div>
+        <span style={{ fontSize: 10, color: '#475569' }}>▾</span>
+      </button>
+
+      {open && (
+        <>
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 99 }}
+            onClick={() => setOpen(false)}
+          />
+          <div style={{
+            position: 'absolute', bottom: 'calc(100% + 6px)', left: 12, right: 12,
+            background: '#1e293b', borderRadius: 8, border: '1px solid #334155',
+            boxShadow: '0 -8px 24px rgba(0,0,0,0.3)', zIndex: 100, overflow: 'hidden',
+          }}>
+            <div style={{ padding: '10px 14px', borderBottom: '1px solid #334155' }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#f1f5f9' }}>{user.displayName}</div>
+              <div style={{
+                display: 'inline-block', marginTop: 3, padding: '1px 7px', borderRadius: 9999,
+                background: color + '28', color,
+                fontSize: 10, fontWeight: 700, textTransform: 'capitalize',
+              }}>
+                {user.role}
+              </div>
+            </div>
+            <button
+              onClick={() => { setOpen(false); logout() }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8, width: '100%',
+                padding: '9px 14px', border: 'none', background: 'none',
+                cursor: 'pointer', fontSize: 12, color: '#f87171', fontWeight: 600,
+                transition: 'background 0.1s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              Sign Out
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 // ─── Main Sidebar ─────────────────────────────────────────────────
 export default function Sidebar() {
   const NAV_ITEMS: NavItem[] = [
@@ -189,17 +282,8 @@ export default function Sidebar() {
         <SidebarOperators />
       </div>
 
-      {/* ── Demo badge ── */}
-      <div style={{ padding: '10px 12px', borderTop: '1px solid #1e293b', flexShrink: 0 }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
-          background: 'rgba(245,158,11,0.10)', color: '#f59e0b',
-          border: '1px solid rgba(245,158,11,0.2)',
-          borderRadius: 6, padding: '5px 8px', fontSize: 10, fontWeight: 600,
-        }}>
-          ⚡ DEMO — Simulated Data
-        </div>
-      </div>
+      {/* ── User menu ── */}
+      <SidebarUserMenu />
 
     </aside>
   )

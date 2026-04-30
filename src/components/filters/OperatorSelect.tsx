@@ -2,10 +2,10 @@ import { useFilterStore } from '@/store/filterStore'
 import { OPERATORS } from '@/data/operators'
 import type { OperatorType } from '@/types/operator'
 
-const SELECT_STYLE: React.CSSProperties = {
-  height: 32, padding: '0 8px', fontSize: 12, borderRadius: 6,
-  border: '1px solid #e2e8f0', background: 'white', color: '#374151',
-  cursor: 'pointer', outline: 'none', minWidth: 120,
+function selectStyle(compact?: boolean): React.CSSProperties {
+  return compact
+    ? { height: 20, padding: '0 5px', fontSize: 10, borderRadius: 4, border: '1px solid #e2e8f0', background: 'white', color: '#374151', cursor: 'pointer', outline: 'none', minWidth: 90 }
+    : { height: 32, padding: '0 8px', fontSize: 12, borderRadius: 6, border: '1px solid #e2e8f0', background: 'white', color: '#374151', cursor: 'pointer', outline: 'none', minWidth: 120 }
 }
 
 const TYPE_LABELS: Record<OperatorType, string> = {
@@ -14,7 +14,7 @@ const TYPE_LABELS: Record<OperatorType, string> = {
   tower_company: 'Tower Co.',
 }
 
-export default function OperatorSelect() {
+export default function OperatorSelect({ compact }: { compact?: boolean }) {
   const operatorType    = useFilterStore(s => s.operatorType)
   const operatorId      = useFilterStore(s => s.operatorId)
   const setOperatorType = useFilterStore(s => s.setOperatorType)
@@ -31,7 +31,7 @@ export default function OperatorSelect() {
       <select
         value={operatorType ?? ''}
         onChange={e => setOperatorType((e.target.value as OperatorType) || null)}
-        style={SELECT_STYLE}
+        style={selectStyle(compact)}
         aria-label="Operator type"
       >
         <option value="">All Types</option>
@@ -44,7 +44,7 @@ export default function OperatorSelect() {
       <select
         value={operatorId ?? ''}
         onChange={e => setOperatorId(e.target.value || null)}
-        style={SELECT_STYLE}
+        style={selectStyle(compact)}
         aria-label="Operator"
       >
         <option value="">All Operators</option>
