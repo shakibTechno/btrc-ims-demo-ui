@@ -62,14 +62,26 @@ export default function BangladeshOverlay() {
         }}
       />
 
+      {/* ── Border yellow glow (wide, behind main line) ─────── */}
+      <GeoJSON
+        data={geoJson}
+        style={() => ({
+          fill:        false,
+          color:       '#fbbf24',
+          weight:      7,
+          opacity:     0.45,
+          interactive: false,
+        })}
+      />
+
       {/* ── Country border highlight ─────────────────────────── */}
       <GeoJSON
         data={geoJson}
         style={() => ({
           fill:        false,
-          color:       '#3b82f6',
-          weight:      1.8,
-          opacity:     0.9,
+          color:       '#0f172a',
+          weight:      2.2,
+          opacity:     1,
           interactive: false,
         })}
       />

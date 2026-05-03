@@ -7,7 +7,7 @@
 //   sites            — current filtered/live site list (from siteStore)
 //   highlightDivision — name of a division to emphasize (disaster mode)
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { GeoJSON, Marker } from 'react-leaflet'
 import L from 'leaflet'
 import type { Feature, FeatureCollection } from 'geojson'
@@ -56,7 +56,7 @@ const DIVISION_STYLE: Record<DivisionStatus, L.PathOptions> = {
 // Neutral style when heatmap is off (border only, no status colour)
 const NEUTRAL_STYLE: L.PathOptions = {
   fillColor: 'transparent', fillOpacity: 0,
-  color: '#94a3b8', weight: 1, opacity: 0.55,
+  color: '#7f1d1d', weight: 2.5, opacity: 0.85,
 }
 
 // Boost the highlighted division (disaster zone)
@@ -74,7 +74,7 @@ function makeLabelIcon(name: string, status: DivisionStatus, highlighted: boolea
     down:     '#991b1b',
     empty:    '#475569',
   }
-  const color = highlighted ? '#991b1b' : heatmap ? colors[status] : '#64748b'
+  const color = highlighted ? '#991b1b' : heatmap ? colors[status] : '#1e293b'
 
   return L.divIcon({
     className: '',
@@ -82,11 +82,11 @@ function makeLabelIcon(name: string, status: DivisionStatus, highlighted: boolea
     iconAnchor:[0, 0],
     html: `<span style="
       display:inline-block;
-      font:700 9px/1 system-ui,sans-serif;
+      font:700 10px/1 system-ui,sans-serif;
       text-transform:uppercase;
-      letter-spacing:0.07em;
+      letter-spacing:0.08em;
       color:${color};
-      text-shadow:0 1px 3px rgba(255,255,255,0.95),0 0 6px rgba(255,255,255,0.7);
+      text-shadow:0 1px 4px rgba(255,255,255,1),0 0 8px rgba(255,255,255,0.9);
       white-space:nowrap;
       pointer-events:none;
       transform:translate(-50%,-50%);
@@ -100,17 +100,18 @@ function makeLabelIcon(name: string, status: DivisionStatus, highlighted: boolea
 interface Props {
   sites:              Site[]
   highlightDivision?: string
+  selectedDivision?:  string | null
   heatmap?:           boolean
 }
 
 interface DivisionCentroid {
-  name: string
-  lat:  number
-  lon:  number
+  name:   string
+  lat:    number
+  lon:    number
   status: DivisionStatus
 }
 
-export default function DivisionLayer({ sites, highlightDivision, heatmap = false }: Props) {
+export default function DivisionLayer({ sites, highlightDivision, selectedDivision, heatmap = false }: Props) {
   const [geoData, setGeoData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
@@ -132,7 +133,7 @@ export default function DivisionLayer({ sites, highlightDivision, heatmap = fals
     )
   }, [geoData, sites])
 
-  // Centroid labels — derived from GeoJSON center_lat / center_lon props
+  // Centroid labels — derived from GeoJSON lat / lon props
   const centroids = useMemo<DivisionCentroid[]>(() => {
     if (!geoData) return []
     return geoData.features.map(f => ({
@@ -149,6 +150,50 @@ export default function DivisionLayer({ sites, highlightDivision, heatmap = fals
     [divStats],
   )
 
+  const prevLayerRef = useRef<L.Path | null>(null)
+  const layersMapRef = useRef<Map<string, L.Path>>(new Map())
+
+  const animateLayer = useCallback((pathLayer: L.Path) => {
+    if (prevLayerRef.current && prevLayerRef.current !== pathLayer) {
+      const prev = prevLayerRef.current
+      const pEl = prev.getElement() as SVGPathElement | null
+      if (pEl) { pEl.style.transition = 'none'; pEl.style.strokeDasharray = ''; pEl.style.strokeDashoffset = '' }
+      const saved = (prev as any)._savedStyle as L.PathOptions | undefined
+      prev.setStyle(saved ?? NEUTRAL_STYLE)
+    }
+    ;(pathLayer as any)._savedStyle = { ...pathLayer.options }
+    pathLayer.setStyle({ color: '#000000', weight: 3, opacity: 1 })
+    prevLayerRef.current = pathLayer
+
+    const el = pathLayer.getElement() as SVGPathElement | null
+    if (!el) return
+    const len = el.getTotalLength()
+    if (!len) return
+
+    el.style.transition = 'none'
+    el.style.strokeDasharray = `${len}`
+    el.style.strokeDashoffset = `${len}`
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transition = 'stroke-dashoffset 0.9s ease-in-out'
+        el.style.strokeDashoffset = '0'
+      })
+    })
+  }, [])
+
+  // Trigger draw animation when topbar division filter changes
+  useEffect(() => {
+    if (!selectedDivision) return
+    const layer = layersMapRef.current.get(selectedDivision)
+    if (layer) animateLayer(layer)
+  }, [selectedDivision, animateLayer])
+
+  const onEachDivision = useCallback((feat: Feature, layer: L.Layer) => {
+    const name = feat.properties?.name as string
+    layersMapRef.current.set(name, layer as L.Path)
+    layer.on('click', () => animateLayer(layer as L.Path))
+  }, [animateLayer])
+
   if (!geoData) return null
 
   return (
@@ -164,6 +209,7 @@ export default function DivisionLayer({ sites, highlightDivision, heatmap = fals
           if (!heatmap) return NEUTRAL_STYLE
           return DIVISION_STYLE[divStats[name] ?? 'empty']
         }}
+        onEachFeature={onEachDivision}
       />
 
       {/* ── Division name labels ───────────────────────────── */}
@@ -173,7 +219,7 @@ export default function DivisionLayer({ sites, highlightDivision, heatmap = fals
           position={[c.lat, c.lon]}
           icon={makeLabelIcon(c.name, c.status, c.name === highlightDivision, heatmap)}
           interactive={false}
-          zIndexOffset={-1000}
+          zIndexOffset={500}
         />
       ))}
     </>

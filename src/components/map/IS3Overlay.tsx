@@ -63,8 +63,8 @@ function lineStyle(feature?: Feature): L.PathOptions {
     case '48':   weight = 2.5;                                    break
     case '24':   weight = 1.8;                                    break
     case '12':   weight = 1.2; opacity = 0.78;                    break
-    case 'msg':  weight = 1.5; dashArray = '7 4'; opacity = 0.75; break
-    case 'ring': weight = 1.4; dashArray = '5 3'; opacity = 0.85; break
+    case 'msg':  weight = 1.5; opacity = 0.75; break
+    case 'ring': weight = 1.4; opacity = 0.85; break
     case 'cbd':  weight = 1.2;                                    break
     default:     weight = 1.0; opacity = 0.55;
   }
@@ -114,7 +114,7 @@ function buildLinePopup(p: Record<string, unknown>): string {
           <span style="width:5px;height:5px;border-radius:50%;background:${color};display:inline-block;flex-shrink:0"></span>
           ${coreTag}
         </span>
-        <span style="font-size:10px;color:#64748b;background:#f1f5f9;padding:2px 6px;border-radius:4px">IS3 FHL</span>
+        <span style="font-size:10px;color:#64748b;background:#f1f5f9;padding:2px 6px;border-radius:4px">InfoSarkar-3</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;color:#475569;font-size:11px">
         ${nameRow}
@@ -125,7 +125,7 @@ function buildLinePopup(p: Record<string, unknown>): string {
         </div>
         <div style="display:flex;gap:6px">
           <span style="color:#94a3b8;min-width:54px;flex-shrink:0">Network</span>
-          <span style="color:#7c3aed;font-weight:600">Info Sarker-3 FHL</span>
+          <span style="color:#7c3aed;font-weight:600">InfoSarkar-3</span>
         </div>
       </div>
     </div>`
@@ -148,7 +148,7 @@ function buildPointPopup(nm: string, lat: number, lng: number): string {
           <span style="width:5px;height:5px;border-radius:50%;background:#7c3aed;display:inline-block;flex-shrink:0"></span>
           Node
         </span>
-        <span style="font-size:10px;color:#64748b;background:#f1f5f9;padding:2px 6px;border-radius:4px">IS3 FHL</span>
+        <span style="font-size:10px;color:#64748b;background:#f1f5f9;padding:2px 6px;border-radius:4px">InfoSarkar-3</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;color:#475569;font-size:11px">
         <div style="display:flex;gap:6px">
@@ -157,7 +157,7 @@ function buildPointPopup(nm: string, lat: number, lng: number): string {
         </div>
         <div style="display:flex;gap:6px">
           <span style="color:#94a3b8;min-width:54px;flex-shrink:0">Network</span>
-          <span style="color:#7c3aed;font-weight:600">Info Sarker-3 FHL</span>
+          <span style="color:#7c3aed;font-weight:600">InfoSarkar-3</span>
         </div>
       </div>
     </div>`

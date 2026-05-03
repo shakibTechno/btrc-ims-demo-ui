@@ -87,7 +87,12 @@ export default function FullscreenControl() {
           L.DomEvent.preventDefault(e)
           L.DomEvent.stopPropagation(e)
           if (!document.fullscreenElement) {
-            map.getContainer().requestFullscreen().catch(console.warn)
+            // Go up two levels: leaflet-container → BaseMap wrapper → map-wrapper
+            // (map-wrapper also holds the layers panel overlay, so it stays visible in fullscreen)
+            const fsTarget =
+              map.getContainer().parentElement?.parentElement ??
+              map.getContainer()
+            fsTarget.requestFullscreen().catch(console.warn)
           } else {
             document.exitFullscreen().catch(console.warn)
           }

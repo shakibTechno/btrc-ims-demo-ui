@@ -30,3 +30,6 @@ public/data/bd-highways.geojson
 # Large raw GIS source files (use GeoJSON outputs in public/data/ instead)
 MapData/FHLFON/
 MapData/Bahon Limited Shape Files/
+
+# Local tile server — MBTiles are large binaries, not for version control
+tiles/*.mbtiles

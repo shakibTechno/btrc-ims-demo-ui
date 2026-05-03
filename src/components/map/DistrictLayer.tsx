@@ -1,13 +1,13 @@
 // ─── DistrictLayer ────────────────────────────────────────────────
 // Loads bd-districts.geojson (64 districts) and renders:
 //   • One filled polygon per district, colored by dominant site status
-//   • District name labels visible at zoom ≥ 8 (they overlap at lower zoom)
+//   • District name labels at centroid
 //
 // Props:
 //   sites             — current filtered/live site list
 //   highlightDivision — shade the entire division in disaster color
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { GeoJSON, Marker } from 'react-leaflet'
 import L from 'leaflet'
 import type { Feature, FeatureCollection } from 'geojson'
@@ -57,7 +57,7 @@ const DISTRICT_STYLE: Record<DistrictStatus, L.PathOptions> = {
 
 const NEUTRAL_STYLE: L.PathOptions = {
   fillColor: 'transparent', fillOpacity: 0,
-  color: '#94a3b8', weight: 1.2, opacity: 0.75,
+  color: '#6b7c2e', weight: 1.2, opacity: 0.85,
 }
 
 const HIGHLIGHT_STYLE: L.PathOptions = {
@@ -72,9 +72,9 @@ function makeLabelIcon(name: string, status: DistrictStatus, heatmap: boolean): 
     active:   '#14532d',
     degraded: '#78350f',
     down:     '#7f1d1d',
-    empty:    '#64748b',
+    empty:    '#334155',
   }
-  const color = heatmap ? colors[status] : '#94a3b8'
+  const color = heatmap ? colors[status] : '#475569'
   return L.divIcon({
     className: '',
     iconSize:  [0, 0],
@@ -83,7 +83,7 @@ function makeLabelIcon(name: string, status: DistrictStatus, heatmap: boolean): 
       display:inline-block;
       font:600 8px/1 system-ui,sans-serif;
       color:${color};
-      text-shadow:0 1px 3px rgba(255,255,255,0.97),0 0 6px rgba(255,255,255,0.8);
+      text-shadow:0 1px 3px rgba(255,255,255,1),0 0 6px rgba(255,255,255,0.9);
       white-space:nowrap;
       pointer-events:none;
       transform:translate(-50%,-50%);
@@ -159,6 +159,45 @@ export default function DistrictLayer({ sites, highlightDivision, heatmap = fals
     [distStats],
   )
 
+  const prevLayerRef = useRef<L.Path | null>(null)
+
+  const onEachDistrict = useCallback((_feat: Feature, layer: L.Layer) => {
+    layer.on('click', () => {
+      // Reset previous selection
+      if (prevLayerRef.current) {
+        const prev = prevLayerRef.current
+        const pEl = prev.getElement() as SVGPathElement | null
+        if (pEl) {
+          pEl.style.transition = 'none'
+          pEl.style.strokeDasharray = ''
+          pEl.style.strokeDashoffset = ''
+        }
+        const saved = (prev as any)._savedStyle as L.PathOptions | undefined
+        if (saved) prev.setStyle(saved)
+      }
+
+      const pathLayer = layer as L.Path
+      ;(pathLayer as any)._savedStyle = { ...pathLayer.options }
+      pathLayer.setStyle({ color: '#6b7c2e', weight: 2, opacity: 1 })
+      prevLayerRef.current = pathLayer
+
+      const el = pathLayer.getElement() as SVGPathElement | null
+      if (!el) return
+      const len = el.getTotalLength()
+      if (!len) return
+
+      el.style.transition = 'none'
+      el.style.strokeDasharray = `${len}`
+      el.style.strokeDashoffset = `${len}`
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.style.transition = 'stroke-dashoffset 0.9s ease-in-out'
+          el.style.strokeDashoffset = '0'
+        })
+      })
+    })
+  }, [])
+
   if (!geoData) return null
 
   return (
@@ -168,16 +207,17 @@ export default function DistrictLayer({ sites, highlightDivision, heatmap = fals
         key={statsKey}
         data={geoData}
         style={styleFunc as () => L.PathOptions}
+        onEachFeature={onEachDistrict}
       />
 
-      {/* ── District name labels (always visible) ────────── */}
+      {/* ── District name labels ──────────────────────────── */}
       {centroids.map(c => (
         <Marker
           key={c.name}
           position={[c.lat, c.lon]}
           icon={makeLabelIcon(c.name, c.status, heatmap)}
           interactive={false}
-          zIndexOffset={-1000}
+          zIndexOffset={500}
         />
       ))}
     </>

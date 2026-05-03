@@ -14,10 +14,12 @@ import L from 'leaflet'
 // ── Style constants ──────────────────────────────────────────────
 
 const LINE_WEIGHT: Record<string, number> = {
-  Aerial: 1.6, Burial: 1.4, OPGW: 2.0,
+  Aerial: 1.6, Burial: 1.4,
 }
-const LINE_COLOR = '#4338ca'
-const OPGW_COLOR = '#7c3aed'
+const LINE_COLORS: Record<string, string> = {
+  Aerial: '#4338ca',  // indigo
+  Burial: '#fbbf24',  // light yellow
+}
 
 const PT_STYLES: Record<string, { color: string; radius: number; border: string }> = {
   CO:  { color: '#1e1b4b', radius: 6, border: 'white' },
@@ -74,7 +76,7 @@ function buildPointPopup(
           ${pt}
         </span>
         <span style="font-size:10px;color:#64748b;background:#f1f5f9;
-                     padding:2px 6px;border-radius:4px;white-space:nowrap">FHLFON</span>
+                     padding:2px 6px;border-radius:4px;white-space:nowrap">Fiber@Home</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;color:#475569;font-size:11px">
         <div style="display:flex;gap:6px">
@@ -91,7 +93,7 @@ function buildPointPopup(
         </div>
         <div style="display:flex;gap:6px">
           <span style="color:#94a3b8;min-width:54px;flex-shrink:0">Network</span>
-          <span style="color:#4338ca;font-weight:600">FHL — FHLFON</span>
+          <span style="color:#4338ca;font-weight:600">Fiber@Home</span>
         </div>
       </div>
     </div>
@@ -118,7 +120,7 @@ function buildLinePopup(lt: string, cn: number, cu: number, km: number): string 
         </div>
         <div style="display:flex;gap:6px">
           <span style="color:#94a3b8;min-width:54px;flex-shrink:0">Network</span>
-          <span style="color:#4338ca;font-weight:600">FHL — FHLFON</span>
+          <span style="color:#4338ca;font-weight:600">Fiber@Home</span>
         </div>
       </div>
     </div>
@@ -130,10 +132,10 @@ function buildLinePopup(lt: string, cn: number, cu: number, km: number): string 
 function lineStyle(feature?: Feature): L.PathOptions {
   const lt = (feature?.properties?.lt as string) ?? 'Aerial'
   return {
-    color:     lt === 'OPGW' ? OPGW_COLOR : LINE_COLOR,
+    color:     LINE_COLORS[lt] ?? LINE_COLORS.Aerial,
     weight:    LINE_WEIGHT[lt] ?? 1.4,
     opacity:   0.75,
-    dashArray: lt === 'Burial' ? '5 3' : undefined,
+    dashArray: undefined,
     lineCap:   'round',
     lineJoin:  'round',
   }

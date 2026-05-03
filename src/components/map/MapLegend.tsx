@@ -105,12 +105,12 @@ export default function MapLegend({
         const typeRows = allTypeRows.filter(r => r.show)
 
         const opgwSection = showOPGW ? `
-          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">OPGW</div>
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">PGCB</div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
             <svg width="22" height="8" viewBox="0 0 22 8">
-              <line x1="0" y1="4" x2="16" y2="4" stroke="#eab308" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="2"  cy="4" r="2.5" fill="#eab308" stroke="white" stroke-width="1.2"/>
-              <circle cx="16" cy="4" r="2.5" fill="#eab308" stroke="white" stroke-width="1.2"/>
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#dc2626" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#dc2626" stroke="white" stroke-width="1.2"/>
             </svg>
             <span style="color:#334155">400 kV T/L</span>
           </div>
@@ -124,11 +124,27 @@ export default function MapLegend({
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
             <svg width="22" height="8" viewBox="0 0 22 8">
-              <line x1="0" y1="4" x2="16" y2="4" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 3"/>
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#f97316" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#f97316" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#f97316" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">132 kV T/L</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
               <circle cx="2"  cy="4" r="2.5" fill="#3b82f6" stroke="white" stroke-width="1.2"/>
               <circle cx="16" cy="4" r="2.5" fill="#3b82f6" stroke="white" stroke-width="1.2"/>
             </svg>
             <span style="color:#334155">UG Cable</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#eab308" stroke-width="1.2" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#eab308" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#eab308" stroke="white" stroke-width="1.2"/>
+            </svg>
+            <span style="color:#334155">Others</span>
           </div>
         ` : ''
 
@@ -136,15 +152,15 @@ export default function MapLegend({
           <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Bahon Ltd</div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
             <svg width="22" height="8" viewBox="0 0 22 8">
-              <line x1="0" y1="4" x2="16" y2="4" stroke="#06b6d4" stroke-width="1.8" stroke-linecap="round"/>
-              <circle cx="2"  cy="4" r="2.5" fill="#06b6d4" stroke="white" stroke-width="1.2"/>
-              <circle cx="16" cy="4" r="2.5" fill="#06b6d4" stroke="white" stroke-width="1.2"/>
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#dc2626" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#dc2626" stroke="white" stroke-width="1.2"/>
             </svg>
             <span style="color:#334155">Overhead (OH)</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
             <svg width="22" height="8" viewBox="0 0 22 8">
-              <line x1="0" y1="4" x2="16" y2="4" stroke="#78350f" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="5 3"/>
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#78350f" stroke-width="1.8" stroke-linecap="round"/>
               <circle cx="2"  cy="4" r="2.5" fill="#78350f" stroke="white" stroke-width="1.2"/>
               <circle cx="16" cy="4" r="2.5" fill="#78350f" stroke="white" stroke-width="1.2"/>
             </svg>
@@ -159,13 +175,13 @@ export default function MapLegend({
             <span style="color:#334155">Wall Clamped (WC)</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
-            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#06b6d4;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #06b6d4;"></span>
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#16a34a;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #16a34a;"></span>
             <span style="color:#334155">Network Node</span>
           </div>
         ` : ''
 
         const is3Section = showIS3 ? `
-          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">IS3 FHL</div>
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">InfoSarkar-3</div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
             <svg width="22" height="8" viewBox="0 0 22 8">
               <line x1="0" y1="4" x2="16" y2="4" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/>
@@ -184,7 +200,7 @@ export default function MapLegend({
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
             <svg width="22" height="8" viewBox="0 0 22 8">
-              <line x1="0" y1="4" x2="16" y2="4" stroke="#c026d3" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="5 3"/>
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#c026d3" stroke-width="1.5" stroke-linecap="round"/>
               <circle cx="2"  cy="4" r="2.5" fill="#c026d3" stroke="white" stroke-width="1.2"/>
               <circle cx="16" cy="4" r="2.5" fill="#c026d3" stroke="white" stroke-width="1.2"/>
             </svg>
@@ -201,7 +217,7 @@ export default function MapLegend({
         ` : ''
 
         const fhlfonSection = showFHLFON ? `
-          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">FHLFON</div>
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Fiber@Home</div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
             <svg width="22" height="8" viewBox="0 0 22 8">
               <line x1="0" y1="4" x2="16" y2="4" stroke="#4338ca" stroke-width="2.0" stroke-linecap="round"/>
@@ -212,19 +228,11 @@ export default function MapLegend({
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
             <svg width="22" height="8" viewBox="0 0 22 8">
-              <line x1="0" y1="4" x2="16" y2="4" stroke="#4338ca" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="5 3"/>
-              <circle cx="2"  cy="4" r="2.5" fill="#4338ca" stroke="white" stroke-width="1.2"/>
-              <circle cx="16" cy="4" r="2.5" fill="#4338ca" stroke="white" stroke-width="1.2"/>
+              <line x1="0" y1="4" x2="16" y2="4" stroke="#fbbf24" stroke-width="1.6" stroke-linecap="round"/>
+              <circle cx="2"  cy="4" r="2.5" fill="#fbbf24" stroke="white" stroke-width="1.2"/>
+              <circle cx="16" cy="4" r="2.5" fill="#fbbf24" stroke="white" stroke-width="1.2"/>
             </svg>
             <span style="color:#334155">Burial (UG)</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
-            <svg width="22" height="8" viewBox="0 0 22 8">
-              <line x1="0" y1="4" x2="16" y2="4" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round"/>
-              <circle cx="2"  cy="4" r="2.5" fill="#7c3aed" stroke="white" stroke-width="1.2"/>
-              <circle cx="16" cy="4" r="2.5" fill="#7c3aed" stroke="white" stroke-width="1.2"/>
-            </svg>
-            <span style="color:#334155">OPGW</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
             <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1e1b4b;flex-shrink:0;border:1.5px solid white;box-shadow:0 0 0 1px #1e1b4b;"></span>

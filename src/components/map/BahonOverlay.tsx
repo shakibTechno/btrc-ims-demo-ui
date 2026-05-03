@@ -4,7 +4,7 @@
 // Points : 12,817 network nodes (zoom ≥ 12) — click for location card
 //
 // Cable-type colours:
-//   OH  (Overhead)       — cyan    #06b6d4  solid  1.8 px
+//   OH  (Overhead)       — red     #dc2626  solid  1.8 px
 //   UG  (Underground)    — brown   #78350f  dashed 1.8 px
 //   WC  (Wall Clamped)   — amber   #d97706  solid  1.2 px
 //   Other                — slate   #94a3b8  solid  1.0 px
@@ -16,7 +16,7 @@ import L from 'leaflet'
 
 // ── Style constants ──────────────────────────────────────────────
 
-export const BAHON_COLOR    = '#06b6d4'
+export const BAHON_COLOR    = '#dc2626'
 const BAHON_UG_COLOR = '#78350f'
 const BAHON_WC_COLOR = '#d97706'
 const BAHON_OT_COLOR = '#94a3b8'
@@ -58,7 +58,7 @@ function lineStyle(feature?: Feature): L.PathOptions {
     color:     CT_COLOR[ct] ?? BAHON_OT_COLOR,
     weight:    ct === 'OH' ? 1.8 : ct === 'UG' ? 1.8 : ct === 'WC' ? 1.2 : 1.0,
     opacity:   ct === 'WC' ? 0.65 : 0.82,
-    dashArray: ct === 'UG' ? '6 4' : undefined,
+    dashArray: undefined,
     lineCap:   'round',
     lineJoin:  'round',
   }
@@ -147,7 +147,7 @@ function buildPointPopup(
                      border-radius:9999px;background:rgba(6,182,212,0.08);
                      border:1px solid rgba(6,182,212,0.3);
                      color:#0e7490;font-size:10px;font-weight:600">
-          <span style="width:5px;height:5px;border-radius:50%;background:${BAHON_COLOR};display:inline-block;flex-shrink:0"></span>
+          <span style="width:5px;height:5px;border-radius:50%;background:#16a34a;display:inline-block;flex-shrink:0"></span>
           Node
         </span>
         <span style="font-size:10px;color:#64748b;background:#f1f5f9;padding:2px 6px;border-radius:4px">Bahon Ltd</span>
@@ -215,17 +215,7 @@ export default function BahonOverlay({ visible, lineFilters, showNodes }: Props)
 
   return (
     <>
-      {/* Lines — re-keyed when filter set changes */}
-      {filteredLines && filteredLines.features.length > 0 && (
-        <GeoJSON
-          key={`bahon-lines-${lineKey}`}
-          data={filteredLines}
-          style={lineStyle}
-          onEachFeature={onEachLine}
-        />
-      )}
-
-      {/* Network nodes */}
+      {/* Network nodes — rendered first so lines draw on top */}
       {showNodes && points && (
         <GeoJSON
           key="bahon-points"
@@ -238,7 +228,7 @@ export default function BahonOverlay({ visible, lineFilters, showNodes }: Props)
               radius:      4,
               color:       'white',
               weight:      1.2,
-              fillColor:   BAHON_COLOR,
+              fillColor:   '#16a34a',
               fillOpacity: 0.9,
               opacity:     0.9,
               interactive: true,
@@ -249,6 +239,16 @@ export default function BahonOverlay({ visible, lineFilters, showNodes }: Props)
             )
             return marker
           }}
+        />
+      )}
+
+      {/* Lines — rendered last so they sit on top of nodes */}
+      {filteredLines && filteredLines.features.length > 0 && (
+        <GeoJSON
+          key={`bahon-lines-${lineKey}`}
+          data={filteredLines}
+          style={lineStyle}
+          onEachFeature={onEachLine}
         />
       )}
     </>

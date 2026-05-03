@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback, useEffect } from 'react'
 import { useMap } from 'react-leaflet'
+import L from 'leaflet'
 import PageWrapper        from '@/components/layout/PageWrapper'
 import BaseMap            from '@/components/map/BaseMap'
 import SiteMarkerLayer    from '@/components/map/SiteMarkerLayer'
@@ -10,16 +11,12 @@ import BahonOverlay       from '@/components/map/BahonOverlay'
 import IS3Overlay         from '@/components/map/IS3Overlay'
 import FHLFONOverlay      from '@/components/map/FHLFONOverlay'
 import MapLegend          from '@/components/map/MapLegend'
-import StatusHistoryChart from '@/components/charts/StatusHistoryChart'
-import SectionHeader      from '@/components/shared/SectionHeader'
-import KPIRow               from './KPIRow'
 import MapLayersPanel       from './MapLayersPanel'
 import PowerSummaryPanel    from './PowerSummaryPanel'
 import OutageSummaryPanel   from './OutageSummaryPanel'
-import DivisionBreakdownPanel from './DivisionBreakdownPanel'
 import { useFilteredSites }   from '@/hooks/useFilteredSites'
 import { useKPIs }            from '@/hooks/useKPIs'
-import { getNationalHourlyCounts } from '@/data/statusHistory'
+import { useFilterStore }     from '@/store/filterStore'
 import type { AssetType } from '@/types/site'
 
 // Bangladesh geographic bounds — SW corner to NE corner
@@ -40,34 +37,59 @@ function FitBangladesh() {
   return null
 }
 
-function MapViewResetter({ trigger }: { trigger: number }) {
+// Leaflet control button that resets the map view to Bangladesh bounds.
+// Positioned at topleft so it stacks directly below the fullscreen button.
+function ResetViewControl() {
   const map = useMap()
   useEffect(() => {
-    if (trigger > 0) map.fitBounds(BD_BOUNDS, BD_FIT_OPTIONS)
-  }, [trigger, map])
+    const ResetControl = L.Control.extend({
+      onAdd() {
+        const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control')
+        const a   = L.DomUtil.create('a', '', div) as HTMLAnchorElement
+        a.href    = '#'
+        a.title   = 'Reset to Bangladesh view'
+        a.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>`
+        a.style.cssText = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;color:#555;cursor:pointer;'
+        L.DomEvent.on(a, 'click', (e: Event) => {
+          L.DomEvent.preventDefault(e)
+          L.DomEvent.stopPropagation(e)
+          map.fitBounds(BD_BOUNDS, BD_FIT_OPTIONS)
+        })
+        return div
+      },
+      onRemove() {},
+    })
+    const ctrl = new ResetControl({ position: 'topleft' })
+    ctrl.addTo(map)
+    return () => { ctrl.remove() }
+  }, [map])
   return null
 }
 
 export default function NationalOverview() {
-  const sites       = useFilteredSites()
-  const kpis        = useKPIs()
-  const historyData = useMemo(() => getNationalHourlyCounts(), [])
+  const sites            = useFilteredSites()
+  const kpis             = useKPIs()
+  const selectedDivision = useFilterStore(s => s.division)
 
   // ── Toggle state (all OFF by default) ────────────────────────
-  const [resetView,   setResetView]  = useState(0)
   const [showHeatmap, setShowHeatmap] = useState(false)
   const [showOPGW,    setShowOPGW]   = useState(false)
   const [showBahon,   setShowBahon]  = useState(false)
   const [showIS3,     setShowIS3]    = useState(false)
   const [showFHLFON,  setShowFHLFON] = useState(false)
-  const [mapView,     setMapView]    = useState<'division' | 'district'>('division')
+  const [mapView,     setMapView]    = useState<'division' | 'district' | null>(null)
   const [visibleTypes, setVisibleTypes] = useState<Set<AssetType>>(() => new Set<AssetType>())
 
   // ── Sub-filters (all ON by default within each overlay) ──────
+  const [opgwFilters,        setOpgwFilters]        = useState(() => new Set(['400kV', '230kV', '132kV', 'UG', 'other']))
   const [bahonFilters,       setBahonFilters]       = useState(() => new Set(['OH', 'UG', 'WC', 'node']))
   const [is3LineFilters,     setIs3LineFilters]     = useState(() => new Set(['48', '24', '12', 'msg', 'ring', 'cbd', 'other']))
   const [showIS3Nodes,       setShowIS3Nodes]       = useState(true)
-  const [fhlfonLineFilters,  setFhlfonLineFilters]  = useState(() => new Set(['Aerial', 'Burial', 'OPGW']))
+  const [fhlfonLineFilters,  setFhlfonLineFilters]  = useState(() => new Set(['Aerial', 'Burial']))
   const [fhlfonPointFilters, setFhlfonPointFilters] = useState(() => new Set(['CO', 'BTS', 'FDH', 'JE', 'EP', 'FAT']))
 
   const toggleAssetType = useCallback((type: AssetType) => {
@@ -75,6 +97,14 @@ export default function NationalOverview() {
       const next = new Set(prev)
       if (next.has(type)) next.delete(type)
       else next.add(type)
+      return next
+    })
+  }, [])
+
+  const toggleOpgwFilter = useCallback((key: string) => {
+    setOpgwFilters(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key); else next.add(key)
       return next
     })
   }, [])
@@ -111,6 +141,22 @@ export default function NationalOverview() {
     })
   }, [])
 
+  const handleResetLayers = useCallback(() => {
+    setMapView(null)
+    setShowHeatmap(false)
+    setVisibleTypes(new Set())
+    setShowOPGW(false)
+    setOpgwFilters(new Set(['400kV', '230kV', '132kV', 'UG', 'other']))
+    setShowBahon(false)
+    setBahonFilters(new Set(['OH', 'UG', 'WC', 'node']))
+    setShowIS3(false)
+    setIs3LineFilters(new Set(['48', '24', '12', 'msg', 'ring', 'cbd', 'other']))
+    setShowIS3Nodes(true)
+    setShowFHLFON(false)
+    setFhlfonLineFilters(new Set(['Aerial', 'Burial']))
+    setFhlfonPointFilters(new Set(['CO', 'BTS', 'FDH', 'JE', 'EP', 'FAT']))
+  }, [])
+
   const mapSites = useMemo(
     () => sites.filter(s => visibleTypes.has(s.type)),
     [sites, visibleTypes]
@@ -123,67 +169,21 @@ export default function NationalOverview() {
   return (
     <PageWrapper>
 
-      {/* ── KPI row ──────────────────────────────────────────── */}
-      <div style={{ marginBottom: 12 }}>
-        <KPIRow kpis={kpis} />
-      </div>
-
-      {/* ── Main body: map (left) + side panels (right) ──────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 12, marginBottom: 12 }}>
+      {/* ── Main body: map (full width) with layers panel overlay ── */}
+      <div style={{ marginBottom: 12, position: 'relative' }}>
 
         {/* GIS Map */}
         <div style={{
           background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
           overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-          display: 'flex', flexDirection: 'column',
-          height: 'calc(100vh - 140px)', minHeight: 420,
+          height: 'calc(100vh - 60px)', minHeight: 420, position: 'relative',
         }}>
-          {/* Map header — clean: just title + reset + site count */}
-          <div style={{
-            padding: '8px 14px', borderBottom: '1px solid #f1f5f9',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{
-                fontSize: 12, fontWeight: 700, color: '#475569',
-                textTransform: 'uppercase', letterSpacing: '0.05em',
-              }}>
-                Infrastructure Map
-              </span>
-              <button
-                onClick={() => setResetView(v => v + 1)}
-                title="Reset map to default view"
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  padding: '3px 8px', borderRadius: 5, cursor: 'pointer',
-                  border: '1px solid #e2e8f0', background: 'white',
-                  color: '#64748b', fontSize: 10, fontWeight: 600,
-                  transition: 'all 0.12s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#334155' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'white';   e.currentTarget.style.color = '#64748b' }}
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                  <path d="M3 3v5h5"/>
-                </svg>
-                Reset View
-              </button>
-            </div>
-            <span style={{ fontSize: 11, color: '#94a3b8' }}>
-              {sites.length} site{sites.length !== 1 ? 's' : ''}
-            </span>
-          </div>
-
-          <BaseMap height="100%" style={{ flex: 1, minHeight: 0 }}>
+          <BaseMap height="100%" style={{ height: '100%' }}>
             <FitBangladesh />
-            <MapViewResetter trigger={resetView} />
-            {mapView === 'division'
-              ? <DivisionLayer  sites={sites} heatmap={showHeatmap} />
-              : <DistrictLayer  sites={sites} heatmap={showHeatmap} />
-            }
-            <OPGWOverlay   visible={showOPGW}   />
+            <ResetViewControl />
+            {mapView === 'division' && <DivisionLayer sites={sites} heatmap={showHeatmap} selectedDivision={selectedDivision} />}
+            {mapView === 'district' && <DistrictLayer sites={sites} heatmap={showHeatmap} />}
+            <OPGWOverlay   visible={showOPGW} lineFilters={opgwFilters} />
             <BahonOverlay
               visible={showBahon}
               lineFilters={bahonFilters}
@@ -201,51 +201,42 @@ export default function NationalOverview() {
             />
             <SiteMarkerLayer sites={mapSites} />
             <MapLegend
-              position="bottomright"
+              position="bottomleft"
               showTower={showTower} showBTS={showBTS} showPoP={showPoP}
               showOPGW={showOPGW} showBahon={showBahon}
               showIS3={showIS3} showFHLFON={showFHLFON}
             />
           </BaseMap>
-        </div>
 
-        {/* Right panel — Map Layers only */}
-        <div>
-          <MapLayersPanel
-            mapView={mapView}           setMapView={setMapView}
-            showHeatmap={showHeatmap}   onToggleHeatmap={() => setShowHeatmap(v => !v)}
-            visibleTypes={visibleTypes} onToggleAsset={toggleAssetType}
-            showOPGW={showOPGW}         onToggleOPGW={()   => setShowOPGW(v   => !v)}
-            showBahon={showBahon}       onToggleBahon={()  => setShowBahon(v  => !v)}
-            bahonFilters={bahonFilters} onToggleBahonFilter={toggleBahonFilter}
-            showIS3={showIS3}            onToggleIS3={()    => setShowIS3(v => !v)}
-            is3LineFilters={is3LineFilters} onToggleIS3Line={toggleIS3Line}
-            showIS3Nodes={showIS3Nodes}  onToggleIS3Nodes={() => setShowIS3Nodes(v => !v)}
-            showFHLFON={showFHLFON}     onToggleFHLFON={() => setShowFHLFON(v => !v)}
-            fhlfonLineFilters={fhlfonLineFilters}   onToggleFhlfonLine={toggleFhlfonLine}
-            fhlfonPointFilters={fhlfonPointFilters} onToggleFhlfonPoint={toggleFhlfonPoint}
-          />
-        </div>
-      </div>
-
-      {/* ── Bottom row 1: division table + status history ────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-        <DivisionBreakdownPanel />
-        <div style={{
-          background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
-          padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-        }}>
-          <SectionHeader
-            title="24-Hour Status Trend"
-            subtitle="National hourly active / degraded / down counts"
-          />
-          <div style={{ marginTop: 8 }}>
-            <StatusHistoryChart data={historyData} height={220} />
+          {/* Map layers panel — floats over the map on the right */}
+          <div style={{
+            position: 'absolute', top: 8, right: 8,
+            zIndex: 1500,
+            maxHeight: 'calc(100% - 16px)',
+            overflowY: 'auto',
+            overflowX: 'visible',
+          }}>
+            <MapLayersPanel
+              mapView={mapView}           setMapView={setMapView}
+              showHeatmap={showHeatmap}   onToggleHeatmap={() => setShowHeatmap(v => !v)}
+              visibleTypes={visibleTypes} onToggleAsset={toggleAssetType}
+              showOPGW={showOPGW}         onToggleOPGW={()   => setShowOPGW(v   => !v)}
+              opgwFilters={opgwFilters}   onToggleOpgwFilter={toggleOpgwFilter}
+              showBahon={showBahon}       onToggleBahon={()  => setShowBahon(v  => !v)}
+              bahonFilters={bahonFilters} onToggleBahonFilter={toggleBahonFilter}
+              showIS3={showIS3}            onToggleIS3={()    => setShowIS3(v => !v)}
+              is3LineFilters={is3LineFilters} onToggleIS3Line={toggleIS3Line}
+              showIS3Nodes={showIS3Nodes}  onToggleIS3Nodes={() => setShowIS3Nodes(v => !v)}
+              showFHLFON={showFHLFON}     onToggleFHLFON={() => setShowFHLFON(v => !v)}
+              fhlfonLineFilters={fhlfonLineFilters}   onToggleFhlfonLine={toggleFhlfonLine}
+              fhlfonPointFilters={fhlfonPointFilters} onToggleFhlfonPoint={toggleFhlfonPoint}
+              onReset={handleResetLayers}
+            />
           </div>
         </div>
       </div>
 
-      {/* ── Bottom row 2: power + outages ────────────────────── */}
+      {/* ── Bottom row: power + outages ──────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <PowerSummaryPanel kpis={kpis} />
         <OutageSummaryPanel />
