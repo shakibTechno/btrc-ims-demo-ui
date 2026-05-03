@@ -43,7 +43,7 @@ export default function AlertPanel({ open, onClose }: Props) {
           style={{
             position: 'fixed', inset: 0,
             background: 'rgba(0,0,0,0.15)',
-            zIndex: 49,
+            zIndex: 2000,
           }}
         />
       )}
@@ -56,7 +56,7 @@ export default function AlertPanel({ open, onClose }: Props) {
           width: 380,
           background: 'white',
           boxShadow: '-4px 0 24px rgba(0,0,0,0.12)',
-          zIndex: 50,
+          zIndex: 2001,
           display: 'flex', flexDirection: 'column',
           transform: open ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
