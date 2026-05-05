@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import type { AssetType } from '@/types/site'
 import type { SummitLineFilters } from '@/components/map/SummitOverlay'
 import type { BLGenFilter }  from '@/components/map/BanglalinkTowersOverlay'
 import type { BLLineFilter }  from '@/components/map/BanglalinkLinesOverlay'
@@ -9,7 +8,6 @@ import type { BTCLNodeFilter } from '@/components/map/BTCLNodesOverlay'
 interface Props {
   mapView:        'division' | 'district' | 'upazila' | null
   setMapView:     (v: 'division' | 'district' | 'upazila' | null) => void
-  visibleTypes:   Set<AssetType>
   showOPGW:            boolean
   onToggleOPGW:        () => void
   opgwFilters:         Set<string>
@@ -265,7 +263,6 @@ function IconLayers() {
 
 export default function MapLayersPanel({
   mapView, setMapView,
-  visibleTypes,
   showOPGW, onToggleOPGW, opgwFilters, onToggleOpgwFilter,
   showBahon, onToggleBahon, bahonFilters, onToggleBahonFilter,
   showIS3, onToggleIS3, is3LineFilters, onToggleIS3Line, showIS3Nodes, onToggleIS3Nodes,

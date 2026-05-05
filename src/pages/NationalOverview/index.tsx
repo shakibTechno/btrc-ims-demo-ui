@@ -367,7 +367,6 @@ export default function NationalOverview() {
           }}>
             <MapLayersPanel
               mapView={mapView}           setMapView={setMapView}
-              visibleTypes={visibleTypes} onToggleAsset={toggleAssetType}
               showOPGW={showOPGW}         onToggleOPGW={()   => setShowOPGW(v   => !v)}
               opgwFilters={opgwFilters}   onToggleOpgwFilter={toggleOpgwFilter}
               showBahon={showBahon}       onToggleBahon={()  => setShowBahon(v  => !v)}
