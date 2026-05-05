@@ -10,7 +10,6 @@ interface Props {
   mapView:        'division' | 'district' | 'upazila' | null
   setMapView:     (v: 'division' | 'district' | 'upazila' | null) => void
   visibleTypes:   Set<AssetType>
-  onToggleAsset:  (t: AssetType) => void
   showOPGW:            boolean
   onToggleOPGW:        () => void
   opgwFilters:         Set<string>
@@ -266,7 +265,7 @@ function IconLayers() {
 
 export default function MapLayersPanel({
   mapView, setMapView,
-  visibleTypes, onToggleAsset,
+  visibleTypes,
   showOPGW, onToggleOPGW, opgwFilters, onToggleOpgwFilter,
   showBahon, onToggleBahon, bahonFilters, onToggleBahonFilter,
   showIS3, onToggleIS3, is3LineFilters, onToggleIS3Line, showIS3Nodes, onToggleIS3Nodes,
@@ -296,17 +295,14 @@ export default function MapLayersPanel({
   const [secBL,      setSecBL]      = useState(true)
   const [secBTCLOp,  setSecBTCLOp]  = useState(true)
   const [secInfra,   setSecInfra]   = useState(true)
-  const [secSites,   setSecSites]   = useState(true)
 
   const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
   const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
-  const siteActive    = [visibleTypes.has('tower'), visibleTypes.has('bts'), visibleTypes.has('nttn_pop')].filter(Boolean).length
 
   const activeCount = [
     mapView != null,
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
          showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion]),
-    visibleTypes.has('tower'), visibleTypes.has('bts'), visibleTypes.has('nttn_pop'),
   ].filter(Boolean).length
 
   // ── Collapsed strip ───────────────────────────────────────────
