@@ -12,16 +12,28 @@ interface Props {
   showTower?:  boolean
   showBTS?:    boolean
   showPoP?:    boolean
-  showOPGW?:   boolean
-  showBahon?:  boolean
-  showIS3?:    boolean
-  showFHLFON?: boolean
+  showOPGW?:    boolean
+  showBahon?:   boolean
+  showIS3?:     boolean
+  showFHLFON?:  boolean
+  showRailway?:  boolean
+  showBRFiber?:  boolean
+  showOprLines?: boolean
+  showSummit?:   boolean
+  showBLTowers?: boolean
+  showBLLines?:   boolean
+  showBTCL?:       boolean
+  showBTCLNodes?:  boolean
+  showBTCLUnion?:  boolean
 }
 
 export default function MapLegend({
   position = 'bottomright',
   showTower = false, showBTS = false, showPoP = false,
   showOPGW = false, showBahon = false, showIS3 = false, showFHLFON = false,
+  showRailway = false, showBRFiber = false, showOprLines = false,
+  showSummit = false, showBLTowers = false, showBLLines = false,
+  showBTCL = false, showBTCLNodes = false, showBTCLUnion = false,
 }: Props) {
   const map        = useMap()
   const controlRef = useRef<L.Control | null>(null)
@@ -44,7 +56,7 @@ export default function MapLegend({
         // ── Conditionally built sections ──────────────────────
 
         const hasAnySite = showTower || showBTS || showPoP
-        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON
+        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON || showRailway || showBRFiber || showOprLines || showSummit || showBLTowers || showBLLines || showBTCL || showBTCLNodes || showBTCLUnion
 
         // Hide legend entirely when nothing is active
         if (!hasAnything) {
@@ -268,6 +280,224 @@ export default function MapLegend({
           `).join('')}
         ` : ''
 
+        const railwaySection = showRailway ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Railway</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="22" y2="4" stroke="#78350f" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+            <span style="color:#334155">Meter gauge</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="22" y2="4" stroke="#1e1b4b" stroke-width="3.2" stroke-linecap="round"/>
+            </svg>
+            <span style="color:#334155">Broad gauge single</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8">
+              <line x1="0" y1="4" x2="22" y2="4" stroke="#4c1d95" stroke-width="4.0" stroke-linecap="round"/>
+            </svg>
+            <span style="color:#334155">Broad gauge double</span>
+          </div>
+        ` : ''
+
+        const blTowersSection = showBLTowers ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Banglalink Towers</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2563eb;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #2563eb;"></span>
+            <span style="color:#334155">4G site</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #16a34a;"></span>
+            <span style="color:#334155">3G only</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc2626;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #dc2626;"></span>
+            <span style="color:#334155">2G only</span>
+          </div>
+        ` : ''
+
+        const blLinesSection = showBLLines ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Banglalink Fiber</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#7c3aed" stroke-width="3.2" stroke-linecap="round"/></svg>
+            <span style="color:#334155">72 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#2563eb" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <span style="color:#334155">48 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#0891b2" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">32 Core</span>
+          </div>
+        ` : ''
+
+        const btclSection = (showBTCL || showBTCLNodes || showBTCLUnion) ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">BTCL</div>
+          ${showBTCL ? `
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#7c3aed" stroke-width="3.5" stroke-linecap="round"/></svg>
+            <span style="color:#334155">144+ Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#6d28d9" stroke-width="3.0" stroke-linecap="round"/></svg>
+            <span style="color:#334155">96 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#2563eb" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <span style="color:#334155">48 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#0891b2" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">24 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#94a3b8" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <span style="color:#334155">&lt;24 Core</span>
+          </div>` : ''}
+          ${showBTCLNodes ? `
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#0891b2;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #0891b2;"></span>
+            <span style="color:#334155">HOP</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#d97706;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #d97706;"></span>
+            <span style="color:#334155">Handhole</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#16a34a;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #16a34a;"></span>
+            <span style="color:#334155">Connection Pt</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#dc2626;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #dc2626;"></span>
+            <span style="color:#334155">Manhole</span>
+          </div>` : ''}
+          ${showBTCLUnion ? `
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin:5px 0 3px;">Union Projects</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0ea5e9;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #0ea5e9;"></span>
+            <span style="color:#334155">Barisal</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #f59e0b;"></span>
+            <span style="color:#334155">Chittagong</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #10b981;"></span>
+            <span style="color:#334155">Khulna</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6366f1;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #6366f1;"></span>
+            <span style="color:#334155">Dhaka</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f97316;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #f97316;"></span>
+            <span style="color:#334155">Rajshahi</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8b5cf6;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #8b5cf6;"></span>
+            <span style="color:#334155">Sylhet</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#06b6d4;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #06b6d4;"></span>
+            <span style="color:#334155">Rangpur</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ec4899;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1.5px #ec4899;"></span>
+            <span style="color:#334155">Mymensingh</span>
+          </div>` : ''}
+        ` : ''
+
+        const summitSection = showSummit ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Summit</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#7c3aed" stroke-width="2.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Backbone (≥96 core)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Major burial (48–95)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#ca8a04" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span style="color:#334155">PGCB Route</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Railway Route</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#7c3aed;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #7c3aed;"></span>
+            <span style="color:#334155">Network Node</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #f59e0b;"></span>
+            <span style="color:#334155">BTS Site</span>
+          </div>
+        ` : ''
+
+        const oprLinesSection = showOprLines ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Operator Lines</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Summit</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#3b82f6" stroke-width="2.2" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Bahon</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#8b5cf6" stroke-width="2.2" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Fiber@Home</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Banglalink</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#10b981" stroke-width="2.2" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Robi</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#06b6d4" stroke-width="2.2" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Grameenphone</span>
+          </div>
+        ` : ''
+
+        const brFiberSection = showBRFiber ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Bangladesh Railway Fiber</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#94a3b8" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <span style="color:#334155">8 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span style="color:#334155">16 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#0d9488" stroke-width="2.0" stroke-linecap="round"/></svg>
+            <span style="color:#334155">32 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/></svg>
+            <span style="color:#334155">48 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#ea580c" stroke-width="3.0" stroke-linecap="round"/></svg>
+            <span style="color:#334155">72 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#7c3aed" stroke-width="3.4" stroke-linecap="round"/></svg>
+            <span style="color:#334155">96 Core</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#b45309;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #b45309;"></span>
+            <span style="color:#334155">Station Node</span>
+          </div>
+        ` : ''
+
         div.innerHTML = `
           ${statusSection}
           ${typeSection}
@@ -275,6 +505,13 @@ export default function MapLegend({
           ${bahonSection}
           ${is3Section}
           ${fhlfonSection}
+          ${railwaySection}
+          ${brFiberSection}
+          ${oprLinesSection}
+          ${summitSection}
+          ${blTowersSection}
+          ${blLinesSection}
+          ${btclSection}
         `
 
         L.DomEvent.disableClickPropagation(div)
@@ -287,7 +524,7 @@ export default function MapLegend({
     controlRef.current = control
 
     return () => { control.remove() }
-  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON])
+  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber, showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion])
 
   return null
 }
