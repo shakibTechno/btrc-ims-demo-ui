@@ -134,14 +134,6 @@ export default function NationalOverview() {
   const [fhlfonLineFilters,  setFhlfonLineFilters]  = useState(() => new Set(['Aerial', 'Burial']))
   const [fhlfonPointFilters, setFhlfonPointFilters] = useState(() => new Set(['CO', 'BTS', 'FDH', 'JE', 'EP', 'FAT']))
 
-  const toggleAssetType = useCallback((type: AssetType) => {
-    setVisibleTypes(prev => {
-      const next = new Set(prev)
-      if (next.has(type)) next.delete(type)
-      else next.add(type)
-      return next
-    })
-  }, [])
 
   const toggleOpgwFilter = useCallback((key: string) => {
     setOpgwFilters(prev => {
