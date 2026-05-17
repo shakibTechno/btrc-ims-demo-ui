@@ -28,6 +28,7 @@ interface Props {
   showFiberLines?:  boolean
   showFiberPoints?: boolean
   showBTCLNew?:     boolean
+  showGPSites?:     boolean
 }
 
 export default function MapLegend({
@@ -39,6 +40,7 @@ export default function MapLegend({
   showBTCL = false, showBTCLNodes = false, showBTCLUnion = false,
   showFiberLines = false, showFiberPoints = false,
   showBTCLNew = false,
+  showGPSites = false,
 }: Props) {
   const map        = useMap()
   const controlRef = useRef<L.Control | null>(null)
@@ -61,7 +63,7 @@ export default function MapLegend({
         // ── Conditionally built sections ──────────────────────
 
         const hasAnySite = showTower || showBTS || showPoP
-        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON || showRailway || showBRFiber || showOprLines || showSummit || showBLTowers || showBLLines || showBTCL || showBTCLNodes || showBTCLUnion || showFiberLines || showFiberPoints || showBTCLNew
+        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON || showRailway || showBRFiber || showOprLines || showSummit || showBLTowers || showBLLines || showBTCL || showBTCLNodes || showBTCLUnion || showFiberLines || showFiberPoints || showBTCLNew || showGPSites
 
         // Hide legend entirely when nothing is active
         if (!hasAnything) {
@@ -503,6 +505,18 @@ export default function MapLegend({
           </div>
         ` : ''
 
+        const gpSection = showGPSites ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Grameenphone</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#2563eb;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #2563eb;"></span>
+            <span style="color:#334155">Fiber Connected</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #f59e0b;"></span>
+            <span style="color:#334155">MW Connected</span>
+          </div>
+        ` : ''
+
         const btclNewSection = showBTCLNew ? `
           <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">BTCL (Latest)</div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
@@ -601,6 +615,7 @@ export default function MapLegend({
           ${blTowersSection}
           ${blLinesSection}
           ${btclSection}
+          ${gpSection}
           ${fiberNetSection}
           ${btclNewSection}
         `
@@ -615,7 +630,7 @@ export default function MapLegend({
     controlRef.current = control
 
     return () => { control.remove() }
-  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber, showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion, showFiberLines, showFiberPoints, showBTCLNew])
+  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber, showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion, showFiberLines, showFiberPoints, showBTCLNew, showGPSites])
 
   return null
 }

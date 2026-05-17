@@ -6,6 +6,7 @@ import type { BTCLLineFilter } from '@/components/map/BTCLOverlay'
 import type { BTCLNodeFilter } from '@/components/map/BTCLNodesOverlay'
 import type { FiberOp, FiberOpFilter }              from '@/components/map/FiberNetworkLinesOverlay'
 import type { BTCLNewPointType, BTCLNewTypeFilter } from '@/components/map/BTCLNewPointsOverlay'
+import type { GPTxType, GPTxFilter }               from '@/components/map/GPSitesOverlay'
 
 interface Props {
   mapView:        'division' | 'district' | 'upazila' | null
@@ -78,6 +79,10 @@ interface Props {
   onToggleBTCLNew:       () => void
   btclNewTypeFilter:     BTCLNewTypeFilter
   onToggleBTCLNewType:   (key: BTCLNewPointType) => void
+  showGPSites:           boolean
+  onToggleGPSites:       () => void
+  gpTxFilter:            GPTxFilter
+  onToggleGPTx:          (key: GPTxType) => void
   onReset:               () => void
 }
 
@@ -296,6 +301,7 @@ export default function MapLayersPanel({
   showFiberPoints, onToggleFiberPoints,
   fiberOpFilter, onToggleFiberOp,
   showBTCLNew, onToggleBTCLNew, btclNewTypeFilter, onToggleBTCLNewType,
+  showGPSites, onToggleGPSites, gpTxFilter, onToggleGPTx,
   onReset,
 }: Props) {
   const [collapsed,  setCollapsed]  = useState(true)
@@ -303,6 +309,7 @@ export default function MapLayersPanel({
   // Section open/close state
   const [secFiberNet, setSecFiberNet] = useState(true)
   const [secBTCLNew,  setSecBTCLNew]  = useState(true)
+  const [secGP,       setSecGP]       = useState(true)
   const [secAdmin,   setSecAdmin]   = useState(true)
   const [secTelecom, setSecTelecom] = useState(true)
   const [secMobile,  setSecMobile]  = useState(true)
@@ -315,12 +322,13 @@ export default function MapLayersPanel({
   const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
   const fiberActive   = [showFiberLines, showFiberPoints].filter(Boolean).length
   const btclNewActive = showBTCLNew ? 1 : 0
+  const gpActive      = showGPSites ? 1 : 0
 
   const activeCount = [
     mapView != null,
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
          showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion,
-         showFiberLines, showFiberPoints, showBTCLNew]),
+         showFiberLines, showFiberPoints, showBTCLNew, showGPSites]),
   ].filter(Boolean).length
 
   // ── Collapsed strip ───────────────────────────────────────────
@@ -736,6 +744,28 @@ export default function MapLayersPanel({
                   <CheckItem checked={btclNewTypeFilter.has('POP')}   onClick={() => onToggleBTCLNewType('POP')}   label="POP"                   dotColor="#22c55e" />
                   <CheckItem checked={btclNewTypeFilter.has('MH')}    onClick={() => onToggleBTCLNewType('MH')}    label="MH (Man Hole)"         dotColor="#ef4444" />
                   <CheckItem checked={btclNewTypeFilter.has('Other')} onClick={() => onToggleBTCLNewType('Other')} label="Other"                 dotColor="#94a3b8" />
+                </SubFilters>
+              )}
+            </div>
+          </div>
+        )}
+
+
+        <Divider />
+
+        {/* ── 6. Grameenphone ── */}
+        <SectionHeader label="Grameenphone" open={secGP} onToggle={() => setSecGP(v => !v)}
+          badge={gpActive || undefined} />
+        {secGP && (
+          <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div>
+              <ToggleBtn on={showGPSites} onClick={onToggleGPSites} label="Sites" emoji="📡"
+                activeColor={{ border: '#2563eb', bg: '#eff6ff', text: '#1d4ed8' }} />
+              {showGPSites && (
+                <SubFilters>
+                  <SubLabel>Backhaul Type</SubLabel>
+                  <CheckItem checked={gpTxFilter.has('Fiber')} onClick={() => onToggleGPTx('Fiber')} label="Fiber Connected" dotColor="#2563eb" />
+                  <CheckItem checked={gpTxFilter.has('MW')}    onClick={() => onToggleGPTx('MW')}    label="MW Connected"    dotColor="#f59e0b" />
                 </SubFilters>
               )}
             </div>
