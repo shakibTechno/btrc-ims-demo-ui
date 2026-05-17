@@ -19,6 +19,7 @@ import BTCLNodesOverlay,        { type BTCLNodeFilter } from '@/components/map/B
 import BTCLUnionOverlay                                 from '@/components/map/BTCLUnionOverlay'
 import FiberNetworkLinesOverlay, { type FiberOp, type FiberOpFilter } from '@/components/map/FiberNetworkLinesOverlay'
 import FiberNetworkPointsOverlay                        from '@/components/map/FiberNetworkPointsOverlay'
+import BTCLNewPointsOverlay, { type BTCLNewPointType, type BTCLNewTypeFilter } from '@/components/map/BTCLNewPointsOverlay'
 import RailwayOverlay        from '@/components/map/RailwayOverlay'
 import RailwayFiberOverlay   from '@/components/map/RailwayFiberOverlay'
 import OperatorLinesOverlay  from '@/components/map/OperatorLinesOverlay'
@@ -130,6 +131,10 @@ export default function NationalOverview() {
   const [fiberOpFilter,   setFiberOpFilter]   = useState<FiberOpFilter>(
     () => new Set<FiberOp>(['GP', 'Robi', 'BTCL', 'BL', 'MOTN', 'BSCCL', 'Unknown'])
   )
+  const [showBTCLNew,       setShowBTCLNew]       = useState(false)
+  const [btclNewTypeFilter, setBtclNewTypeFilter] = useState<BTCLNewTypeFilter>(
+    () => new Set<BTCLNewPointType>(['CP', 'HH', 'HOP', 'POP', 'MH', 'Other'])
+  )
   const [mapView,     setMapView]    = useState<'division' | 'district' | 'upazila' | null>(null)
   const [visibleTypes, setVisibleTypes] = useState<Set<AssetType>>(() => new Set<AssetType>())
 
@@ -234,6 +239,14 @@ export default function NationalOverview() {
     })
   }, [])
 
+  const toggleBTCLNewType = useCallback((key: BTCLNewPointType) => {
+    setBtclNewTypeFilter(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key); else next.add(key)
+      return next
+    })
+  }, [])
+
   const toggleFiberOp = useCallback((key: FiberOp) => {
     setFiberOpFilter(prev => {
       const next = new Set(prev)
@@ -275,6 +288,8 @@ export default function NationalOverview() {
     setShowFiberLines(false)
     setShowFiberPoints(false)
     setFiberOpFilter(new Set<FiberOp>(['GP', 'Robi', 'BTCL', 'BL', 'MOTN', 'BSCCL', 'Unknown']))
+    setShowBTCLNew(false)
+    setBtclNewTypeFilter(new Set<BTCLNewPointType>(['CP', 'HH', 'HOP', 'POP', 'MH', 'Other']))
     setFhlfonLineFilters(new Set(['Aerial', 'Burial']))
     setFhlfonPointFilters(new Set(['CO', 'BTS', 'FDH', 'JE', 'EP', 'FAT']))
   }, [])
@@ -357,6 +372,7 @@ export default function NationalOverview() {
             <BTCLUnionOverlay visible={showBTCLUnion} />
             <FiberNetworkLinesOverlay  visible={showFiberLines}  opFilter={fiberOpFilter} />
             <FiberNetworkPointsOverlay visible={showFiberPoints} opFilter={fiberOpFilter} />
+            <BTCLNewPointsOverlay visible={showBTCLNew} typeFilter={btclNewTypeFilter} />
             <SiteMarkerLayer sites={mapSites} />
             <MapLegend
               position="bottomleft"
@@ -367,6 +383,7 @@ export default function NationalOverview() {
               showSummit={showSummit}  showBLTowers={showBLTowers}  showBLLines={showBLLines}
               showBTCL={showBTCL}  showBTCLNodes={showBTCLNodes}  showBTCLUnion={showBTCLUnion}
               showFiberLines={showFiberLines}  showFiberPoints={showFiberPoints}
+              showBTCLNew={showBTCLNew}
             />
           </BaseMap>
 
@@ -412,6 +429,8 @@ export default function NationalOverview() {
               showFiberLines={showFiberLines}      onToggleFiberLines={() => setShowFiberLines(v => !v)}
               showFiberPoints={showFiberPoints}    onToggleFiberPoints={() => setShowFiberPoints(v => !v)}
               fiberOpFilter={fiberOpFilter}        onToggleFiberOp={toggleFiberOp}
+              showBTCLNew={showBTCLNew}            onToggleBTCLNew={() => setShowBTCLNew(v => !v)}
+              btclNewTypeFilter={btclNewTypeFilter} onToggleBTCLNewType={toggleBTCLNewType}
               onReset={handleResetLayers}
             />
           </div>

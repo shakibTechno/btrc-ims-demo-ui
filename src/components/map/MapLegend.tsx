@@ -27,6 +27,7 @@ interface Props {
   showBTCLUnion?:  boolean
   showFiberLines?:  boolean
   showFiberPoints?: boolean
+  showBTCLNew?:     boolean
 }
 
 export default function MapLegend({
@@ -37,6 +38,7 @@ export default function MapLegend({
   showSummit = false, showBLTowers = false, showBLLines = false,
   showBTCL = false, showBTCLNodes = false, showBTCLUnion = false,
   showFiberLines = false, showFiberPoints = false,
+  showBTCLNew = false,
 }: Props) {
   const map        = useMap()
   const controlRef = useRef<L.Control | null>(null)
@@ -59,7 +61,7 @@ export default function MapLegend({
         // ── Conditionally built sections ──────────────────────
 
         const hasAnySite = showTower || showBTS || showPoP
-        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON || showRailway || showBRFiber || showOprLines || showSummit || showBLTowers || showBLLines || showBTCL || showBTCLNodes || showBTCLUnion || showFiberLines || showFiberPoints
+        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON || showRailway || showBRFiber || showOprLines || showSummit || showBLTowers || showBLLines || showBTCL || showBTCLNodes || showBTCLUnion || showFiberLines || showFiberPoints || showBTCLNew
 
         // Hide legend entirely when nothing is active
         if (!hasAnything) {
@@ -501,6 +503,34 @@ export default function MapLegend({
           </div>
         ` : ''
 
+        const btclNewSection = showBTCLNew ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">BTCL (Latest)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f97316;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #f97316;"></span>
+            <span style="color:#334155">CP (Connection Point)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#06b6d4;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #06b6d4;"></span>
+            <span style="color:#334155">HH (Hand Hole)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#8b5cf6;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #8b5cf6;"></span>
+            <span style="color:#334155">HOP</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #22c55e;"></span>
+            <span style="color:#334155">POP</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ef4444;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #ef4444;"></span>
+            <span style="color:#334155">MH (Man Hole)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#94a3b8;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #94a3b8;"></span>
+            <span style="color:#334155">Other</span>
+          </div>
+        ` : ''
+
         const fiberNetSection = (showFiberLines || showFiberPoints) ? `
           <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Fiber Network</div>
           ${showFiberLines ? `
@@ -572,6 +602,7 @@ export default function MapLegend({
           ${blLinesSection}
           ${btclSection}
           ${fiberNetSection}
+          ${btclNewSection}
         `
 
         L.DomEvent.disableClickPropagation(div)
@@ -584,7 +615,7 @@ export default function MapLegend({
     controlRef.current = control
 
     return () => { control.remove() }
-  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber, showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion, showFiberLines, showFiberPoints])
+  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber, showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion, showFiberLines, showFiberPoints, showBTCLNew])
 
   return null
 }

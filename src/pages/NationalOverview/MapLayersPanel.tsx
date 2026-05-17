@@ -4,7 +4,8 @@ import type { BLGenFilter }  from '@/components/map/BanglalinkTowersOverlay'
 import type { BLLineFilter }  from '@/components/map/BanglalinkLinesOverlay'
 import type { BTCLLineFilter } from '@/components/map/BTCLOverlay'
 import type { BTCLNodeFilter } from '@/components/map/BTCLNodesOverlay'
-import type { FiberOp, FiberOpFilter } from '@/components/map/FiberNetworkLinesOverlay'
+import type { FiberOp, FiberOpFilter }              from '@/components/map/FiberNetworkLinesOverlay'
+import type { BTCLNewPointType, BTCLNewTypeFilter } from '@/components/map/BTCLNewPointsOverlay'
 
 interface Props {
   mapView:        'division' | 'district' | 'upazila' | null
@@ -72,8 +73,12 @@ interface Props {
   showFiberPoints:      boolean
   onToggleFiberPoints:  () => void
   fiberOpFilter:        FiberOpFilter
-  onToggleFiberOp:      (key: FiberOp) => void
-  onReset:              () => void
+  onToggleFiberOp:       (key: FiberOp) => void
+  showBTCLNew:           boolean
+  onToggleBTCLNew:       () => void
+  btclNewTypeFilter:     BTCLNewTypeFilter
+  onToggleBTCLNewType:   (key: BTCLNewPointType) => void
+  onReset:               () => void
 }
 
 // ── Primitives ────────────────────────────────────────────────────
@@ -290,12 +295,14 @@ export default function MapLayersPanel({
   showFiberLines, onToggleFiberLines,
   showFiberPoints, onToggleFiberPoints,
   fiberOpFilter, onToggleFiberOp,
+  showBTCLNew, onToggleBTCLNew, btclNewTypeFilter, onToggleBTCLNewType,
   onReset,
 }: Props) {
   const [collapsed,  setCollapsed]  = useState(true)
 
   // Section open/close state
   const [secFiberNet, setSecFiberNet] = useState(true)
+  const [secBTCLNew,  setSecBTCLNew]  = useState(true)
   const [secAdmin,   setSecAdmin]   = useState(true)
   const [secTelecom, setSecTelecom] = useState(true)
   const [secMobile,  setSecMobile]  = useState(true)
@@ -307,12 +314,13 @@ export default function MapLayersPanel({
   const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
   const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
   const fiberActive   = [showFiberLines, showFiberPoints].filter(Boolean).length
+  const btclNewActive = showBTCLNew ? 1 : 0
 
   const activeCount = [
     mapView != null,
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
          showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion,
-         showFiberLines, showFiberPoints]),
+         showFiberLines, showFiberPoints, showBTCLNew]),
   ].filter(Boolean).length
 
   // ── Collapsed strip ───────────────────────────────────────────
@@ -705,6 +713,32 @@ export default function MapLayersPanel({
                 <CheckItem checked={fiberOpFilter.has('Unknown')} onClick={() => onToggleFiberOp('Unknown')} label="Unknown"      dotColor="#94a3b8" />
               </SubFilters>
             )}
+          </div>
+        )}
+
+
+        <Divider />
+
+        {/* ── 5. BTCL (Latest) ── */}
+        <SectionHeader label="BTCL" open={secBTCLNew} onToggle={() => setSecBTCLNew(v => !v)}
+          badge={btclNewActive || undefined} />
+        {secBTCLNew && (
+          <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div>
+              <ToggleBtn on={showBTCLNew} onClick={onToggleBTCLNew} label="Points (Excel 2025)" emoji="📍"
+                activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
+              {showBTCLNew && (
+                <SubFilters>
+                  <SubLabel>Point Type</SubLabel>
+                  <CheckItem checked={btclNewTypeFilter.has('CP')}    onClick={() => onToggleBTCLNewType('CP')}    label="CP (Connection Point)" dotColor="#f97316" />
+                  <CheckItem checked={btclNewTypeFilter.has('HH')}    onClick={() => onToggleBTCLNewType('HH')}    label="HH (Hand Hole)"        dotColor="#06b6d4" />
+                  <CheckItem checked={btclNewTypeFilter.has('HOP')}   onClick={() => onToggleBTCLNewType('HOP')}   label="HOP"                   dotColor="#8b5cf6" />
+                  <CheckItem checked={btclNewTypeFilter.has('POP')}   onClick={() => onToggleBTCLNewType('POP')}   label="POP"                   dotColor="#22c55e" />
+                  <CheckItem checked={btclNewTypeFilter.has('MH')}    onClick={() => onToggleBTCLNewType('MH')}    label="MH (Man Hole)"         dotColor="#ef4444" />
+                  <CheckItem checked={btclNewTypeFilter.has('Other')} onClick={() => onToggleBTCLNewType('Other')} label="Other"                 dotColor="#94a3b8" />
+                </SubFilters>
+              )}
+            </div>
           </div>
         )}
 
