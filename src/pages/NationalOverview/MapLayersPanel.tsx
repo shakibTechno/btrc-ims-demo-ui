@@ -8,6 +8,7 @@ import type { FiberOp, FiberOpFilter }              from '@/components/map/Fiber
 import type { BTCLNewPointType, BTCLNewTypeFilter } from '@/components/map/BTCLNewPointsOverlay'
 import type { GPTxType, GPTxFilter }               from '@/components/map/GPSitesOverlay'
 import type { RobiTxType, RobiTxFilter }           from '@/components/map/RobiSitesOverlay'
+import type { BLBTSTxType, BLBTSTxFilter }         from '@/components/map/BLBTSSitesOverlay'
 
 interface Props {
   mapView:        'division' | 'district' | 'upazila' | null
@@ -88,6 +89,10 @@ interface Props {
   onToggleRobiSites:     () => void
   robiTxFilter:          RobiTxFilter
   onToggleRobiTx:        (key: RobiTxType) => void
+  showBLBTS:             boolean
+  onToggleBLBTS:         () => void
+  blBtsTxFilter:         BLBTSTxFilter
+  onToggleBLBTSTx:       (key: BLBTSTxType) => void
   onReset:               () => void
 }
 
@@ -308,6 +313,7 @@ export default function MapLayersPanel({
   showBTCLNew, onToggleBTCLNew, btclNewTypeFilter, onToggleBTCLNewType,
   showGPSites, onToggleGPSites, gpTxFilter, onToggleGPTx,
   showRobiSites, onToggleRobiSites, robiTxFilter, onToggleRobiTx,
+  showBLBTS, onToggleBLBTS, blBtsTxFilter, onToggleBLBTSTx,
   onReset,
 }: Props) {
   const [collapsed,  setCollapsed]  = useState(true)
@@ -325,7 +331,7 @@ export default function MapLayersPanel({
   const [secBTCLOp,  setSecBTCLOp]  = useState(true)
   const [secInfra,   setSecInfra]   = useState(true)
 
-  const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
+  const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
   const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
   const fiberActive   = [showFiberLines, showFiberPoints].filter(Boolean).length
   const btclNewActive = showBTCLNew   ? 1 : 0
@@ -335,7 +341,7 @@ export default function MapLayersPanel({
   const activeCount = [
     mapView != null,
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
-         showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion,
+         showOprLines, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion,
          showFiberLines, showFiberPoints, showBTCLNew, showGPSites, showRobiSites]),
   ].filter(Boolean).length
 
@@ -500,6 +506,19 @@ export default function MapLayersPanel({
                               <CheckItem checked={blLineFilter.has('72')} onClick={() => onToggleBLLine('72')} label="72 Core" dotColor="#7c3aed" />
                               <CheckItem checked={blLineFilter.has('48')} onClick={() => onToggleBLLine('48')} label="48 Core" dotColor="#2563eb" />
                               <CheckItem checked={blLineFilter.has('32')} onClick={() => onToggleBLLine('32')} label="32 Core" dotColor="#0891b2" />
+                            </SubFilters>
+                          )}
+                        </div>
+                        {/* BTS Sites (Latest) */}
+                        <div>
+                          <ToggleBtn on={showBLBTS} onClick={onToggleBLBTS} label="BTS Sites (Latest)" emoji="📡"
+                            activeColor={{ border: '#f59e0b', bg: '#fffbeb', text: '#92400e' }} />
+                          {showBLBTS && (
+                            <SubFilters>
+                              <SubLabel>Backhaul Type</SubLabel>
+                              <CheckItem checked={blBtsTxFilter.has('Microwave')} onClick={() => onToggleBLBTSTx('Microwave')} label="Microwave" dotColor="#f59e0b" />
+                              <CheckItem checked={blBtsTxFilter.has('Fiber')}     onClick={() => onToggleBLBTSTx('Fiber')}     label="Fiber"     dotColor="#2563eb" />
+                              <CheckItem checked={blBtsTxFilter.has('Inactive')}  onClick={() => onToggleBLBTSTx('Inactive')}  label="Inactive"  dotColor="#94a3b8" />
                             </SubFilters>
                           )}
                         </div>
