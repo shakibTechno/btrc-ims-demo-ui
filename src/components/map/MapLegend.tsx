@@ -25,6 +25,8 @@ interface Props {
   showBTCL?:       boolean
   showBTCLNodes?:  boolean
   showBTCLUnion?:  boolean
+  showFiberLines?:  boolean
+  showFiberPoints?: boolean
 }
 
 export default function MapLegend({
@@ -34,6 +36,7 @@ export default function MapLegend({
   showRailway = false, showBRFiber = false, showOprLines = false,
   showSummit = false, showBLTowers = false, showBLLines = false,
   showBTCL = false, showBTCLNodes = false, showBTCLUnion = false,
+  showFiberLines = false, showFiberPoints = false,
 }: Props) {
   const map        = useMap()
   const controlRef = useRef<L.Control | null>(null)
@@ -56,7 +59,7 @@ export default function MapLegend({
         // ── Conditionally built sections ──────────────────────
 
         const hasAnySite = showTower || showBTS || showPoP
-        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON || showRailway || showBRFiber || showOprLines || showSummit || showBLTowers || showBLLines || showBTCL || showBTCLNodes || showBTCLUnion
+        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON || showRailway || showBRFiber || showOprLines || showSummit || showBLTowers || showBLLines || showBTCL || showBTCLNodes || showBTCLUnion || showFiberLines || showFiberPoints
 
         // Hide legend entirely when nothing is active
         if (!hasAnything) {
@@ -498,6 +501,62 @@ export default function MapLegend({
           </div>
         ` : ''
 
+        const fiberNetSection = (showFiberLines || showFiberPoints) ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">Fiber Network</div>
+          ${showFiberLines ? `
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin:3px 0 3px;">Lines</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#e11d48" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Grameenphone</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#ea580c" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Robi</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#0891b2" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">BTCL</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">Banglalink</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#8b5cf6" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">MOTN</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <svg width="22" height="8" viewBox="0 0 22 8"><line x1="0" y1="4" x2="22" y2="4" stroke="#10b981" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span style="color:#334155">BSCCL</span>
+          </div>` : ''}
+          ${showFiberPoints ? `
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin:${showFiberLines ? '5px' : '3px'} 0 3px;">Points</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#e11d48;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #e11d48;"></span>
+            <span style="color:#334155">Grameenphone</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ea580c;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #ea580c;"></span>
+            <span style="color:#334155">Robi</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#0891b2;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #0891b2;"></span>
+            <span style="color:#334155">BTCL</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #f59e0b;"></span>
+            <span style="color:#334155">Banglalink</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#8b5cf6;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #8b5cf6;"></span>
+            <span style="color:#334155">MOTN</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #10b981;"></span>
+            <span style="color:#334155">BSCCL</span>
+          </div>` : ''}
+        ` : ''
+
         div.innerHTML = `
           ${statusSection}
           ${typeSection}
@@ -512,6 +571,7 @@ export default function MapLegend({
           ${blTowersSection}
           ${blLinesSection}
           ${btclSection}
+          ${fiberNetSection}
         `
 
         L.DomEvent.disableClickPropagation(div)
@@ -524,7 +584,7 @@ export default function MapLegend({
     controlRef.current = control
 
     return () => { control.remove() }
-  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber, showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion])
+  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber, showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion, showFiberLines, showFiberPoints])
 
   return null
 }

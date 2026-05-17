@@ -4,6 +4,7 @@ import type { BLGenFilter }  from '@/components/map/BanglalinkTowersOverlay'
 import type { BLLineFilter }  from '@/components/map/BanglalinkLinesOverlay'
 import type { BTCLLineFilter } from '@/components/map/BTCLOverlay'
 import type { BTCLNodeFilter } from '@/components/map/BTCLNodesOverlay'
+import type { FiberOp, FiberOpFilter } from '@/components/map/FiberNetworkLinesOverlay'
 
 interface Props {
   mapView:        'division' | 'district' | 'upazila' | null
@@ -66,6 +67,12 @@ interface Props {
   onToggleBTCLNode:     (key: 'hop' | 'hh' | 'cp' | 'mh') => void
   showBTCLUnion:        boolean
   onToggleBTCLUnion:    () => void
+  showFiberLines:       boolean
+  onToggleFiberLines:   () => void
+  showFiberPoints:      boolean
+  onToggleFiberPoints:  () => void
+  fiberOpFilter:        FiberOpFilter
+  onToggleFiberOp:      (key: FiberOp) => void
   onReset:              () => void
 }
 
@@ -280,11 +287,15 @@ export default function MapLayersPanel({
   showBTCL, onToggleBTCL, btclLineFilter, onToggleBTCLLine,
   showBTCLNodes, onToggleBTCLNodes, btclNodeFilter, onToggleBTCLNode,
   showBTCLUnion, onToggleBTCLUnion,
+  showFiberLines, onToggleFiberLines,
+  showFiberPoints, onToggleFiberPoints,
+  fiberOpFilter, onToggleFiberOp,
   onReset,
 }: Props) {
   const [collapsed,  setCollapsed]  = useState(true)
 
   // Section open/close state
+  const [secFiberNet, setSecFiberNet] = useState(true)
   const [secAdmin,   setSecAdmin]   = useState(true)
   const [secTelecom, setSecTelecom] = useState(true)
   const [secMobile,  setSecMobile]  = useState(true)
@@ -293,13 +304,14 @@ export default function MapLayersPanel({
   const [secBTCLOp,  setSecBTCLOp]  = useState(true)
   const [secInfra,   setSecInfra]   = useState(true)
 
-  const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
+  const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion, showFiberLines, showFiberPoints].filter(Boolean).length
   const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
 
   const activeCount = [
     mapView != null,
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
-         showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion]),
+         showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion,
+         showFiberLines, showFiberPoints]),
   ].filter(Boolean).length
 
   // ── Collapsed strip ───────────────────────────────────────────
@@ -604,6 +616,38 @@ export default function MapLayersPanel({
                           <ToggleBtn on={showBTCLUnion} onClick={onToggleBTCLUnion} label="Union Projects" emoji="🏘️"
                             activeColor={{ border: '#0ea5e9', bg: '#f0f9ff', text: '#0369a1' }} />
                         </div>
+                      </TreeLine>
+                    )}
+                  </div>
+
+                  {/* Fiber Network (KMZ multi-operator) */}
+                  <div>
+                    <OperatorHeader
+                      label="Fiber Network" open={secFiberNet} onToggle={() => setSecFiberNet(v => !v)}
+                      dotColor="#94a3b8" active={showFiberLines || showFiberPoints}
+                    />
+                    {secFiberNet && (
+                      <TreeLine>
+                        <div>
+                          <ToggleBtn on={showFiberLines} onClick={onToggleFiberLines} label="Lines" emoji="〰️"
+                            activeColor={{ border: '#6b7280', bg: '#f9fafb', text: '#374151' }} />
+                        </div>
+                        <div>
+                          <ToggleBtn on={showFiberPoints} onClick={onToggleFiberPoints} label="Points" emoji="📍"
+                            activeColor={{ border: '#6b7280', bg: '#f9fafb', text: '#374151' }} />
+                        </div>
+                        {(showFiberLines || showFiberPoints) && (
+                          <SubFilters>
+                            <SubLabel>Operators</SubLabel>
+                            <CheckItem checked={fiberOpFilter.has('GP')}      onClick={() => onToggleFiberOp('GP')}      label="Grameenphone" dotColor="#e11d48" />
+                            <CheckItem checked={fiberOpFilter.has('Robi')}    onClick={() => onToggleFiberOp('Robi')}    label="Robi"         dotColor="#ea580c" />
+                            <CheckItem checked={fiberOpFilter.has('BTCL')}    onClick={() => onToggleFiberOp('BTCL')}    label="BTCL"         dotColor="#0891b2" />
+                            <CheckItem checked={fiberOpFilter.has('BL')}      onClick={() => onToggleFiberOp('BL')}      label="Banglalink"   dotColor="#f59e0b" />
+                            <CheckItem checked={fiberOpFilter.has('MOTN')}    onClick={() => onToggleFiberOp('MOTN')}    label="MOTN"         dotColor="#8b5cf6" />
+                            <CheckItem checked={fiberOpFilter.has('BSCCL')}   onClick={() => onToggleFiberOp('BSCCL')}   label="BSCCL"        dotColor="#10b981" />
+                            <CheckItem checked={fiberOpFilter.has('Unknown')} onClick={() => onToggleFiberOp('Unknown')} label="Unknown"      dotColor="#94a3b8" />
+                          </SubFilters>
+                        )}
                       </TreeLine>
                     )}
                   </div>

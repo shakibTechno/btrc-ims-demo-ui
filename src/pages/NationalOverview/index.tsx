@@ -17,6 +17,8 @@ import BanglalinkLinesOverlay,  { type BLLineFilter }  from '@/components/map/Ba
 import BTCLOverlay,             { type BTCLLineFilter } from '@/components/map/BTCLOverlay'
 import BTCLNodesOverlay,        { type BTCLNodeFilter } from '@/components/map/BTCLNodesOverlay'
 import BTCLUnionOverlay                                 from '@/components/map/BTCLUnionOverlay'
+import FiberNetworkLinesOverlay, { type FiberOp, type FiberOpFilter } from '@/components/map/FiberNetworkLinesOverlay'
+import FiberNetworkPointsOverlay                        from '@/components/map/FiberNetworkPointsOverlay'
 import RailwayOverlay        from '@/components/map/RailwayOverlay'
 import RailwayFiberOverlay   from '@/components/map/RailwayFiberOverlay'
 import OperatorLinesOverlay  from '@/components/map/OperatorLinesOverlay'
@@ -123,6 +125,11 @@ export default function NationalOverview() {
     () => new Set<'hop' | 'hh' | 'cp' | 'mh'>(['hop', 'hh', 'cp', 'mh'])
   )
   const [showBTCLUnion,   setShowBTCLUnion]   = useState(false)
+  const [showFiberLines,  setShowFiberLines]  = useState(false)
+  const [showFiberPoints, setShowFiberPoints] = useState(false)
+  const [fiberOpFilter,   setFiberOpFilter]   = useState<FiberOpFilter>(
+    () => new Set<FiberOp>(['GP', 'Robi', 'BTCL', 'BL', 'MOTN', 'BSCCL', 'Unknown'])
+  )
   const [mapView,     setMapView]    = useState<'division' | 'district' | 'upazila' | null>(null)
   const [visibleTypes, setVisibleTypes] = useState<Set<AssetType>>(() => new Set<AssetType>())
 
@@ -227,6 +234,14 @@ export default function NationalOverview() {
     })
   }, [])
 
+  const toggleFiberOp = useCallback((key: FiberOp) => {
+    setFiberOpFilter(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key); else next.add(key)
+      return next
+    })
+  }, [])
+
   const handleResetLayers = useCallback(() => {
     setMapView(null)
     setVisibleTypes(new Set())
@@ -257,6 +272,9 @@ export default function NationalOverview() {
     setShowBTCLNodes(false)
     setBtclNodeFilter(new Set<'hop' | 'hh' | 'cp' | 'mh'>(['hop', 'hh', 'cp', 'mh']))
     setShowBTCLUnion(false)
+    setShowFiberLines(false)
+    setShowFiberPoints(false)
+    setFiberOpFilter(new Set<FiberOp>(['GP', 'Robi', 'BTCL', 'BL', 'MOTN', 'BSCCL', 'Unknown']))
     setFhlfonLineFilters(new Set(['Aerial', 'Burial']))
     setFhlfonPointFilters(new Set(['CO', 'BTS', 'FDH', 'JE', 'EP', 'FAT']))
   }, [])
@@ -337,6 +355,8 @@ export default function NationalOverview() {
               nodeFilter={btclNodeFilter}
             />
             <BTCLUnionOverlay visible={showBTCLUnion} />
+            <FiberNetworkLinesOverlay  visible={showFiberLines}  opFilter={fiberOpFilter} />
+            <FiberNetworkPointsOverlay visible={showFiberPoints} opFilter={fiberOpFilter} />
             <SiteMarkerLayer sites={mapSites} />
             <MapLegend
               position="bottomleft"
@@ -346,6 +366,7 @@ export default function NationalOverview() {
               showBRFiber={showBRFiber} showOprLines={showOprLines}
               showSummit={showSummit}  showBLTowers={showBLTowers}  showBLLines={showBLLines}
               showBTCL={showBTCL}  showBTCLNodes={showBTCLNodes}  showBTCLUnion={showBTCLUnion}
+              showFiberLines={showFiberLines}  showFiberPoints={showFiberPoints}
             />
           </BaseMap>
 
@@ -388,6 +409,9 @@ export default function NationalOverview() {
               showBTCLNodes={showBTCLNodes}        onToggleBTCLNodes={() => setShowBTCLNodes(v => !v)}
               btclNodeFilter={btclNodeFilter}      onToggleBTCLNode={toggleBTCLNode}
               showBTCLUnion={showBTCLUnion}        onToggleBTCLUnion={() => setShowBTCLUnion(v => !v)}
+              showFiberLines={showFiberLines}      onToggleFiberLines={() => setShowFiberLines(v => !v)}
+              showFiberPoints={showFiberPoints}    onToggleFiberPoints={() => setShowFiberPoints(v => !v)}
+              fiberOpFilter={fiberOpFilter}        onToggleFiberOp={toggleFiberOp}
               onReset={handleResetLayers}
             />
           </div>
