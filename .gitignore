@@ -33,3 +33,10 @@ MapData/Bahon Limited Shape Files/
 
 # Local tile server — MBTiles are large binaries, not for version control
 tiles/*.mbtiles
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
