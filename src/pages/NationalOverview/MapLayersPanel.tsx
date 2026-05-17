@@ -581,7 +581,7 @@ export default function MapLayersPanel({
                   {/* BTCL */}
                   <div>
                     <OperatorHeader
-                      label="BTCL" open={secBTCLOp} onToggle={() => setSecBTCLOp(v => !v)}
+                      label="BTCL-OLD" open={secBTCLOp} onToggle={() => setSecBTCLOp(v => !v)}
                       dotColor="#0891b2" active={showBTCL || showBTCLNodes || showBTCLUnion}
                     />
                     {secBTCLOp && (
