@@ -21,6 +21,7 @@ import FiberNetworkLinesOverlay, { type FiberOp, type FiberOpFilter } from '@/co
 import FiberNetworkPointsOverlay                        from '@/components/map/FiberNetworkPointsOverlay'
 import BTCLNewPointsOverlay, { type BTCLNewPointType, type BTCLNewTypeFilter } from '@/components/map/BTCLNewPointsOverlay'
 import GPSitesOverlay,        { type GPTxType, type GPTxFilter }               from '@/components/map/GPSitesOverlay'
+import RobiSitesOverlay,     { type RobiTxType, type RobiTxFilter }            from '@/components/map/RobiSitesOverlay'
 import RailwayOverlay        from '@/components/map/RailwayOverlay'
 import RailwayFiberOverlay   from '@/components/map/RailwayFiberOverlay'
 import OperatorLinesOverlay  from '@/components/map/OperatorLinesOverlay'
@@ -132,8 +133,10 @@ export default function NationalOverview() {
   const [fiberOpFilter,   setFiberOpFilter]   = useState<FiberOpFilter>(
     () => new Set<FiberOp>(['GP', 'Robi', 'BTCL', 'BL', 'MOTN', 'BSCCL', 'Unknown'])
   )
-  const [showGPSites,  setShowGPSites]  = useState(false)
-  const [gpTxFilter,   setGpTxFilter]   = useState<GPTxFilter>(() => new Set<GPTxType>(['Fiber', 'MW']))
+  const [showGPSites,   setShowGPSites]   = useState(false)
+  const [gpTxFilter,    setGpTxFilter]    = useState<GPTxFilter>(() => new Set<GPTxType>(['Fiber', 'MW']))
+  const [showRobiSites, setShowRobiSites] = useState(false)
+  const [robiTxFilter,  setRobiTxFilter]  = useState<RobiTxFilter>(() => new Set<RobiTxType>(['MW', 'Fiber', 'Both']))
   const [showBTCLNew,       setShowBTCLNew]       = useState(false)
   const [btclNewTypeFilter, setBtclNewTypeFilter] = useState<BTCLNewTypeFilter>(
     () => new Set<BTCLNewPointType>(['CP', 'HH', 'HOP', 'POP', 'MH', 'Other'])
@@ -250,6 +253,14 @@ export default function NationalOverview() {
     })
   }, [])
 
+  const toggleRobiTx = useCallback((key: RobiTxType) => {
+    setRobiTxFilter(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key); else next.add(key)
+      return next
+    })
+  }, [])
+
   const toggleBTCLNewType = useCallback((key: BTCLNewPointType) => {
     setBtclNewTypeFilter(prev => {
       const next = new Set(prev)
@@ -301,6 +312,8 @@ export default function NationalOverview() {
     setFiberOpFilter(new Set<FiberOp>(['GP', 'Robi', 'BTCL', 'BL', 'MOTN', 'BSCCL', 'Unknown']))
     setShowGPSites(false)
     setGpTxFilter(new Set<GPTxType>(['Fiber', 'MW']))
+    setShowRobiSites(false)
+    setRobiTxFilter(new Set<RobiTxType>(['MW', 'Fiber', 'Both']))
     setShowBTCLNew(false)
     setBtclNewTypeFilter(new Set<BTCLNewPointType>(['CP', 'HH', 'HOP', 'POP', 'MH', 'Other']))
     setFhlfonLineFilters(new Set(['Aerial', 'Burial']))
@@ -386,7 +399,8 @@ export default function NationalOverview() {
             <FiberNetworkLinesOverlay  visible={showFiberLines}  opFilter={fiberOpFilter} />
             <FiberNetworkPointsOverlay visible={showFiberPoints} opFilter={fiberOpFilter} />
             <BTCLNewPointsOverlay visible={showBTCLNew} typeFilter={btclNewTypeFilter} />
-            <GPSitesOverlay visible={showGPSites} txFilter={gpTxFilter} />
+            <GPSitesOverlay   visible={showGPSites}   txFilter={gpTxFilter} />
+            <RobiSitesOverlay visible={showRobiSites} txFilter={robiTxFilter} />
             <SiteMarkerLayer sites={mapSites} />
             <MapLegend
               position="bottomleft"
@@ -399,6 +413,7 @@ export default function NationalOverview() {
               showFiberLines={showFiberLines}  showFiberPoints={showFiberPoints}
               showBTCLNew={showBTCLNew}
               showGPSites={showGPSites}
+              showRobiSites={showRobiSites}
             />
           </BaseMap>
 
@@ -448,6 +463,8 @@ export default function NationalOverview() {
               btclNewTypeFilter={btclNewTypeFilter} onToggleBTCLNewType={toggleBTCLNewType}
               showGPSites={showGPSites}            onToggleGPSites={() => setShowGPSites(v => !v)}
               gpTxFilter={gpTxFilter}              onToggleGPTx={toggleGPTx}
+              showRobiSites={showRobiSites}        onToggleRobiSites={() => setShowRobiSites(v => !v)}
+              robiTxFilter={robiTxFilter}          onToggleRobiTx={toggleRobiTx}
               onReset={handleResetLayers}
             />
           </div>

@@ -7,6 +7,7 @@ import type { BTCLNodeFilter } from '@/components/map/BTCLNodesOverlay'
 import type { FiberOp, FiberOpFilter }              from '@/components/map/FiberNetworkLinesOverlay'
 import type { BTCLNewPointType, BTCLNewTypeFilter } from '@/components/map/BTCLNewPointsOverlay'
 import type { GPTxType, GPTxFilter }               from '@/components/map/GPSitesOverlay'
+import type { RobiTxType, RobiTxFilter }           from '@/components/map/RobiSitesOverlay'
 
 interface Props {
   mapView:        'division' | 'district' | 'upazila' | null
@@ -83,6 +84,10 @@ interface Props {
   onToggleGPSites:       () => void
   gpTxFilter:            GPTxFilter
   onToggleGPTx:          (key: GPTxType) => void
+  showRobiSites:         boolean
+  onToggleRobiSites:     () => void
+  robiTxFilter:          RobiTxFilter
+  onToggleRobiTx:        (key: RobiTxType) => void
   onReset:               () => void
 }
 
@@ -302,6 +307,7 @@ export default function MapLayersPanel({
   fiberOpFilter, onToggleFiberOp,
   showBTCLNew, onToggleBTCLNew, btclNewTypeFilter, onToggleBTCLNewType,
   showGPSites, onToggleGPSites, gpTxFilter, onToggleGPTx,
+  showRobiSites, onToggleRobiSites, robiTxFilter, onToggleRobiTx,
   onReset,
 }: Props) {
   const [collapsed,  setCollapsed]  = useState(true)
@@ -310,6 +316,7 @@ export default function MapLayersPanel({
   const [secFiberNet, setSecFiberNet] = useState(true)
   const [secBTCLNew,  setSecBTCLNew]  = useState(true)
   const [secGP,       setSecGP]       = useState(true)
+  const [secRobi,     setSecRobi]     = useState(true)
   const [secAdmin,   setSecAdmin]   = useState(true)
   const [secTelecom, setSecTelecom] = useState(true)
   const [secMobile,  setSecMobile]  = useState(true)
@@ -321,14 +328,15 @@ export default function MapLayersPanel({
   const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
   const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
   const fiberActive   = [showFiberLines, showFiberPoints].filter(Boolean).length
-  const btclNewActive = showBTCLNew ? 1 : 0
-  const gpActive      = showGPSites ? 1 : 0
+  const btclNewActive = showBTCLNew   ? 1 : 0
+  const gpActive      = showGPSites   ? 1 : 0
+  const robiActive    = showRobiSites ? 1 : 0
 
   const activeCount = [
     mapView != null,
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
          showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion,
-         showFiberLines, showFiberPoints, showBTCLNew, showGPSites]),
+         showFiberLines, showFiberPoints, showBTCLNew, showGPSites, showRobiSites]),
   ].filter(Boolean).length
 
   // ── Collapsed strip ───────────────────────────────────────────
@@ -772,6 +780,27 @@ export default function MapLayersPanel({
           </div>
         )}
 
+        <Divider />
+
+        {/* ── 7. Robi ── */}
+        <SectionHeader label="Robi" open={secRobi} onToggle={() => setSecRobi(v => !v)}
+          badge={robiActive || undefined} />
+        {secRobi && (
+          <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div>
+              <ToggleBtn on={showRobiSites} onClick={onToggleRobiSites} label="Sites" emoji="📡"
+                activeColor={{ border: '#f59e0b', bg: '#fffbeb', text: '#92400e' }} />
+              {showRobiSites && (
+                <SubFilters>
+                  <SubLabel>Backhaul Type</SubLabel>
+                  <CheckItem checked={robiTxFilter.has('MW')}    onClick={() => onToggleRobiTx('MW')}    label="MW Connected"    dotColor="#f59e0b" />
+                  <CheckItem checked={robiTxFilter.has('Fiber')} onClick={() => onToggleRobiTx('Fiber')} label="Fiber Connected" dotColor="#2563eb" />
+                  <CheckItem checked={robiTxFilter.has('Both')}  onClick={() => onToggleRobiTx('Both')}  label="MW + Fiber"      dotColor="#8b5cf6" />
+                </SubFilters>
+              )}
+            </div>
+          </div>
+        )}
 
       </div>
     </div>
