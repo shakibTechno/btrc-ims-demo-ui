@@ -60,11 +60,16 @@ export default function GPSitesOverlay({ visible, txFilter }: Props) {
   }, [renderer])
 
   const onEach = useCallback((feat: Feature, layer: L.Layer) => {
-    const p     = feat.properties ?? {}
-    const tx    = p.tx as GPTxType
-    const color = GP_TX_COLORS[tx] ?? '#94a3b8'
-    const label = GP_TX_LABELS[tx] ?? tx
-    const name  = String(p.name ?? '—')
+    const p        = feat.properties ?? {}
+    const tx       = p.tx as GPTxType
+    const color    = GP_TX_COLORS[tx] ?? '#94a3b8'
+    const label    = GP_TX_LABELS[tx] ?? tx
+    const name     = String(p.name ?? '—')
+    const division = String(p.division ?? '')
+    const district = String(p.district ?? '')
+    const upazila  = String(p.upazila  ?? '')
+    const adminParts = [upazila, district, division].filter(Boolean)
+    const adminLine  = adminParts.length ? adminParts.join(', ') : ''
     layer.bindPopup(`
       <div style="font-family:system-ui,sans-serif;font-size:12px;line-height:1.5;
                   min-width:180px;max-width:280px;">
@@ -72,9 +77,11 @@ export default function GPSitesOverlay({ visible, txFilter }: Props) {
                     word-break:break-word;">${name}</div>
         <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;
                      font-size:10px;font-weight:700;
-                     background:${color}18;border:1px solid ${color}44;color:${color};">
+                     background:${color}18;border:1px solid ${color}44;color:${color};
+                     margin-bottom:${adminLine ? '5px' : '0'};">
           ${label}
         </span>
+        ${adminLine ? `<div style="font-size:11px;color:#64748b;">${adminLine}</div>` : ''}
       </div>`, { maxWidth: 300, offset: L.point(0, -4) })
     layer.bindTooltip(
       `<span style="font:600 11px system-ui,sans-serif;color:#1e293b">${name}</span>`,
