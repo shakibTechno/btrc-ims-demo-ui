@@ -62,27 +62,29 @@ export default function GPSitesOverlay({ visible, txFilter }: Props) {
   const onEach = useCallback((feat: Feature, layer: L.Layer) => {
     const p        = feat.properties ?? {}
     const tx       = p.tx as GPTxType
-    const color    = GP_TX_COLORS[tx] ?? '#94a3b8'
     const label    = GP_TX_LABELS[tx] ?? tx
     const name     = String(p.name ?? '—')
-    const division = String(p.division ?? '')
-    const district = String(p.district ?? '')
-    const upazila  = String(p.upazila  ?? '')
-    const adminParts = [upazila, district, division].filter(Boolean)
-    const adminLine  = adminParts.length ? adminParts.join(', ') : ''
+    const division = String(p.division ?? '') || '—'
+    const district = String(p.district ?? '') || '—'
+    const upazila  = String(p.upazila  ?? '') || '—'
+    const row = (key: string, val: string) =>
+      `<tr>
+        <td style="color:#94a3b8;font-weight:600;padding:2px 10px 2px 0;white-space:nowrap;">${key}</td>
+        <td style="color:#1e293b;">${val}</td>
+       </tr>`
     layer.bindPopup(`
       <div style="font-family:system-ui,sans-serif;font-size:12px;line-height:1.5;
-                  min-width:180px;max-width:280px;">
-        <div style="font-weight:700;color:#1e293b;font-size:13px;margin-bottom:4px;
+                  min-width:200px;max-width:300px;">
+        <div style="font-weight:700;color:#1e293b;font-size:13px;margin-bottom:6px;
                     word-break:break-word;">${name}</div>
-        <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;
-                     font-size:10px;font-weight:700;
-                     background:${color}18;border:1px solid ${color}44;color:${color};
-                     margin-bottom:${adminLine ? '5px' : '0'};">
-          ${label}
-        </span>
-        ${adminLine ? `<div style="font-size:11px;color:#64748b;">${adminLine}</div>` : ''}
-      </div>`, { maxWidth: 300, offset: L.point(0, -4) })
+        <table style="border-collapse:collapse;width:100%;font-size:11px;">
+          ${row('Operator', 'Grameenphone')}
+          ${row('Backhaul', label)}
+          ${row('Upazila', upazila)}
+          ${row('District', district)}
+          ${row('Division', division)}
+        </table>
+      </div>`, { maxWidth: 320, offset: L.point(0, -4) })
     layer.bindTooltip(
       `<span style="font:600 11px system-ui,sans-serif;color:#1e293b">${name}</span>`,
       { sticky: true, offset: [10, 0], opacity: 0.95 }
