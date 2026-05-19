@@ -3,10 +3,16 @@ BTRC IMS -- Master Data Inventory (single sheet)
 Columns: S/N, Operator, Dataset, Primary File(s), Format, Date Received,
          Received From, Records, Geometry, Sub-types, Key Attributes,
          Coord System, Data Period, Dashboard Label, File Timestamp,
-         Version / Commit, Used on Map?, Gap Analysis, Notes
+         Data Version, Used on Map?, Gap Analysis, Notes
+
+Data Version format: vN -- Mon YYYY
+  - Start at v1 for initial load.
+  - Increment to v2, v3, ... each time the operator sends updated data
+    and it is re-processed and reloaded onto the map.
+  - Update the version string in the ROWS table below when bumping.
 """
 
-import pathlib, datetime, subprocess
+import pathlib, datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -20,17 +26,6 @@ def mtime(rel):
     if p.exists():
         return datetime.datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
     return "--"
-
-def git_ver(rel):
-    """Return 'abcd123  YYYY-MM-DD' for the last commit touching rel."""
-    try:
-        out = subprocess.check_output(
-            ["git", "log", "-1", "--format=%h  %ad", "--date=short", "--", rel],
-            cwd=str(BASE), stderr=subprocess.DEVNULL, text=True
-        ).strip()
-        return out if out else "--"
-    except Exception:
-        return "--"
 
 # ── Palette ───────────────────────────────────────────────────────────
 P = dict(
@@ -113,7 +108,7 @@ COLS = [
     ("Data Period",           11),
     ("Dashboard Label / Button", 26),
     ("File Timestamp",        17),
-    ("Version / Git Commit",  20),
+    ("Data Version",          15),
     ("Used on Map?",          12),
     ("Gap Analysis",          38),
     ("Notes / Remarks",       38),
@@ -143,8 +138,11 @@ GAP_UNKNOWN = "Not yet extracted. Content and size unknown."
 # Fields per row:
 #   operator, dataset, primary_file, fmt, date_received, received_from,
 #   records, geometry, subtypes, key_attrs, crs, period,
-#   dashboard_label, file_path (for mtime), git_path (for version),
+#   dashboard_label, file_path (for mtime), data_version,
 #   used, gap_analysis, notes
+#
+# data_version: "vN -- Mon YYYY"
+#   Bump N and update the month/year when operator resubmits new data.
 ROWS = [
 
     # ── Grameenphone ─────────────────────────────────────────────────
@@ -158,7 +156,7 @@ ROWS = [
      "WGS84", "Dec 2025",
      "Grameenphone > Sites",
      r"MapData\Latest Data\GP_Tx Information_18-Dec-25.xlsx",
-     "public/data/gp-sites.geojson",
+     "v1 -- Dec 2025",
      "Yes", GAP_NONE,
      "Admin (Division / District / Upazila) enriched via point-in-polygon lookup."
      " 246 border-edge sites show '--' for admin fields."),
@@ -174,7 +172,7 @@ ROWS = [
      "WGS84", "Nov 2025",
      "Robi > Sites",
      r"MapData\Latest Data\Robi site list_Nov'25_BTRC_MW & fiber.xlsx",
-     "public/data/robi-sites.geojson",
+     "v1 -- Nov 2025",
      "Yes", GAP_NONE,
      "Three-category backhaul classification (MW / Fiber / Both) applied."
      " Admin enriched via PIP. 169 border-edge sites show '--'."),
@@ -191,7 +189,7 @@ ROWS = [
      "WGS84", "Dec 2025",
      "Banglalink > BTS Sites (Latest)",
      r"MapData\Latest Data\BTS Information_Banglalink_Till 15 Dec 25.xlsx",
-     "public/data/bl-bts-sites.geojson",
+     "v1 -- Dec 2025",
      "Yes", GAP_NONE,
      "Admin data taken directly from Excel (no PIP needed)."
      " Address field included in popup."),
@@ -207,7 +205,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "Banglalink > Towers",
      r"MapData\Banglalink\3gtower.geojson",
-     "public/data/3gtower.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "Historical tower dataset. Filterable by generation on map."),
 
@@ -221,7 +219,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "Banglalink > Fiber Lines",
      r"MapData\Banglalink\bl-line.geojson",
-     "public/data/bl-line.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "Historical fiber route lines. Filterable by core count on map."),
 
@@ -237,7 +235,7 @@ ROWS = [
      "WGS84", "2025",
      "BTCL > Points (Excel 2025)",
      r"MapData\Latest Data\GEO SPIRAL DATA STRUCTURE_TEMPLE_FINAL_BTCL.xlsx",
-     "public/data/btcl-latest-points.geojson",
+     "v1 -- 2025",
      "Yes",
      "69 records removed (0.3% of total)."
      " Coordinates fell outside Bangladesh boundary -- likely data-entry errors.",
@@ -255,7 +253,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "BTCL-OLD > Fiber Lines",
      r"MapData\BTCL\btcl-nttn-line.geojson",
-     "public/data/btcl-nttn-line.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "All lines on map. Filterable by core-count band."),
 
@@ -270,7 +268,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "BTCL-OLD > Nodes",
      r"MapData\BTCL\btcl-ponts.geojson",
-     "public/data/btcl-ponts.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "All nodes on map. Filterable by node type."),
 
@@ -284,7 +282,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "BTCL-OLD > Union Projects",
      r"MapData\btcl-union-project-location.geojson",
-     "public/data/btcl-union-locations.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "All union project markers on map."),
 
@@ -301,7 +299,7 @@ ROWS = [
      "WGS84", "Dec 2024",
      "Fiber@Home > Lines",
      r"MapData\FHLFON\FHLFONLineExcel.xlsx",
-     "public/data/fhlfon-lines.geojson",
+     "v1 -- Dec 2024",
      "Partial",
      "123,162 lines not yet on map (87% gap).\n"
      "Currently showing: 18,405 of 141,567.\n"
@@ -324,7 +322,7 @@ ROWS = [
      "WGS84", "Dec 2024",
      "Fiber@Home > Points",
      r"MapData\FHLFON\FHLFONPointExcel.xlsx",
-     "public/data/fhlfon-points.geojson",
+     "v1 -- Dec 2024",
      "Partial",
      "27,197 points not on map (22% gap).\n"
      "Currently showing: 94,953 of 122,150.\n"
@@ -345,7 +343,7 @@ ROWS = [
      "WGS84", "Mar 2026",
      "Summit > Lines",
      r"MapData\Summit\Line_data Excel\Line_data.xlsx",
-     "public/data/summit-lines.geojson",
+     "v1 -- Mar 2026",
      "Partial",
      "79,357 lines not on map (77% gap).\n"
      "Currently showing: 23,157 of 102,514.\n"
@@ -367,7 +365,7 @@ ROWS = [
      "WGS84", "Mar 2026",
      "Summit > Nodes + BTS",
      r"MapData\Summit\Point_data Excel\Point_data.xlsx",
-     "public/data/summit-points.geojson",
+     "v1 -- Mar 2026",
      "Partial",
      "54,288 points not on map (79% gap).\n"
      "Currently showing: 14,562 of 68,850.\n"
@@ -386,7 +384,7 @@ ROWS = [
      "Unknown", "Unknown",
      "-- Not on map --",
      r"MapData\Summit\Railway\Summit.rar",
-     "--",
+     "-- Not processed --",
      "No", GAP_UNKNOWN,
      "Archive file in Railway folder. Must be extracted and analysed"
      " to check for additional network data."),
@@ -403,7 +401,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "Bahon > Lines",
      r"MapData\Bahon Limited Shape Files\Bahon Limited Shape Files\Bahon Network_System Line.shp",
-     "public/data/bahon-lines.geojson",
+     "v1 -- Pre-2025",
      "Yes",
      "No significant gap detected. Exact source count unverified"
      " (shapefile only -- no Excel counterpart for cross-check).",
@@ -420,7 +418,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "Bahon > Nodes",
      r"MapData\Bahon Limited Shape Files\Bahon Limited Shape Files\Bahon Network_System Line.shp",
-     "public/data/bahon-points.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "All nodes on map."),
 
@@ -436,7 +434,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "InfoSarkar-3 > Lines",
      r"MapData\Info Sarker-3 FHL\doc.kml",
-     "public/data/is3-lines.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "All lines on map with core-count filter."),
 
@@ -450,7 +448,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "InfoSarkar-3 > Nodes",
      r"MapData\Info Sarker-3 FHL\doc.kml",
-     "public/data/is3-points.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "All nodes on map."),
 
@@ -466,7 +464,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "PGCB > Lines",
      r"MapData\Power Grid Tranmission(OPGW).kml",
-     "public/data/pgcb-lines.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "All OPGW lines on map. Filterable by voltage / line type."),
 
@@ -481,7 +479,7 @@ ROWS = [
      "WGS84", "2025",
      "Fiber Network > Lines",
      r"MapData\Latest Data\fiber_network_multiple_district.kmz",
-     "public/data/fiber-network-lines.geojson",
+     "v1 -- 2025",
      "Yes", GAP_NONE,
      "All 6-operator inter-district fiber lines on map with operator colour filter."),
 
@@ -495,7 +493,7 @@ ROWS = [
      "WGS84", "2025",
      "Fiber Network > Points",
      r"MapData\Latest Data\fiber_network_multiple_district.kmz",
-     "public/data/fiber-network-points.geojson",
+     "v1 -- 2025",
      "Yes", GAP_NONE,
      "All 6-operator fiber junction points on map."),
 
@@ -511,7 +509,7 @@ ROWS = [
      "WGS84", "2025",
      "Railway > BR Fiber Lines",
      r"MapData\Latest Data\Geo Spatial Data Structure_Template _Final_railway.xlsx",
-     "public/data/br-fiber-lines.geojson",
+     "v1 -- 2025",
      "Yes", GAP_NONE,
      "All 353 fiber route segments on map. Duplicate copy in Railway folder -- not used."),
 
@@ -525,7 +523,7 @@ ROWS = [
      "WGS84", "2025",
      "Railway > BR Fiber Nodes",
      r"MapData\Latest Data\Geo Spatial Data Structure_Template _Final_railway.xlsx",
-     "public/data/br-fiber-nodes.geojson",
+     "v1 -- 2025",
      "Yes", GAP_NONE,
      "All 354 station nodes on map."),
 
@@ -540,7 +538,7 @@ ROWS = [
      "WGS84", "Pre-2025",
      "Railway > Railline",
      r"MapData\Railway\railway.geojson",
-     "public/data/railway.geojson",
+     "v1 -- Pre-2025",
      "Yes", GAP_NONE,
      "Base railway track layer on map."),
 
@@ -557,7 +555,7 @@ ROWS = [
      "WGS84", "2020-2021",
      "-- Not yet on map --",
      r"MapData\pop all isp\aisp-pop.geojson",
-     "public/data/aisp-pop.geojson",
+     "v1 -- 2020-2021",
      "No",
      "3,930 records not yet on map (100% gap).\n"
      "Data is fully available and ready for implementation.",
@@ -573,7 +571,7 @@ sn   = 0
 
 for (op, dataset, pfile, fmt, date_recv, recv_from,
      records, geom, subtypes, attrs, crs, period,
-     dash_label, fpath, gpath,
+     dash_label, fpath, data_ver,
      used, gap, notes) in ROWS:
 
     if op != prev:
@@ -597,13 +595,11 @@ for (op, dataset, pfile, fmt, date_recv, recv_from,
     else:
         gap_bg, gap_fg = row_bg, P["slate"]
 
-    # resolve timestamps and version
-    file_ts  = mtime(fpath) if fpath != "--" else "--"
-    git_info = git_ver(gpath) if gpath != "--" else "--"
+    file_ts = mtime(fpath)
 
     vals = [sn, op, dataset, pfile, fmt, date_recv, recv_from,
             records, geom, subtypes, attrs, crs, period,
-            dash_label, file_ts, git_info,
+            dash_label, file_ts, data_ver,
             used, gap, notes]
 
     for ci, val in enumerate(vals, 1):
