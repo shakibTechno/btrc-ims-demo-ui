@@ -141,6 +141,7 @@ export default function NationalOverview() {
   const [showBLBTS,     setShowBLBTS]     = useState(false)
   const [blBtsTxFilter, setBlBtsTxFilter] = useState<BLBTSTxFilter>(() => new Set<BLBTSTxType>(['Microwave', 'Fiber', 'Inactive']))
   const [showBTCLNew,       setShowBTCLNew]       = useState(false)
+  const [showBTCLNewLines,  setShowBTCLNewLines]  = useState(false)
   const [btclNewTypeFilter, setBtclNewTypeFilter] = useState<BTCLNewTypeFilter>(
     () => new Set<BTCLNewPointType>(['CP', 'HH', 'HOP', 'POP', 'MH', 'Other'])
   )
@@ -328,6 +329,7 @@ export default function NationalOverview() {
     setShowBLBTS(false)
     setBlBtsTxFilter(new Set<BLBTSTxType>(['Microwave', 'Fiber', 'Inactive']))
     setShowBTCLNew(false)
+    setShowBTCLNewLines(false)
     setBtclNewTypeFilter(new Set<BTCLNewPointType>(['CP', 'HH', 'HOP', 'POP', 'MH', 'Other']))
     setFhlfonLineFilters(new Set(['Aerial', 'Burial']))
     setFhlfonPointFilters(new Set(['CO', 'BTS', 'FDH', 'JE', 'EP', 'FAT']))
@@ -409,8 +411,9 @@ export default function NationalOverview() {
               nodeFilter={btclNodeFilter}
             />
             <BTCLUnionOverlay visible={showBTCLUnion} />
-            <FiberNetworkLinesOverlay  visible={showFiberLines}  opFilter={fiberOpFilter} />
-            <FiberNetworkPointsOverlay visible={showFiberPoints} opFilter={fiberOpFilter} />
+            <FiberNetworkLinesOverlay  visible={showFiberLines}     opFilter={fiberOpFilter} />
+            <FiberNetworkLinesOverlay  visible={showBTCLNewLines}   opFilter={new Set<FiberOp>(['BTCL'])} />
+            <FiberNetworkPointsOverlay visible={showFiberPoints}    opFilter={fiberOpFilter} />
             <BTCLNewPointsOverlay visible={showBTCLNew} typeFilter={btclNewTypeFilter} />
             <GPSitesOverlay   visible={showGPSites}   txFilter={gpTxFilter} />
             <RobiSitesOverlay  visible={showRobiSites} txFilter={robiTxFilter} />
@@ -475,6 +478,7 @@ export default function NationalOverview() {
               showFiberPoints={showFiberPoints}    onToggleFiberPoints={() => setShowFiberPoints(v => !v)}
               fiberOpFilter={fiberOpFilter}        onToggleFiberOp={toggleFiberOp}
               showBTCLNew={showBTCLNew}            onToggleBTCLNew={() => setShowBTCLNew(v => !v)}
+              showBTCLNewLines={showBTCLNewLines}  onToggleBTCLNewLines={() => setShowBTCLNewLines(v => !v)}
               btclNewTypeFilter={btclNewTypeFilter} onToggleBTCLNewType={toggleBTCLNewType}
               showGPSites={showGPSites}            onToggleGPSites={() => setShowGPSites(v => !v)}
               gpTxFilter={gpTxFilter}              onToggleGPTx={toggleGPTx}

@@ -81,6 +81,8 @@ interface Props {
   onToggleBTCLNew:       () => void
   btclNewTypeFilter:     BTCLNewTypeFilter
   onToggleBTCLNewType:   (key: BTCLNewPointType) => void
+  showBTCLNewLines:      boolean
+  onToggleBTCLNewLines:  () => void
   showGPSites:           boolean
   onToggleGPSites:       () => void
   gpTxFilter:            GPTxFilter
@@ -311,6 +313,7 @@ export default function MapLayersPanel({
   showFiberPoints, onToggleFiberPoints,
   fiberOpFilter, onToggleFiberOp,
   showBTCLNew, onToggleBTCLNew, btclNewTypeFilter, onToggleBTCLNewType,
+  showBTCLNewLines, onToggleBTCLNewLines,
   showGPSites, onToggleGPSites, gpTxFilter, onToggleGPTx,
   showRobiSites, onToggleRobiSites, robiTxFilter, onToggleRobiTx,
   showBLBTS, onToggleBLBTS, blBtsTxFilter, onToggleBLBTSTx,
@@ -334,7 +337,7 @@ export default function MapLayersPanel({
   const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
   const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
   const fiberActive   = [showFiberLines, showFiberPoints].filter(Boolean).length
-  const btclNewActive = showBTCLNew   ? 1 : 0
+  const btclNewActive = [showBTCLNew, showBTCLNewLines].filter(Boolean).length
   const gpActive      = showGPSites   ? 1 : 0
   const robiActive    = showRobiSites ? 1 : 0
 
@@ -342,7 +345,7 @@ export default function MapLayersPanel({
     mapView != null,
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
          showOprLines, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion,
-         showFiberLines, showFiberPoints, showBTCLNew, showGPSites, showRobiSites]),
+         showFiberLines, showFiberPoints, showBTCLNew, showBTCLNewLines, showGPSites, showRobiSites]),
   ].filter(Boolean).length
 
   // ── Collapsed strip ───────────────────────────────────────────
@@ -759,6 +762,10 @@ export default function MapLayersPanel({
           badge={btclNewActive || undefined} />
         {secBTCLNew && (
           <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div>
+              <ToggleBtn on={showBTCLNewLines} onClick={onToggleBTCLNewLines} label="Lines (KMZ)" emoji="〰️"
+                activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
+            </div>
             <div>
               <ToggleBtn on={showBTCLNew} onClick={onToggleBTCLNew} label="Points (Excel 2025)" emoji="📍"
                 activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
