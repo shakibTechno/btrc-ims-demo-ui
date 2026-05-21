@@ -6,6 +6,8 @@ import type { BTCLLineFilter } from '@/components/map/BTCLOverlay'
 import type { BTCLNodeFilter } from '@/components/map/BTCLNodesOverlay'
 import type { FiberOp, FiberOpFilter }              from '@/components/map/FiberNetworkLinesOverlay'
 import type { BTCLNewPointType, BTCLNewTypeFilter } from '@/components/map/BTCLNewPointsOverlay'
+import type { BTCLTenant, BTCLTenantFilter }        from '@/components/map/BTCLKmzLinesOverlay'
+import { BTCL_TENANT_COLORS, BTCL_TENANT_LABELS }  from '@/components/map/BTCLKmzLinesOverlay'
 import type { GPTxType, GPTxFilter }               from '@/components/map/GPSitesOverlay'
 import type { RobiTxType, RobiTxFilter }           from '@/components/map/RobiSitesOverlay'
 import type { BLBTSTxType, BLBTSTxFilter }         from '@/components/map/BLBTSSitesOverlay'
@@ -83,6 +85,8 @@ interface Props {
   onToggleBTCLNewType:   (key: BTCLNewPointType) => void
   showBTCLNewLines:      boolean
   onToggleBTCLNewLines:  () => void
+  btclTenantFilter:      BTCLTenantFilter
+  onToggleBTCLTenant:    (t: BTCLTenant) => void
   showGPSites:           boolean
   onToggleGPSites:       () => void
   gpTxFilter:            GPTxFilter
@@ -313,7 +317,7 @@ export default function MapLayersPanel({
   showFiberPoints, onToggleFiberPoints,
   fiberOpFilter, onToggleFiberOp,
   showBTCLNew, onToggleBTCLNew, btclNewTypeFilter, onToggleBTCLNewType,
-  showBTCLNewLines, onToggleBTCLNewLines,
+  showBTCLNewLines, onToggleBTCLNewLines, btclTenantFilter, onToggleBTCLTenant,
   showGPSites, onToggleGPSites, gpTxFilter, onToggleGPTx,
   showRobiSites, onToggleRobiSites, robiTxFilter, onToggleRobiTx,
   showBLBTS, onToggleBLBTS, blBtsTxFilter, onToggleBLBTSTx,
@@ -765,6 +769,20 @@ export default function MapLayersPanel({
             <div>
               <ToggleBtn on={showBTCLNewLines} onClick={onToggleBTCLNewLines} label="Lines (KMZ)" emoji="〰️"
                 activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
+              {showBTCLNewLines && (
+                <SubFilters>
+                  <SubLabel>Tenant</SubLabel>
+                  {(['BTCL', 'GP', 'Robi', 'MOTN', 'BL', 'BSCCL'] as BTCLTenant[]).map(t => (
+                    <CheckItem
+                      key={t}
+                      checked={btclTenantFilter.has(t)}
+                      onClick={() => onToggleBTCLTenant(t)}
+                      label={BTCL_TENANT_LABELS[t]}
+                      dotColor={BTCL_TENANT_COLORS[t]}
+                    />
+                  ))}
+                </SubFilters>
+              )}
             </div>
             <div>
               <ToggleBtn on={showBTCLNew} onClick={onToggleBTCLNew} label="Points (Excel 2025)" emoji="📍"

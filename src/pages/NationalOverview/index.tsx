@@ -18,6 +18,7 @@ import BTCLOverlay,             { type BTCLLineFilter } from '@/components/map/B
 import BTCLNodesOverlay,        { type BTCLNodeFilter } from '@/components/map/BTCLNodesOverlay'
 import BTCLUnionOverlay                                 from '@/components/map/BTCLUnionOverlay'
 import FiberNetworkLinesOverlay, { type FiberOp, type FiberOpFilter } from '@/components/map/FiberNetworkLinesOverlay'
+import BTCLKmzLinesOverlay, { type BTCLTenant, type BTCLTenantFilter } from '@/components/map/BTCLKmzLinesOverlay'
 import FiberNetworkPointsOverlay                        from '@/components/map/FiberNetworkPointsOverlay'
 import BTCLNewPointsOverlay, { type BTCLNewPointType, type BTCLNewTypeFilter } from '@/components/map/BTCLNewPointsOverlay'
 import GPSitesOverlay,        { type GPTxType, type GPTxFilter }               from '@/components/map/GPSitesOverlay'
@@ -142,6 +143,9 @@ export default function NationalOverview() {
   const [blBtsTxFilter, setBlBtsTxFilter] = useState<BLBTSTxFilter>(() => new Set<BLBTSTxType>(['Microwave', 'Fiber', 'Inactive']))
   const [showBTCLNew,       setShowBTCLNew]       = useState(false)
   const [showBTCLNewLines,  setShowBTCLNewLines]  = useState(false)
+  const [btclTenantFilter,  setBtclTenantFilter]  = useState<BTCLTenantFilter>(
+    () => new Set<BTCLTenant>(['BTCL', 'GP', 'Robi', 'MOTN', 'BL', 'BSCCL'])
+  )
   const [btclNewTypeFilter, setBtclNewTypeFilter] = useState<BTCLNewTypeFilter>(
     () => new Set<BTCLNewPointType>(['CP', 'HH', 'HOP', 'POP', 'MH', 'Other'])
   )
@@ -281,6 +285,14 @@ export default function NationalOverview() {
     })
   }, [])
 
+  const toggleBTCLTenant = useCallback((t: BTCLTenant) => {
+    setBtclTenantFilter(prev => {
+      const next = new Set(prev)
+      if (next.has(t)) next.delete(t); else next.add(t)
+      return next
+    })
+  }, [])
+
   const toggleFiberOp = useCallback((key: FiberOp) => {
     setFiberOpFilter(prev => {
       const next = new Set(prev)
@@ -330,6 +342,7 @@ export default function NationalOverview() {
     setBlBtsTxFilter(new Set<BLBTSTxType>(['Microwave', 'Fiber', 'Inactive']))
     setShowBTCLNew(false)
     setShowBTCLNewLines(false)
+    setBtclTenantFilter(new Set<BTCLTenant>(['BTCL', 'GP', 'Robi', 'MOTN', 'BL', 'BSCCL']))
     setBtclNewTypeFilter(new Set<BTCLNewPointType>(['CP', 'HH', 'HOP', 'POP', 'MH', 'Other']))
     setFhlfonLineFilters(new Set(['Aerial', 'Burial']))
     setFhlfonPointFilters(new Set(['CO', 'BTS', 'FDH', 'JE', 'EP', 'FAT']))
@@ -412,7 +425,7 @@ export default function NationalOverview() {
             />
             <BTCLUnionOverlay visible={showBTCLUnion} />
             <FiberNetworkLinesOverlay  visible={showFiberLines}     opFilter={fiberOpFilter} />
-            <FiberNetworkLinesOverlay  visible={showBTCLNewLines}   opFilter={new Set<FiberOp>(['BTCL'])} />
+            <BTCLKmzLinesOverlay       visible={showBTCLNewLines}   tenantFilter={btclTenantFilter} />
             <FiberNetworkPointsOverlay visible={showFiberPoints}    opFilter={fiberOpFilter} />
             <BTCLNewPointsOverlay visible={showBTCLNew} typeFilter={btclNewTypeFilter} />
             <GPSitesOverlay   visible={showGPSites}   txFilter={gpTxFilter} />
@@ -479,6 +492,7 @@ export default function NationalOverview() {
               fiberOpFilter={fiberOpFilter}        onToggleFiberOp={toggleFiberOp}
               showBTCLNew={showBTCLNew}            onToggleBTCLNew={() => setShowBTCLNew(v => !v)}
               showBTCLNewLines={showBTCLNewLines}  onToggleBTCLNewLines={() => setShowBTCLNewLines(v => !v)}
+              btclTenantFilter={btclTenantFilter}  onToggleBTCLTenant={toggleBTCLTenant}
               btclNewTypeFilter={btclNewTypeFilter} onToggleBTCLNewType={toggleBTCLNewType}
               showGPSites={showGPSites}            onToggleGPSites={() => setShowGPSites(v => !v)}
               gpTxFilter={gpTxFilter}              onToggleGPTx={toggleGPTx}
