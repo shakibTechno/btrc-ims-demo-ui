@@ -484,6 +484,51 @@ export default function MapLayersPanel({
               <SubGroupHeader label="Mobile Operators" open={secMobile} onToggle={() => setSecMobile(v => !v)} />
               {secMobile && (
                 <TreeLine>
+                  {/* Grameenphone operator block */}
+                  <div>
+                    <OperatorHeader
+                      label="Grameenphone" open={secGP} onToggle={() => setSecGP(v => !v)}
+                      dotColor="#2563eb" active={showGPSites}
+                    />
+                    {secGP && (
+                      <TreeLine>
+                        <div>
+                          <ToggleBtn on={showGPSites} onClick={onToggleGPSites} label="Sites" emoji="📡"
+                            activeColor={{ border: '#2563eb', bg: '#eff6ff', text: '#1d4ed8' }} />
+                          {showGPSites && (
+                            <SubFilters>
+                              <SubLabel>Backhaul Type</SubLabel>
+                              <CheckItem checked={gpTxFilter.has('Fiber')} onClick={() => onToggleGPTx('Fiber')} label="Fiber Connected" dotColor="#2563eb" />
+                              <CheckItem checked={gpTxFilter.has('MW')}    onClick={() => onToggleGPTx('MW')}    label="MW Connected"    dotColor="#f59e0b" />
+                            </SubFilters>
+                          )}
+                        </div>
+                      </TreeLine>
+                    )}
+                  </div>
+                  {/* Robi operator block */}
+                  <div>
+                    <OperatorHeader
+                      label="Robi" open={secRobi} onToggle={() => setSecRobi(v => !v)}
+                      dotColor="#ea580c" active={showRobiSites}
+                    />
+                    {secRobi && (
+                      <TreeLine>
+                        <div>
+                          <ToggleBtn on={showRobiSites} onClick={onToggleRobiSites} label="Sites" emoji="📡"
+                            activeColor={{ border: '#f59e0b', bg: '#fffbeb', text: '#92400e' }} />
+                          {showRobiSites && (
+                            <SubFilters>
+                              <SubLabel>Backhaul Type</SubLabel>
+                              <CheckItem checked={robiTxFilter.has('MW')}    onClick={() => onToggleRobiTx('MW')}    label="MW Connected"    dotColor="#f59e0b" />
+                              <CheckItem checked={robiTxFilter.has('Fiber')} onClick={() => onToggleRobiTx('Fiber')} label="Fiber Connected" dotColor="#2563eb" />
+                              <CheckItem checked={robiTxFilter.has('Both')}  onClick={() => onToggleRobiTx('Both')}  label="MW + Fiber"      dotColor="#8b5cf6" />
+                            </SubFilters>
+                          )}
+                        </div>
+                      </TreeLine>
+                    )}
+                  </div>
                   {/* Banglalink operator block */}
                   <div>
                     <OperatorHeader
@@ -771,49 +816,6 @@ export default function MapLayersPanel({
           </div>
         )}
 
-
-        <Divider />
-
-        {/* ── 6. Grameenphone ── */}
-        <SectionHeader label="Grameenphone" open={secGP} onToggle={() => setSecGP(v => !v)}
-          badge={gpActive || undefined} />
-        {secGP && (
-          <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div>
-              <ToggleBtn on={showGPSites} onClick={onToggleGPSites} label="Sites" emoji="📡"
-                activeColor={{ border: '#2563eb', bg: '#eff6ff', text: '#1d4ed8' }} />
-              {showGPSites && (
-                <SubFilters>
-                  <SubLabel>Backhaul Type</SubLabel>
-                  <CheckItem checked={gpTxFilter.has('Fiber')} onClick={() => onToggleGPTx('Fiber')} label="Fiber Connected" dotColor="#2563eb" />
-                  <CheckItem checked={gpTxFilter.has('MW')}    onClick={() => onToggleGPTx('MW')}    label="MW Connected"    dotColor="#f59e0b" />
-                </SubFilters>
-              )}
-            </div>
-          </div>
-        )}
-
-        <Divider />
-
-        {/* ── 7. Robi ── */}
-        <SectionHeader label="Robi" open={secRobi} onToggle={() => setSecRobi(v => !v)}
-          badge={robiActive || undefined} />
-        {secRobi && (
-          <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div>
-              <ToggleBtn on={showRobiSites} onClick={onToggleRobiSites} label="Sites" emoji="📡"
-                activeColor={{ border: '#f59e0b', bg: '#fffbeb', text: '#92400e' }} />
-              {showRobiSites && (
-                <SubFilters>
-                  <SubLabel>Backhaul Type</SubLabel>
-                  <CheckItem checked={robiTxFilter.has('MW')}    onClick={() => onToggleRobiTx('MW')}    label="MW Connected"    dotColor="#f59e0b" />
-                  <CheckItem checked={robiTxFilter.has('Fiber')} onClick={() => onToggleRobiTx('Fiber')} label="Fiber Connected" dotColor="#2563eb" />
-                  <CheckItem checked={robiTxFilter.has('Both')}  onClick={() => onToggleRobiTx('Both')}  label="MW + Fiber"      dotColor="#8b5cf6" />
-                </SubFilters>
-              )}
-            </div>
-          </div>
-        )}
 
       </div>
     </div>
