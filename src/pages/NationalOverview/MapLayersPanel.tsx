@@ -4,7 +4,6 @@ import type { BLGenFilter }  from '@/components/map/BanglalinkTowersOverlay'
 import type { BLLineFilter }  from '@/components/map/BanglalinkLinesOverlay'
 import type { BTCLLineFilter } from '@/components/map/BTCLOverlay'
 import type { BTCLNodeFilter } from '@/components/map/BTCLNodesOverlay'
-import type { FiberOp, FiberOpFilter }              from '@/components/map/FiberNetworkLinesOverlay'
 import type { BTCLNewPointType, BTCLNewTypeFilter } from '@/components/map/BTCLNewPointsOverlay'
 import type { BTCLTenant, BTCLTenantFilter }        from '@/components/map/BTCLKmzLinesOverlay'
 import { BTCL_TENANT_COLORS, BTCL_TENANT_LABELS }  from '@/components/map/BTCLKmzLinesOverlay'
@@ -73,12 +72,6 @@ interface Props {
   onToggleBTCLNode:     (key: 'hop' | 'hh' | 'cp' | 'mh') => void
   showBTCLUnion:        boolean
   onToggleBTCLUnion:    () => void
-  showFiberLines:       boolean
-  onToggleFiberLines:   () => void
-  showFiberPoints:      boolean
-  onToggleFiberPoints:  () => void
-  fiberOpFilter:        FiberOpFilter
-  onToggleFiberOp:       (key: FiberOp) => void
   showBTCLNew:           boolean
   onToggleBTCLNew:       () => void
   btclNewTypeFilter:     BTCLNewTypeFilter
@@ -313,9 +306,6 @@ export default function MapLayersPanel({
   showBTCL, onToggleBTCL, btclLineFilter, onToggleBTCLLine,
   showBTCLNodes, onToggleBTCLNodes, btclNodeFilter, onToggleBTCLNode,
   showBTCLUnion, onToggleBTCLUnion,
-  showFiberLines, onToggleFiberLines,
-  showFiberPoints, onToggleFiberPoints,
-  fiberOpFilter, onToggleFiberOp,
   showBTCLNew, onToggleBTCLNew, btclNewTypeFilter, onToggleBTCLNewType,
   showBTCLNewLines, onToggleBTCLNewLines, btclTenantFilter, onToggleBTCLTenant,
   showGPSites, onToggleGPSites, gpTxFilter, onToggleGPTx,
@@ -326,7 +316,6 @@ export default function MapLayersPanel({
   const [collapsed,  setCollapsed]  = useState(true)
 
   // Section open/close state — all start collapsed
-  const [secFiberNet, setSecFiberNet] = useState(false)
   const [secBTCLNew,  setSecBTCLNew]  = useState(false)
   const [secGP,       setSecGP]       = useState(false)
   const [secRobi,     setSecRobi]     = useState(false)
@@ -340,16 +329,13 @@ export default function MapLayersPanel({
 
   const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
   const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
-  const fiberActive   = [showFiberLines, showFiberPoints].filter(Boolean).length
   const btclNewActive = [showBTCLNew, showBTCLNewLines].filter(Boolean).length
-  const gpActive      = showGPSites   ? 1 : 0
-  const robiActive    = showRobiSites ? 1 : 0
 
   const activeCount = [
     mapView != null,
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
          showOprLines, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion,
-         showFiberLines, showFiberPoints, showBTCLNew, showBTCLNewLines, showGPSites, showRobiSites]),
+         showBTCLNew, showBTCLNewLines, showGPSites, showRobiSites]),
   ].filter(Boolean).length
 
   // ── Collapsed strip ───────────────────────────────────────────
