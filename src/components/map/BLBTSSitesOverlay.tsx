@@ -31,11 +31,11 @@ export default function BLBTSSitesOverlay({ visible, txFilter }: Props) {
   const [data, setData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible || data) return
+    if (!visible || txFilter.size === 0 || data) return
     fetch('/data/bl-bts-sites.geojson?v=1')
       .then(r => r.json()).then(setData)
       .catch(err => console.warn('BLBTSSitesOverlay: fetch failed', err))
-  }, [visible, data])
+  }, [visible, txFilter, data])
 
   const renderer = useMemo(() => L.canvas({ padding: 0.5 }), [])
 

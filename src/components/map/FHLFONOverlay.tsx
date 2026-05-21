@@ -214,22 +214,22 @@ export default function FHLFONOverlay({ visible, lineFilters, pointFilters }: Pr
   })
 
   useEffect(() => {
-    if (!visible) return
-    fetch('/data/fhlfon-lines.geojson')
+    if (!visible || (lineFilters.size === 0 && pointFilters.size === 0)) return
+    if (!lines) fetch('/data/fhlfon-lines.geojson')
       .then(r => r.json()).then(setLines)
       .catch(err => console.warn('FHLFON lines failed', err))
-    fetch('/data/fhlfon-points-primary.geojson')
+    if (!primary) fetch('/data/fhlfon-points-primary.geojson')
       .then(r => r.json()).then(setPrimary)
       .catch(err => console.warn('FHLFON primary points failed', err))
-  }, [visible])
+  }, [visible, lineFilters, pointFilters, lines, primary])
 
   useEffect(() => {
-    if (!visible || zoom < 11 || detailFetched.current) return
+    if (!visible || zoom < 11 || pointFilters.size === 0 || detailFetched.current) return
     detailFetched.current = true
     fetch('/data/fhlfon-points-detail.geojson')
       .then(r => r.json()).then(setDetail)
       .catch(err => console.warn('FHLFON detail points failed', err))
-  }, [visible, zoom])
+  }, [visible, zoom, pointFilters])
 
   const filteredLines = useMemo(() => {
     if (!lines) return null

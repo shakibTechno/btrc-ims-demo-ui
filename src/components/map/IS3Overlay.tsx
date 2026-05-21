@@ -180,14 +180,14 @@ export default function IS3Overlay({ visible, lineFilters, showNodes }: Props) {
   const [points, setPoints] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible) return
-    fetch('/data/is3-lines.geojson')
+    if (!visible || (lineFilters.size === 0 && !showNodes)) return
+    if (!lines) fetch('/data/is3-lines.geojson')
       .then(r => r.json()).then(setLines)
       .catch(err => console.warn('IS3Overlay lines failed', err))
-    fetch('/data/is3-points.geojson')
+    if (!points) fetch('/data/is3-points.geojson')
       .then(r => r.json()).then(setPoints)
       .catch(err => console.warn('IS3Overlay points failed', err))
-  }, [visible])
+  }, [visible, lineFilters, showNodes, lines, points])
 
   const filteredLines = useMemo(() => {
     if (!lines) return null

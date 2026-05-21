@@ -140,14 +140,14 @@ export default function RailwayFiberOverlay({ visible, coreFilters, showNodes }:
   const [points, setPoints] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible) return
-    fetch('/data/br-fiber-lines.geojson?v=3')
+    if (!visible || (coreFilters.size === 0 && !showNodes)) return
+    if (!lines) fetch('/data/br-fiber-lines.geojson?v=3')
       .then(r => r.json()).then(setLines)
       .catch(err => console.warn('RailwayFiberOverlay lines failed', err))
-    fetch('/data/br-fiber-nodes.geojson?v=3')
+    if (!points) fetch('/data/br-fiber-nodes.geojson?v=3')
       .then(r => r.json()).then(setPoints)
       .catch(err => console.warn('RailwayFiberOverlay nodes failed', err))
-  }, [visible])
+  }, [visible, coreFilters, showNodes, lines, points])
 
   const filteredLines = useMemo(() => {
     if (!lines) return null

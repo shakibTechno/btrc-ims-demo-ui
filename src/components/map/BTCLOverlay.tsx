@@ -197,11 +197,11 @@ export default function BTCLOverlay({ visible, lineFilter }: Props) {
   const [data, setData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible || data) return
+    if (!visible || lineFilter.size === 0 || data) return
     fetch('/data/btcl-lines.geojson?v=2')
       .then(r => r.json()).then(setData)
       .catch(err => console.warn('BTCLOverlay: fetch failed', err))
-  }, [visible, data])
+  }, [visible, lineFilter, data])
 
   const filtered = useMemo(() => {
     if (!data) return null

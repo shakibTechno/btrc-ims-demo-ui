@@ -82,11 +82,11 @@ export default function BTCLNodesOverlay({ visible, nodeFilter }: Props) {
   const [data, setData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible || data) return
+    if (!visible || nodeFilter.size === 0 || data) return
     fetch('/data/btcl-nodes.geojson?v=1')
       .then(r => r.json()).then(setData)
       .catch(err => console.warn('BTCLNodesOverlay: fetch failed', err))
-  }, [visible, data])
+  }, [visible, nodeFilter, data])
 
   // Single canvas renderer shared by all 30k markers
   const renderer = useMemo(() => L.canvas({ padding: 0.5 }), [])

@@ -94,11 +94,11 @@ export default function BTCLKmzLinesOverlay({ visible, tenantFilter }: Props) {
   const [data, setData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible || data) return
+    if (!visible || tenantFilter.size === 0 || data) return
     fetch('/data/fiber-lines.geojson?v=2')
       .then(r => r.json()).then(setData)
       .catch(err => console.warn('BTCLKmzLinesOverlay: fetch failed', err))
-  }, [visible, data])
+  }, [visible, tenantFilter, data])
 
   const filtered = useMemo(() => {
     if (!data) return null

@@ -28,11 +28,11 @@ export default function BTCLNewPointsOverlay({ visible, typeFilter }: Props) {
   const [data, setData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible || data) return
+    if (!visible || typeFilter.size === 0 || data) return
     fetch('/data/btcl-points-new.geojson?v=1')
       .then(r => r.json()).then(setData)
       .catch(err => console.warn('BTCLNewPointsOverlay: fetch failed', err))
-  }, [visible, data])
+  }, [visible, typeFilter, data])
 
   const renderer = useMemo(() => L.canvas({ padding: 0.5 }), [])
 

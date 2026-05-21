@@ -105,11 +105,11 @@ export default function OperatorLinesOverlay({ visible, opFilters }: Props) {
   const [data, setData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible) return
+    if (!visible || opFilters.size === 0 || data) return
     fetch('/data/opr-lines.geojson?v=1')
       .then(r => r.json()).then(setData)
       .catch(err => console.warn('OperatorLinesOverlay fetch failed', err))
-  }, [visible])
+  }, [visible, opFilters, data])
 
   const filtered = useMemo(() => {
     if (!data) return null

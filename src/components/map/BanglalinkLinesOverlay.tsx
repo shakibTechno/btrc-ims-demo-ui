@@ -195,11 +195,11 @@ export default function BanglalinkLinesOverlay({ visible, lineFilter }: Props) {
   const [data, setData] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible || data) return
+    if (!visible || lineFilter.size === 0 || data) return
     fetch('/data/bl-lines.geojson?v=1')
       .then(r => r.json()).then(setData)
       .catch(err => console.warn('BanglalinkLinesOverlay: fetch failed', err))
-  }, [visible, data])
+  }, [visible, lineFilter, data])
 
   const filtered = useMemo(() => {
     if (!data) return null

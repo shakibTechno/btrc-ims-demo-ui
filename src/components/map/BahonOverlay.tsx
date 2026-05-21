@@ -192,14 +192,14 @@ export default function BahonOverlay({ visible, lineFilters, showNodes }: Props)
   const [points, setPoints] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible) return
-    fetch('/data/bahon-lines.geojson')
+    if (!visible || lineFilters.size === 0) return
+    if (!lines) fetch('/data/bahon-lines.geojson')
       .then(r => r.json()).then(setLines)
       .catch(err => console.warn('BahonOverlay lines failed', err))
-    fetch('/data/bahon-points.geojson')
+    if (!points) fetch('/data/bahon-points.geojson')
       .then(r => r.json()).then(setPoints)
       .catch(err => console.warn('BahonOverlay points failed', err))
-  }, [visible])
+  }, [visible, lineFilters, lines, points])
 
   const filteredLines = useMemo(() => {
     if (!lines) return null

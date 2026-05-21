@@ -93,12 +93,12 @@ export default function OPGWOverlay({ visible, lineFilters }: Props) {
   const [geo, setGeo] = useState<FeatureCollection | null>(null)
 
   useEffect(() => {
-    if (!visible) return
+    if (!visible || lineFilters.size === 0 || geo) return
     fetch('/data/opgw-lines.geojson')
       .then(r => r.json())
       .then(setGeo)
       .catch(err => console.warn('OPGWOverlay: GeoJSON failed', err))
-  }, [visible])
+  }, [visible, lineFilters, geo])
 
   const filtered = useMemo(() => {
     if (!geo) return null

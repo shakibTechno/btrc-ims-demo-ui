@@ -158,11 +158,11 @@ export default function BanglalinkTowersOverlay({ visible, genFilter }: Props) {
   const zoom = useZoom()
 
   useEffect(() => {
-    if (!visible || data) return
+    if (!visible || genFilter.size === 0 || data) return
     fetch('/data/bl-towers.geojson?v=1')
       .then(r => r.json()).then(setData)
       .catch(err => console.warn('BanglalinkTowersOverlay: fetch failed', err))
-  }, [visible, data])
+  }, [visible, genFilter, data])
 
   const filtered = useMemo(() => {
     if (!data) return null
