@@ -328,13 +328,13 @@ export default function MapLayersPanel({
   // Section open/close state
   const [secFiberNet, setSecFiberNet] = useState(true)
   const [secBTCLNew,  setSecBTCLNew]  = useState(true)
-  const [secGP,       setSecGP]       = useState(true)
-  const [secRobi,     setSecRobi]     = useState(true)
+  const [secGP,       setSecGP]       = useState(false)
+  const [secRobi,     setSecRobi]     = useState(false)
   const [secAdmin,   setSecAdmin]   = useState(true)
   const [secTelecom, setSecTelecom] = useState(true)
   const [secMobile,  setSecMobile]  = useState(true)
   const [secNTTN,    setSecNTTN]    = useState(true)
-  const [secBL,      setSecBL]      = useState(true)
+  const [secBL,      setSecBL]      = useState(false)
   const [secBTCLOp,  setSecBTCLOp]  = useState(true)
   const [secInfra,   setSecInfra]   = useState(true)
 
