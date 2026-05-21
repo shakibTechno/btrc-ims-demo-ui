@@ -293,14 +293,6 @@ export default function NationalOverview() {
     })
   }, [])
 
-  const toggleFiberOp = useCallback((key: FiberOp) => {
-    setFiberOpFilter(prev => {
-      const next = new Set(prev)
-      if (next.has(key)) next.delete(key); else next.add(key)
-      return next
-    })
-  }, [])
-
   const handleResetLayers = useCallback(() => {
     setMapView(null)
     setVisibleTypes(new Set())
