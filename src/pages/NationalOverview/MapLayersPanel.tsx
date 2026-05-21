@@ -325,18 +325,18 @@ export default function MapLayersPanel({
 }: Props) {
   const [collapsed,  setCollapsed]  = useState(true)
 
-  // Section open/close state
-  const [secFiberNet, setSecFiberNet] = useState(true)
-  const [secBTCLNew,  setSecBTCLNew]  = useState(true)
+  // Section open/close state — all start collapsed
+  const [secFiberNet, setSecFiberNet] = useState(false)
+  const [secBTCLNew,  setSecBTCLNew]  = useState(false)
   const [secGP,       setSecGP]       = useState(false)
   const [secRobi,     setSecRobi]     = useState(false)
-  const [secAdmin,   setSecAdmin]   = useState(true)
-  const [secTelecom, setSecTelecom] = useState(true)
-  const [secMobile,  setSecMobile]  = useState(true)
-  const [secNTTN,    setSecNTTN]    = useState(true)
+  const [secAdmin,   setSecAdmin]   = useState(false)
+  const [secTelecom, setSecTelecom] = useState(false)
+  const [secMobile,  setSecMobile]  = useState(false)
+  const [secNTTN,    setSecNTTN]    = useState(false)
   const [secBL,      setSecBL]      = useState(false)
-  const [secBTCLOp,  setSecBTCLOp]  = useState(true)
-  const [secInfra,   setSecInfra]   = useState(true)
+  const [secBTCLOp,  setSecBTCLOp]  = useState(false)
+  const [secInfra,   setSecInfra]   = useState(false)
 
   const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
   const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
