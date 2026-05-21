@@ -17,7 +17,7 @@ function InvalidateSize() {
 
 // ─── TileModeControl ─────────────────────────────────────────────
 // Two stacked buttons: CARTO and LOCAL. Active = blue, inactive = white.
-type TileMode = 'osm' | 'carto' | 'local'
+type TileMode = 'osm' | 'carto' | 'google' | 'local'
 
 function TileModeControl({ mode, onSet }: { mode: TileMode; onSet: (m: TileMode) => void }) {
   const map = useMap()
@@ -48,8 +48,9 @@ function TileModeControl({ mode, onSet }: { mode: TileMode; onSet: (m: TileMode)
           })
         }
 
-        makeBtn('OSM',   'osm',   'OpenStreetMap')
-        makeBtn('CARTO', 'carto', 'CartoDB light map')
+        makeBtn('OSM',    'osm',    'OpenStreetMap')
+        makeBtn('CARTO',  'carto',  'CartoDB light map')
+        makeBtn('GOOGLE', 'google', 'Google Roadmap')
         return wrap
       },
       onRemove() {},
@@ -115,6 +116,15 @@ export default function BaseMap({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
             subdomains="abcd"
             maxZoom={19}
+          />
+        )}
+        {tileMode === 'google' && (
+          <TileLayer
+            key="google"
+            url="https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+            subdomains={['0', '1', '2', '3']}
+            attribution='&copy; Google Maps'
+            maxZoom={20}
           />
         )}
         {tileMode === 'local' && (
