@@ -324,11 +324,12 @@ export default function MapLayersPanel({
   const [secMobile,  setSecMobile]  = useState(false)
   const [secNTTN,    setSecNTTN]    = useState(false)
   const [secBL,      setSecBL]      = useState(false)
-  const [secBTCLOp,  setSecBTCLOp]  = useState(false)
-  const [secInfra,   setSecInfra]   = useState(false)
+  const [secBTCLOp,   setSecBTCLOp]   = useState(false)
+  const [secInfra,    setSecInfra]    = useState(false)
+  const [secTowerOp,  setSecTowerOp]  = useState(false)
 
-  const telecomActive = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion].filter(Boolean).length
-  const infraActive   = [showRailway, showBRFiber, showOprLines].filter(Boolean).length
+  const telecomActive = [showBLTowers, showBLLines, showBLBTS, showGPSites, showRobiSites].filter(Boolean).length
+  const nttnActive    = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBTCL, showBTCLNodes, showBTCLUnion, showRailway, showBRFiber, showOprLines, showBTCLNew, showBTCLNewLines].filter(Boolean).length
   const btclNewActive = [showBTCLNew, showBTCLNewLines].filter(Boolean).length
 
   const activeCount = [
@@ -459,8 +460,8 @@ export default function MapLayersPanel({
 
         <Divider />
 
-        {/* ── 2. Telecom Operators ── */}
-        <SectionHeader label="Telecom Operators" open={secTelecom} onToggle={() => setSecTelecom(v => !v)}
+        {/* ── 2. Telecom Operator ── */}
+        <SectionHeader label="Telecom Operator" open={secTelecom} onToggle={() => setSecTelecom(v => !v)}
           badge={telecomActive || undefined} />
         {secTelecom && (
           <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 5 }}>
@@ -567,141 +568,235 @@ export default function MapLayersPanel({
               )}
             </div>
 
-            {/* NTTN Operators sub-group */}
+          </div>
+        )}
+
+        <Divider />
+
+        {/* ── 3. NTTN Operator ── */}
+        <SectionHeader label="NTTN Operator" open={secNTTN} onToggle={() => setSecNTTN(v => !v)}
+          badge={nttnActive || undefined} />
+        {secNTTN && (
+          <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+
+            {/* PGCB */}
             <div>
-              <SubGroupHeader label="NTTN Operators" open={secNTTN} onToggle={() => setSecNTTN(v => !v)} />
-              {secNTTN && (
+              <ToggleBtn on={showOPGW} onClick={onToggleOPGW} label="PGCB"
+                activeColor={{ border: '#ca8a04', bg: '#fefce8', text: '#854d0e' }} />
+              {showOPGW && (
+                <SubFilters>
+                  <CheckItem checked={opgwFilters.has('400kV')} onClick={() => onToggleOpgwFilter('400kV')} label="400 kV T/L" dotColor="#dc2626" />
+                  <CheckItem checked={opgwFilters.has('230kV')} onClick={() => onToggleOpgwFilter('230kV')} label="230 kV T/L" dotColor="#16a34a" />
+                  <CheckItem checked={opgwFilters.has('132kV')} onClick={() => onToggleOpgwFilter('132kV')} label="132 kV T/L" dotColor="#f97316" />
+                  <CheckItem checked={opgwFilters.has('UG')}    onClick={() => onToggleOpgwFilter('UG')}    label="UG Cable"   dotColor="#3b82f6" />
+                  <CheckItem checked={opgwFilters.has('other')} onClick={() => onToggleOpgwFilter('other')} label="Others"     dotColor="#eab308" />
+                </SubFilters>
+              )}
+            </div>
+
+            {/* Bahon */}
+            <div>
+              <ToggleBtn on={showBahon} onClick={onToggleBahon} label="Bahon"
+                activeColor={{ border: '#06b6d4', bg: '#ecfeff', text: '#0e7490' }} />
+              {showBahon && (
+                <SubFilters>
+                  <CheckItem checked={bahonFilters.has('OH')}   onClick={() => onToggleBahonFilter('OH')}   label="Overhead"     dotColor="#dc2626" />
+                  <CheckItem checked={bahonFilters.has('UG')}   onClick={() => onToggleBahonFilter('UG')}   label="Underground"  dotColor="#78350f" />
+                  <CheckItem checked={bahonFilters.has('WC')}   onClick={() => onToggleBahonFilter('WC')}   label="Wall Clamped" dotColor="#d97706" />
+                  <CheckItem checked={bahonFilters.has('node')} onClick={() => onToggleBahonFilter('node')} label="Network Node" dotColor="#16a34a" />
+                </SubFilters>
+              )}
+            </div>
+
+            {/* InfoSarkar-3 */}
+            <div>
+              <ToggleBtn on={showIS3} onClick={onToggleIS3} label="InfoSarkar-3"
+                activeColor={{ border: '#7c3aed', bg: '#f5f3ff', text: '#5b21b6' }} />
+              {showIS3 && (
+                <SubFilters>
+                  <SubLabel>Lines</SubLabel>
+                  <CheckItem checked={is3LineFilters.has('48')}   onClick={() => onToggleIS3Line('48')}   label="48 Core"   dotColor="#dc2626" />
+                  <CheckItem checked={is3LineFilters.has('24')}   onClick={() => onToggleIS3Line('24')}   label="24 Core"   dotColor="#0d9488" />
+                  <CheckItem checked={is3LineFilters.has('12')}   onClick={() => onToggleIS3Line('12')}   label="12 Core"   dotColor="#ca8a04" />
+                  <CheckItem checked={is3LineFilters.has('msg')}  onClick={() => onToggleIS3Line('msg')}  label="Messenger" dotColor="#c026d3" />
+                  <CheckItem checked={is3LineFilters.has('ring')} onClick={() => onToggleIS3Line('ring')} label="Ring"      dotColor="#16a34a" />
+                  <CheckItem checked={is3LineFilters.has('cbd')}  onClick={() => onToggleIS3Line('cbd')}  label="CBD"       dotColor="#4f46e5" />
+                  <SubLabel>Nodes</SubLabel>
+                  <CheckItem checked={showIS3Nodes} onClick={onToggleIS3Nodes} label="Network Nodes" dotColor="#7c3aed" />
+                </SubFilters>
+              )}
+            </div>
+
+            {/* Fiber@Home */}
+            <div>
+              <ToggleBtn on={showFHLFON} onClick={onToggleFHLFON} label="Fiber@Home"
+                activeColor={{ border: '#4338ca', bg: '#eef2ff', text: '#3730a3' }} />
+              {showFHLFON && (
+                <SubFilters>
+                  <SubLabel>Lines</SubLabel>
+                  <CheckItem checked={fhlfonLineFilters.has('Aerial')} onClick={() => onToggleFhlfonLine('Aerial')} label="Aerial" dotColor="#4338ca" />
+                  <CheckItem checked={fhlfonLineFilters.has('Burial')} onClick={() => onToggleFhlfonLine('Burial')} label="Burial" dotColor="#fbbf24" />
+                  <SubLabel>Points</SubLabel>
+                  <CheckItem checked={fhlfonPointFilters.has('CO')}  onClick={() => onToggleFhlfonPoint('CO')}  label="CO"  dotColor="#1e1b4b" />
+                  <CheckItem checked={fhlfonPointFilters.has('BTS')} onClick={() => onToggleFhlfonPoint('BTS')} label="BTS" dotColor="#4338ca" />
+                  <CheckItem checked={fhlfonPointFilters.has('FDH')} onClick={() => onToggleFhlfonPoint('FDH')} label="FDH" dotColor="#818cf8" />
+                  <CheckItem checked={fhlfonPointFilters.has('JE')}  onClick={() => onToggleFhlfonPoint('JE')}  label="JE"  dotColor="#6366f1" />
+                  <CheckItem checked={fhlfonPointFilters.has('EP')}  onClick={() => onToggleFhlfonPoint('EP')}  label="EP"  dotColor="#a5b4fc" />
+                  <CheckItem checked={fhlfonPointFilters.has('FAT')} onClick={() => onToggleFhlfonPoint('FAT')} label="FAT" dotColor="#c7d2fe" />
+                </SubFilters>
+              )}
+            </div>
+
+            {/* Summit */}
+            <div>
+              <ToggleBtn on={showSummit} onClick={onToggleSummit} label="Summit" emoji="🔶"
+                activeColor={{ border: '#7c3aed', bg: '#f5f3ff', text: '#4c1d95' }} />
+              {showSummit && (
+                <SubFilters>
+                  <SubLabel>Lines</SubLabel>
+                  <CheckItem checked={summitLineFilters.backbone} onClick={() => onToggleSummitLine('backbone')} label="Backbone (≥96 core)"     dotColor="#7c3aed" />
+                  <CheckItem checked={summitLineFilters.major}    onClick={() => onToggleSummitLine('major')}    label="Major burial (48–95) ⁹⁺" dotColor="#2563eb" />
+                  <CheckItem checked={summitLineFilters.pgcb}     onClick={() => onToggleSummitLine('pgcb')}     label="PGCB Route"               dotColor="#ca8a04" />
+                  <CheckItem checked={summitLineFilters.railway}  onClick={() => onToggleSummitLine('railway')}  label="Railway Route"            dotColor="#dc2626" />
+                  <SubLabel>Points</SubLabel>
+                  <CheckItem checked={showSummitNodes} onClick={onToggleSummitNodes} label="Network Nodes"    dotColor="#7c3aed" />
+                  <CheckItem checked={showSummitBTS}   onClick={onToggleSummitBTS}   label="BTS (zoom ≥ 11)" dotColor="#f59e0b" />
+                </SubFilters>
+              )}
+            </div>
+
+            {/* BTCL-OLD */}
+            <div>
+              <OperatorHeader
+                label="BTCL-OLD" open={secBTCLOp} onToggle={() => setSecBTCLOp(v => !v)}
+                dotColor="#0891b2" active={showBTCL || showBTCLNodes || showBTCLUnion}
+              />
+              {secBTCLOp && (
                 <TreeLine>
-
-                  {/* PGCB */}
                   <div>
-                    <ToggleBtn on={showOPGW} onClick={onToggleOPGW} label="PGCB"
-                      activeColor={{ border: '#ca8a04', bg: '#fefce8', text: '#854d0e' }} />
-                    {showOPGW && (
+                    <ToggleBtn on={showBTCL} onClick={onToggleBTCL} label="Fiber Lines" emoji="🔷"
+                      activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
+                    {showBTCL && (
                       <SubFilters>
-                        <CheckItem checked={opgwFilters.has('400kV')} onClick={() => onToggleOpgwFilter('400kV')} label="400 kV T/L" dotColor="#dc2626" />
-                        <CheckItem checked={opgwFilters.has('230kV')} onClick={() => onToggleOpgwFilter('230kV')} label="230 kV T/L" dotColor="#16a34a" />
-                        <CheckItem checked={opgwFilters.has('132kV')} onClick={() => onToggleOpgwFilter('132kV')} label="132 kV T/L" dotColor="#f97316" />
-                        <CheckItem checked={opgwFilters.has('UG')}    onClick={() => onToggleOpgwFilter('UG')}    label="UG Cable"   dotColor="#3b82f6" />
-                        <CheckItem checked={opgwFilters.has('other')} onClick={() => onToggleOpgwFilter('other')} label="Others"     dotColor="#eab308" />
+                        <SubLabel>Core Count</SubLabel>
+                        <CheckItem checked={btclLineFilter.has('144')}   onClick={() => onToggleBTCLLine('144')}   label="144+ Core"   dotColor="#7c3aed" />
+                        <CheckItem checked={btclLineFilter.has('96')}    onClick={() => onToggleBTCLLine('96')}    label="96 Core"     dotColor="#6d28d9" />
+                        <CheckItem checked={btclLineFilter.has('48')}    onClick={() => onToggleBTCLLine('48')}    label="48 Core"     dotColor="#2563eb" />
+                        <CheckItem checked={btclLineFilter.has('24')}    onClick={() => onToggleBTCLLine('24')}    label="24 Core"     dotColor="#0891b2" />
+                        <CheckItem checked={btclLineFilter.has('other')} onClick={() => onToggleBTCLLine('other')} label="&lt;24 Core" dotColor="#94a3b8" />
                       </SubFilters>
                     )}
                   </div>
-
-                  {/* Bahon */}
                   <div>
-                    <ToggleBtn on={showBahon} onClick={onToggleBahon} label="Bahon"
-                      activeColor={{ border: '#06b6d4', bg: '#ecfeff', text: '#0e7490' }} />
-                    {showBahon && (
+                    <ToggleBtn on={showBTCLNodes} onClick={onToggleBTCLNodes} label="Nodes" emoji="📍"
+                      activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
+                    {showBTCLNodes && (
                       <SubFilters>
-                        <CheckItem checked={bahonFilters.has('OH')}   onClick={() => onToggleBahonFilter('OH')}   label="Overhead"     dotColor="#dc2626" />
-                        <CheckItem checked={bahonFilters.has('UG')}   onClick={() => onToggleBahonFilter('UG')}   label="Underground"  dotColor="#78350f" />
-                        <CheckItem checked={bahonFilters.has('WC')}   onClick={() => onToggleBahonFilter('WC')}   label="Wall Clamped" dotColor="#d97706" />
-                        <CheckItem checked={bahonFilters.has('node')} onClick={() => onToggleBahonFilter('node')} label="Network Node" dotColor="#16a34a" />
+                        <SubLabel>Point Type</SubLabel>
+                        <CheckItem checked={btclNodeFilter.has('hop')} onClick={() => onToggleBTCLNode('hop')} label="HOP"           dotColor="#0891b2" />
+                        <CheckItem checked={btclNodeFilter.has('hh')}  onClick={() => onToggleBTCLNode('hh')}  label="Handhole (HH)" dotColor="#d97706" />
+                        <CheckItem checked={btclNodeFilter.has('cp')}  onClick={() => onToggleBTCLNode('cp')}  label="Connection Pt" dotColor="#16a34a" />
+                        <CheckItem checked={btclNodeFilter.has('mh')}  onClick={() => onToggleBTCLNode('mh')}  label="Manhole (MH)"  dotColor="#dc2626" />
                       </SubFilters>
                     )}
                   </div>
-
-                  {/* InfoSarkar-3 */}
                   <div>
-                    <ToggleBtn on={showIS3} onClick={onToggleIS3} label="InfoSarkar-3"
-                      activeColor={{ border: '#7c3aed', bg: '#f5f3ff', text: '#5b21b6' }} />
-                    {showIS3 && (
-                      <SubFilters>
-                        <SubLabel>Lines</SubLabel>
-                        <CheckItem checked={is3LineFilters.has('48')}   onClick={() => onToggleIS3Line('48')}   label="48 Core"   dotColor="#dc2626" />
-                        <CheckItem checked={is3LineFilters.has('24')}   onClick={() => onToggleIS3Line('24')}   label="24 Core"   dotColor="#0d9488" />
-                        <CheckItem checked={is3LineFilters.has('12')}   onClick={() => onToggleIS3Line('12')}   label="12 Core"   dotColor="#ca8a04" />
-                        <CheckItem checked={is3LineFilters.has('msg')}  onClick={() => onToggleIS3Line('msg')}  label="Messenger" dotColor="#c026d3" />
-                        <CheckItem checked={is3LineFilters.has('ring')} onClick={() => onToggleIS3Line('ring')} label="Ring"      dotColor="#16a34a" />
-                        <CheckItem checked={is3LineFilters.has('cbd')}  onClick={() => onToggleIS3Line('cbd')}  label="CBD"       dotColor="#4f46e5" />
-                        <SubLabel>Nodes</SubLabel>
-                        <CheckItem checked={showIS3Nodes} onClick={onToggleIS3Nodes} label="Network Nodes" dotColor="#7c3aed" />
-                      </SubFilters>
-                    )}
+                    <ToggleBtn on={showBTCLUnion} onClick={onToggleBTCLUnion} label="Union Projects" emoji="🏘️"
+                      activeColor={{ border: '#0ea5e9', bg: '#f0f9ff', text: '#0369a1' }} />
                   </div>
+                </TreeLine>
+              )}
+            </div>
 
-                  {/* Fiber@Home */}
+            {/* Railway */}
+            <div>
+              <OperatorHeader
+                label="Railway" open={secInfra} onToggle={() => setSecInfra(v => !v)}
+                dotColor="#6d28d9" active={showRailway || showBRFiber || showOprLines}
+              />
+              {secInfra && (
+                <TreeLine>
                   <div>
-                    <ToggleBtn on={showFHLFON} onClick={onToggleFHLFON} label="Fiber@Home"
-                      activeColor={{ border: '#4338ca', bg: '#eef2ff', text: '#3730a3' }} />
-                    {showFHLFON && (
+                    <ToggleBtn on={showRailway} onClick={onToggleRailway} label="Railline" emoji="🚂"
+                      activeColor={{ border: '#6d28d9', bg: '#f5f3ff', text: '#5b21b6' }} />
+                  </div>
+                  <div>
+                    <ToggleBtn on={showBRFiber} onClick={onToggleBRFiber} label="Bangladesh Railway Fiber" emoji="🔌"
+                      activeColor={{ border: '#2563eb', bg: '#eff6ff', text: '#1d4ed8' }} />
+                    {showBRFiber && (
                       <SubFilters>
-                        <SubLabel>Lines</SubLabel>
-                        <CheckItem checked={fhlfonLineFilters.has('Aerial')} onClick={() => onToggleFhlfonLine('Aerial')} label="Aerial" dotColor="#4338ca" />
-                        <CheckItem checked={fhlfonLineFilters.has('Burial')} onClick={() => onToggleFhlfonLine('Burial')} label="Burial" dotColor="#fbbf24" />
+                        <SubLabel>Core Count</SubLabel>
+                        <CheckItem checked={brFiberCoreFilters.has('8')}  onClick={() => onToggleBRFiberCore('8')}  label="8 Core"  dotColor="#94a3b8" />
+                        <CheckItem checked={brFiberCoreFilters.has('16')} onClick={() => onToggleBRFiberCore('16')} label="16 Core" dotColor="#64748b" />
+                        <CheckItem checked={brFiberCoreFilters.has('32')} onClick={() => onToggleBRFiberCore('32')} label="32 Core" dotColor="#0d9488" />
+                        <CheckItem checked={brFiberCoreFilters.has('48')} onClick={() => onToggleBRFiberCore('48')} label="48 Core" dotColor="#2563eb" />
+                        <CheckItem checked={brFiberCoreFilters.has('72')} onClick={() => onToggleBRFiberCore('72')} label="72 Core" dotColor="#ea580c" />
+                        <CheckItem checked={brFiberCoreFilters.has('96')} onClick={() => onToggleBRFiberCore('96')} label="96 Core" dotColor="#7c3aed" />
                         <SubLabel>Points</SubLabel>
-                        <CheckItem checked={fhlfonPointFilters.has('CO')}  onClick={() => onToggleFhlfonPoint('CO')}  label="CO"  dotColor="#1e1b4b" />
-                        <CheckItem checked={fhlfonPointFilters.has('BTS')} onClick={() => onToggleFhlfonPoint('BTS')} label="BTS" dotColor="#4338ca" />
-                        <CheckItem checked={fhlfonPointFilters.has('FDH')} onClick={() => onToggleFhlfonPoint('FDH')} label="FDH" dotColor="#818cf8" />
-                        <CheckItem checked={fhlfonPointFilters.has('JE')}  onClick={() => onToggleFhlfonPoint('JE')}  label="JE"  dotColor="#6366f1" />
-                        <CheckItem checked={fhlfonPointFilters.has('EP')}  onClick={() => onToggleFhlfonPoint('EP')}  label="EP"  dotColor="#a5b4fc" />
-                        <CheckItem checked={fhlfonPointFilters.has('FAT')} onClick={() => onToggleFhlfonPoint('FAT')} label="FAT" dotColor="#c7d2fe" />
+                        <CheckItem checked={showBRFiberNodes} onClick={onToggleBRFiberNodes} label="Station Nodes" dotColor="#b45309" />
                       </SubFilters>
                     )}
                   </div>
-
-                  {/* Summit */}
                   <div>
-                    <ToggleBtn on={showSummit} onClick={onToggleSummit} label="Summit" emoji="🔶"
-                      activeColor={{ border: '#7c3aed', bg: '#f5f3ff', text: '#4c1d95' }} />
-                    {showSummit && (
+                    <ToggleBtn on={showOprLines} onClick={onToggleOprLines} label="Operator Lines" emoji="🏢"
+                      activeColor={{ border: '#10b981', bg: '#f0fdf4', text: '#065f46' }} />
+                    {showOprLines && (
                       <SubFilters>
-                        <SubLabel>Lines</SubLabel>
-                        <CheckItem checked={summitLineFilters.backbone} onClick={() => onToggleSummitLine('backbone')} label="Backbone (≥96 core)"     dotColor="#7c3aed" />
-                        <CheckItem checked={summitLineFilters.major}    onClick={() => onToggleSummitLine('major')}    label="Major burial (48–95) ⁹⁺" dotColor="#2563eb" />
-                        <CheckItem checked={summitLineFilters.pgcb}     onClick={() => onToggleSummitLine('pgcb')}     label="PGCB Route"               dotColor="#ca8a04" />
-                        <CheckItem checked={summitLineFilters.railway}  onClick={() => onToggleSummitLine('railway')}  label="Railway Route"            dotColor="#dc2626" />
-                        <SubLabel>Points</SubLabel>
-                        <CheckItem checked={showSummitNodes} onClick={onToggleSummitNodes} label="Network Nodes"    dotColor="#7c3aed" />
-                        <CheckItem checked={showSummitBTS}   onClick={onToggleSummitBTS}   label="BTS (zoom ≥ 11)" dotColor="#f59e0b" />
+                        <SubLabel>Operators</SubLabel>
+                        <CheckItem checked={oprLineFilters.has('1')} onClick={() => onToggleOprLineFilter('1')} label="Summit"       dotColor="#ef4444" />
+                        <CheckItem checked={oprLineFilters.has('2')} onClick={() => onToggleOprLineFilter('2')} label="Bahon"        dotColor="#3b82f6" />
+                        <CheckItem checked={oprLineFilters.has('3')} onClick={() => onToggleOprLineFilter('3')} label="Fiber@Home"   dotColor="#8b5cf6" />
+                        <CheckItem checked={oprLineFilters.has('4')} onClick={() => onToggleOprLineFilter('4')} label="Banglalink"   dotColor="#f59e0b" />
+                        <CheckItem checked={oprLineFilters.has('5')} onClick={() => onToggleOprLineFilter('5')} label="Robi"         dotColor="#10b981" />
+                        <CheckItem checked={oprLineFilters.has('6')} onClick={() => onToggleOprLineFilter('6')} label="Grameenphone" dotColor="#06b6d4" />
                       </SubFilters>
                     )}
                   </div>
+                </TreeLine>
+              )}
+            </div>
 
-                  {/* BTCL */}
+            {/* BTCL Latest */}
+            <div>
+              <OperatorHeader
+                label="BTCL" open={secBTCLNew} onToggle={() => setSecBTCLNew(v => !v)}
+                dotColor="#0891b2" active={showBTCLNew || showBTCLNewLines}
+              />
+              {secBTCLNew && (
+                <TreeLine>
                   <div>
-                    <OperatorHeader
-                      label="BTCL-OLD" open={secBTCLOp} onToggle={() => setSecBTCLOp(v => !v)}
-                      dotColor="#0891b2" active={showBTCL || showBTCLNodes || showBTCLUnion}
-                    />
-                    {secBTCLOp && (
-                      <TreeLine>
-                        <div>
-                          <ToggleBtn on={showBTCL} onClick={onToggleBTCL} label="Fiber Lines" emoji="🔷"
-                            activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
-                          {showBTCL && (
-                            <SubFilters>
-                              <SubLabel>Core Count</SubLabel>
-                              <CheckItem checked={btclLineFilter.has('144')}   onClick={() => onToggleBTCLLine('144')}   label="144+ Core"   dotColor="#7c3aed" />
-                              <CheckItem checked={btclLineFilter.has('96')}    onClick={() => onToggleBTCLLine('96')}    label="96 Core"     dotColor="#6d28d9" />
-                              <CheckItem checked={btclLineFilter.has('48')}    onClick={() => onToggleBTCLLine('48')}    label="48 Core"     dotColor="#2563eb" />
-                              <CheckItem checked={btclLineFilter.has('24')}    onClick={() => onToggleBTCLLine('24')}    label="24 Core"     dotColor="#0891b2" />
-                              <CheckItem checked={btclLineFilter.has('other')} onClick={() => onToggleBTCLLine('other')} label="&lt;24 Core" dotColor="#94a3b8" />
-                            </SubFilters>
-                          )}
-                        </div>
-                        <div>
-                          <ToggleBtn on={showBTCLNodes} onClick={onToggleBTCLNodes} label="Nodes" emoji="📍"
-                            activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
-                          {showBTCLNodes && (
-                            <SubFilters>
-                              <SubLabel>Point Type</SubLabel>
-                              <CheckItem checked={btclNodeFilter.has('hop')} onClick={() => onToggleBTCLNode('hop')} label="HOP"          dotColor="#0891b2" />
-                              <CheckItem checked={btclNodeFilter.has('hh')}  onClick={() => onToggleBTCLNode('hh')}  label="Handhole (HH)" dotColor="#d97706" />
-                              <CheckItem checked={btclNodeFilter.has('cp')}  onClick={() => onToggleBTCLNode('cp')}  label="Connection Pt" dotColor="#16a34a" />
-                              <CheckItem checked={btclNodeFilter.has('mh')}  onClick={() => onToggleBTCLNode('mh')}  label="Manhole (MH)"  dotColor="#dc2626" />
-                            </SubFilters>
-                          )}
-                        </div>
-                        <div>
-                          <ToggleBtn on={showBTCLUnion} onClick={onToggleBTCLUnion} label="Union Projects" emoji="🏘️"
-                            activeColor={{ border: '#0ea5e9', bg: '#f0f9ff', text: '#0369a1' }} />
-                        </div>
-                      </TreeLine>
+                    <ToggleBtn on={showBTCLNewLines} onClick={onToggleBTCLNewLines} label="Lines (KMZ)" emoji="〰️"
+                      activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
+                    {showBTCLNewLines && (
+                      <SubFilters>
+                        <SubLabel>Tenant</SubLabel>
+                        {(['BTCL', 'GP', 'Robi', 'MOTN', 'BL', 'BSCCL'] as BTCLTenant[]).map(t => (
+                          <CheckItem
+                            key={t}
+                            checked={btclTenantFilter.has(t)}
+                            onClick={() => onToggleBTCLTenant(t)}
+                            label={BTCL_TENANT_LABELS[t]}
+                            dotColor={BTCL_TENANT_COLORS[t]}
+                          />
+                        ))}
+                      </SubFilters>
                     )}
                   </div>
-
+                  <div>
+                    <ToggleBtn on={showBTCLNew} onClick={onToggleBTCLNew} label="Points (Excel 2025)" emoji="📍"
+                      activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
+                    {showBTCLNew && (
+                      <SubFilters>
+                        <SubLabel>Point Type</SubLabel>
+                        <CheckItem checked={btclNewTypeFilter.has('CP')}    onClick={() => onToggleBTCLNewType('CP')}    label="CP (Connection Point)" dotColor="#f97316" />
+                        <CheckItem checked={btclNewTypeFilter.has('HH')}    onClick={() => onToggleBTCLNewType('HH')}    label="HH (Hand Hole)"        dotColor="#06b6d4" />
+                        <CheckItem checked={btclNewTypeFilter.has('HOP')}   onClick={() => onToggleBTCLNewType('HOP')}   label="HOP"                   dotColor="#8b5cf6" />
+                        <CheckItem checked={btclNewTypeFilter.has('POP')}   onClick={() => onToggleBTCLNewType('POP')}   label="POP"                   dotColor="#22c55e" />
+                        <CheckItem checked={btclNewTypeFilter.has('MH')}    onClick={() => onToggleBTCLNewType('MH')}    label="MH (Man Hole)"         dotColor="#ef4444" />
+                        <CheckItem checked={btclNewTypeFilter.has('Other')} onClick={() => onToggleBTCLNewType('Other')} label="Other"                 dotColor="#94a3b8" />
+                      </SubFilters>
+                    )}
+                  </div>
                 </TreeLine>
               )}
             </div>
@@ -711,97 +806,14 @@ export default function MapLayersPanel({
 
         <Divider />
 
-        {/* ── 3. Infrastructure ── */}
-        <SectionHeader label="Railway" open={secInfra} onToggle={() => setSecInfra(v => !v)}
-          badge={infraActive || undefined} />
-        {secInfra && (
-          <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
-
-            <ToggleBtn on={showRailway} onClick={onToggleRailway} label="Railline" emoji="🚂"
-              activeColor={{ border: '#6d28d9', bg: '#f5f3ff', text: '#5b21b6' }} />
-
-            <div>
-              <ToggleBtn on={showBRFiber} onClick={onToggleBRFiber} label="Bangladesh Railway Fiber" emoji="🔌"
-                activeColor={{ border: '#2563eb', bg: '#eff6ff', text: '#1d4ed8' }} />
-              {showBRFiber && (
-                <SubFilters>
-                  <SubLabel>Core Count</SubLabel>
-                  <CheckItem checked={brFiberCoreFilters.has('8')}  onClick={() => onToggleBRFiberCore('8')}  label="8 Core"  dotColor="#94a3b8" />
-                  <CheckItem checked={brFiberCoreFilters.has('16')} onClick={() => onToggleBRFiberCore('16')} label="16 Core" dotColor="#64748b" />
-                  <CheckItem checked={brFiberCoreFilters.has('32')} onClick={() => onToggleBRFiberCore('32')} label="32 Core" dotColor="#0d9488" />
-                  <CheckItem checked={brFiberCoreFilters.has('48')} onClick={() => onToggleBRFiberCore('48')} label="48 Core" dotColor="#2563eb" />
-                  <CheckItem checked={brFiberCoreFilters.has('72')} onClick={() => onToggleBRFiberCore('72')} label="72 Core" dotColor="#ea580c" />
-                  <CheckItem checked={brFiberCoreFilters.has('96')} onClick={() => onToggleBRFiberCore('96')} label="96 Core" dotColor="#7c3aed" />
-                  <SubLabel>Points</SubLabel>
-                  <CheckItem checked={showBRFiberNodes} onClick={onToggleBRFiberNodes} label="Station Nodes" dotColor="#b45309" />
-                </SubFilters>
-              )}
-              <TreeLine>
-                <div>
-                  <ToggleBtn on={showOprLines} onClick={onToggleOprLines} label="Operator Lines" emoji="🏢"
-                    activeColor={{ border: '#10b981', bg: '#f0fdf4', text: '#065f46' }} />
-                  {showOprLines && (
-                    <SubFilters>
-                      <SubLabel>Operators</SubLabel>
-                      <CheckItem checked={oprLineFilters.has('1')} onClick={() => onToggleOprLineFilter('1')} label="Summit"       dotColor="#ef4444" />
-                      <CheckItem checked={oprLineFilters.has('2')} onClick={() => onToggleOprLineFilter('2')} label="Bahon"        dotColor="#3b82f6" />
-                      <CheckItem checked={oprLineFilters.has('3')} onClick={() => onToggleOprLineFilter('3')} label="Fiber@Home"   dotColor="#8b5cf6" />
-                      <CheckItem checked={oprLineFilters.has('4')} onClick={() => onToggleOprLineFilter('4')} label="Banglalink"   dotColor="#f59e0b" />
-                      <CheckItem checked={oprLineFilters.has('5')} onClick={() => onToggleOprLineFilter('5')} label="Robi"         dotColor="#10b981" />
-                      <CheckItem checked={oprLineFilters.has('6')} onClick={() => onToggleOprLineFilter('6')} label="Grameenphone" dotColor="#06b6d4" />
-                    </SubFilters>
-                  )}
-                </div>
-              </TreeLine>
-            </div>
-
+        {/* ── 4. Tower Operator ── */}
+        <SectionHeader label="Tower Operator" open={secTowerOp} onToggle={() => setSecTowerOp(v => !v)} />
+        {secTowerOp && (
+          <div style={{ padding: '10px 8px', color: '#94a3b8', fontSize: 11,
+                        textAlign: 'center', fontStyle: 'italic', lineHeight: 1.6 }}>
+            No data available yet
           </div>
         )}
-
-
-        <Divider />
-
-        {/* ── 5. BTCL (Latest) ── */}
-        <SectionHeader label="BTCL" open={secBTCLNew} onToggle={() => setSecBTCLNew(v => !v)}
-          badge={btclNewActive || undefined} />
-        {secBTCLNew && (
-          <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div>
-              <ToggleBtn on={showBTCLNewLines} onClick={onToggleBTCLNewLines} label="Lines (KMZ)" emoji="〰️"
-                activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
-              {showBTCLNewLines && (
-                <SubFilters>
-                  <SubLabel>Tenant</SubLabel>
-                  {(['BTCL', 'GP', 'Robi', 'MOTN', 'BL', 'BSCCL'] as BTCLTenant[]).map(t => (
-                    <CheckItem
-                      key={t}
-                      checked={btclTenantFilter.has(t)}
-                      onClick={() => onToggleBTCLTenant(t)}
-                      label={BTCL_TENANT_LABELS[t]}
-                      dotColor={BTCL_TENANT_COLORS[t]}
-                    />
-                  ))}
-                </SubFilters>
-              )}
-            </div>
-            <div>
-              <ToggleBtn on={showBTCLNew} onClick={onToggleBTCLNew} label="Points (Excel 2025)" emoji="📍"
-                activeColor={{ border: '#0891b2', bg: '#ecfeff', text: '#0e7490' }} />
-              {showBTCLNew && (
-                <SubFilters>
-                  <SubLabel>Point Type</SubLabel>
-                  <CheckItem checked={btclNewTypeFilter.has('CP')}    onClick={() => onToggleBTCLNewType('CP')}    label="CP (Connection Point)" dotColor="#f97316" />
-                  <CheckItem checked={btclNewTypeFilter.has('HH')}    onClick={() => onToggleBTCLNewType('HH')}    label="HH (Hand Hole)"        dotColor="#06b6d4" />
-                  <CheckItem checked={btclNewTypeFilter.has('HOP')}   onClick={() => onToggleBTCLNewType('HOP')}   label="HOP"                   dotColor="#8b5cf6" />
-                  <CheckItem checked={btclNewTypeFilter.has('POP')}   onClick={() => onToggleBTCLNewType('POP')}   label="POP"                   dotColor="#22c55e" />
-                  <CheckItem checked={btclNewTypeFilter.has('MH')}    onClick={() => onToggleBTCLNewType('MH')}    label="MH (Man Hole)"         dotColor="#ef4444" />
-                  <CheckItem checked={btclNewTypeFilter.has('Other')} onClick={() => onToggleBTCLNewType('Other')} label="Other"                 dotColor="#94a3b8" />
-                </SubFilters>
-              )}
-            </div>
-          </div>
-        )}
-
 
       </div>
     </div>
