@@ -440,7 +440,6 @@ export default function NationalOverview() {
               showBRFiber={showBRFiber} showOprLines={showOprLines}
               showSummit={showSummit}  showBLTowers={showBLTowers}  showBLLines={showBLLines}
               showBTCL={showBTCL}  showBTCLNodes={showBTCLNodes}  showBTCLUnion={showBTCLUnion}
-              showFiberLines={showFiberLines}  showFiberPoints={showFiberPoints}
               showBTCLNew={showBTCLNew}
               showGPSites={showGPSites}
               showRobiSites={showRobiSites}
@@ -487,9 +486,6 @@ export default function NationalOverview() {
               showBTCLNodes={showBTCLNodes}        onToggleBTCLNodes={() => setShowBTCLNodes(v => !v)}
               btclNodeFilter={btclNodeFilter}      onToggleBTCLNode={toggleBTCLNode}
               showBTCLUnion={showBTCLUnion}        onToggleBTCLUnion={() => setShowBTCLUnion(v => !v)}
-              showFiberLines={showFiberLines}      onToggleFiberLines={() => setShowFiberLines(v => !v)}
-              showFiberPoints={showFiberPoints}    onToggleFiberPoints={() => setShowFiberPoints(v => !v)}
-              fiberOpFilter={fiberOpFilter}        onToggleFiberOp={toggleFiberOp}
               showBTCLNew={showBTCLNew}            onToggleBTCLNew={() => setShowBTCLNew(v => !v)}
               showBTCLNewLines={showBTCLNewLines}  onToggleBTCLNewLines={() => setShowBTCLNewLines(v => !v)}
               btclTenantFilter={btclTenantFilter}  onToggleBTCLTenant={toggleBTCLTenant}
