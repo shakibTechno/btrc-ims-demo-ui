@@ -330,7 +330,7 @@ export default function MapLayersPanel({
 
   const telecomActive = [showBLTowers, showBLLines, showBLBTS, showGPSites, showRobiSites].filter(Boolean).length
   const nttnActive    = [showOPGW, showBahon, showIS3, showFHLFON, showSummit, showBTCL, showBTCLNodes, showBTCLUnion, showRailway, showBRFiber, showOprLines, showBTCLNew, showBTCLNewLines].filter(Boolean).length
-  const btclNewActive = [showBTCLNew, showBTCLNewLines].filter(Boolean).length
+
 
   const activeCount = [
     mapView != null,
