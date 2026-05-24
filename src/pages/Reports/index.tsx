@@ -20,6 +20,21 @@ const REPORTS: ReportCard[] = [
       </svg>
     ),
   },
+  {
+    title:       'BTS Report',
+    description: 'View BTS sites within a Division, District, or Upazila for Grameenphone, Robi, Banglalink, and Summit.',
+    path:        '/reports/bts',
+    color:       '#059669',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="2" x2="12" y2="6"/>
+        <line x1="12" y1="18" x2="12" y2="22"/>
+        <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83"/>
+        <path d="M19.07 4.93l-2.83 2.83M7.76 16.24l-2.83 2.83"/>
+        <circle cx="12" cy="12" r="4"/>
+      </svg>
+    ),
+  },
 ]
 
 export default function Reports() {
