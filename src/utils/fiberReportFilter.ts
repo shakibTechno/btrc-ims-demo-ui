@@ -242,36 +242,6 @@ export function filterIS3(
   })
 }
 
-// ─── FHLFON (fhlfon-lines.geojson) ───────────────────────────────
-// No geographic fields — include all when selected
-export function filterFHLFON(
-  features: { properties: Props }[],
-): FiberSegment[] {
-  return features.map((f, i) => {
-    const p  = f.properties
-    const cn = n(p.cn)
-    const cu = n(p.cu)
-    const lt = s(p.lt) || 'Fiber'
-    return {
-      id:          `fhlfon-${i}`,
-      operatorKey: 'fhlfon' as OperatorKey,
-      operator:    'Fiber@Home',
-      lineName:    `${lt} Seg ${i + 1}`,
-      lineType:    lt,
-      fromNode:    `${lt} cable`,
-      toNode:      `${cn ?? '?'}-core`,
-      coreCount:   cn,
-      coresUsed:   cu,
-      coresFree:   cn !== null && cu !== null ? cn - cu : null,
-      routeKm:     n(p.km),
-      division:    '',
-      district:    '',
-      upazila:     '',
-      matchSide:   'all',
-    }
-  })
-}
-
 // ─── Operator Lines (opr-lines.geojson) ──────────────────────────
 // line_name — text search
 export function filterOprLines(

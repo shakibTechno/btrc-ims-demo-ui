@@ -10,15 +10,14 @@ const OP_COLOR: Record<OperatorKey, string> = {
   bahon:      '#7c3aed',
   brfiber:    '#059669',
   is3:        '#d97706',
-  fhlfon:     '#0891b2',
   oprlines:   '#64748b',
 }
 
 const MATCH_STYLE: Record<FiberSegment['matchSide'], { label: string; bg: string; color: string }> = {
-  both:        { label: 'Both',     bg: '#dcfce7', color: '#166534' },
-  origin:      { label: 'Origin',   bg: '#dbeafe', color: '#1e40af' },
-  destination: { label: 'Dest',     bg: '#fef3c7', color: '#92400e' },
-  all:         { label: 'Network',  bg: '#f1f5f9', color: '#475569' },
+  both:        { label: 'Both',   bg: '#dcfce7', color: '#166534' },
+  origin:      { label: 'Origin', bg: '#dbeafe', color: '#1e40af' },
+  destination: { label: 'Dest',  bg: '#fef3c7', color: '#92400e' },
+  all:         { label: 'Both',   bg: '#dcfce7', color: '#166534' },
 }
 
 // ─── Tiny badge ───────────────────────────────────────────────────
@@ -94,7 +93,6 @@ function ResultTable({ rows, origin, destination }: {
   const both  = rows.filter(r => r.matchSide === 'both').length
   const ori   = rows.filter(r => r.matchSide === 'origin').length
   const dest  = rows.filter(r => r.matchSide === 'destination').length
-  const net   = rows.filter(r => r.matchSide === 'all').length
 
   const thStyle = (col: keyof FiberSegment): React.CSSProperties => ({
     padding: '8px 12px',
@@ -136,8 +134,7 @@ function ResultTable({ rows, origin, destination }: {
           { key: 'both'        as const, label: `Both endpoints (${both})` },
           { key: 'origin'      as const, label: `Origin only (${ori})` },
           { key: 'destination' as const, label: `Destination only (${dest})` },
-          { key: 'all'         as const, label: `Network (${net})`, hide: net === 0 },
-        ].filter(p => !('hide' in p && p.hide)).map(p => (
+        ].map(p => (
           <button
             key={p.key + p.label}
             onClick={() => setMatchFilter(p.key)}
@@ -254,7 +251,7 @@ function ResultTable({ rows, origin, destination }: {
 }
 
 // ─── Filter panel ─────────────────────────────────────────────────
-const ALL_OPS: OperatorKey[] = ['btcl', 'banglalink', 'bahon', 'brfiber', 'is3', 'fhlfon', 'oprlines']
+const ALL_OPS: OperatorKey[] = ['btcl', 'banglalink', 'bahon', 'brfiber', 'is3', 'oprlines']
 
 const selectStyle: React.CSSProperties = {
   width: '100%',

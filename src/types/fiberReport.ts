@@ -6,7 +6,6 @@ export type OperatorKey =
   | 'bahon'
   | 'brfiber'
   | 'is3'
-  | 'fhlfon'
   | 'oprlines'
 
 export const OPERATOR_LABELS: Record<OperatorKey, string> = {
@@ -15,7 +14,6 @@ export const OPERATOR_LABELS: Record<OperatorKey, string> = {
   bahon:      'Bahon',
   brfiber:    'BR Fiber',
   is3:        'IS3',
-  fhlfon:     'Fiber@Home',
   oprlines:   'Operator Lines',
 }
 

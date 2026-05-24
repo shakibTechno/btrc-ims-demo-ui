@@ -6,7 +6,6 @@ import {
   filterBahon,
   filterBRFiber,
   filterIS3,
-  filterFHLFON,
   filterOprLines,
 } from '@/utils/fiberReportFilter'
 
@@ -29,7 +28,6 @@ const DATA: Record<OperatorKey, string> = {
   bahon:      '/data/bahon-lines.geojson',
   brfiber:    '/data/br-fiber-lines.geojson',
   is3:        '/data/is3-lines.geojson',
-  fhlfon:     '/data/fhlfon-lines.geojson',
   oprlines:   '/data/opr-lines.geojson',
 }
 
@@ -78,16 +76,13 @@ export function useFiberReport(): UseFiberReportResult {
           case 'is3':
             segments.push(...filterIS3(features, origin, destination))
             break
-          case 'fhlfon':
-            segments.push(...filterFHLFON(features))
-            break
           case 'oprlines':
             segments.push(...filterOprLines(features, origin, destination))
             break
         }
       }
 
-      // Sort: both > origin > destination > all
+      // Sort: both > origin > destination
       const order: Record<FiberSegment['matchSide'], number> = {
         both: 0, origin: 1, destination: 2, all: 3,
       }
