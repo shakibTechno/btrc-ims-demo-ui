@@ -298,7 +298,7 @@ export default function Sidebar() {
     { to: '/',               label: 'National Overview',  icon: <IconMap />,      end: true  },
     { to: '/operators',      label: 'Operator Dashboard', icon: <IconBuilding />, end: false },
     { to: '/sites',          label: 'Site Directory',      icon: <IconList />,     end: false },
-    { to: '/reports/fiber',  label: 'Fiber Line Report',  icon: <IconReport />,   end: false },
+    { to: '/reports',        label: 'Reports',             icon: <IconReport />,   end: false },
     {
       to: '/disaster', label: 'Disaster Response', icon: <IconDisaster />, end: false,
       badge: (

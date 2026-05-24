@@ -1,0 +1,97 @@
+import { useNavigate } from 'react-router-dom'
+
+interface ReportCard {
+  title:       string
+  description: string
+  path:        string
+  icon:        React.ReactNode
+  color:       string
+}
+
+const REPORTS: ReportCard[] = [
+  {
+    title:       'Fiber Line Report',
+    description: 'Find fiber segments connecting two geographic areas across operators. Filter by Division, District, or Upazila.',
+    path:        '/reports/fiber',
+    color:       '#1d4ed8',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 12h18M3 12c0-3.3 2.7-6 6-6M3 12c0 3.3 2.7 6 6 6M21 12c0-3.3-2.7-6-6-6M21 12c0 3.3-2.7 6-6 6M9 6c1 2 1.5 4 1.5 6S10 14 9 18M15 6c-1 2-1.5 4-1.5 6S14 14 15 18"/>
+      </svg>
+    ),
+  },
+]
+
+export default function Reports() {
+  const navigate = useNavigate()
+
+  return (
+    <div style={{ padding: 32, maxWidth: 900, margin: '0 auto' }}>
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', margin: 0 }}>Reports</h1>
+        <p style={{ fontSize: 13, color: '#64748b', margin: '5px 0 0' }}>
+          Select a report type to get started.
+        </p>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+        {REPORTS.map(r => (
+          <button
+            key={r.path}
+            onClick={() => navigate(r.path)}
+            style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+              padding: 24,
+              background: 'white',
+              border: '1px solid #e2e8f0',
+              borderRadius: 12,
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.15s',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = r.color
+              e.currentTarget.style.boxShadow = `0 4px 16px ${r.color}20`
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = '#e2e8f0'
+              e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            <div style={{
+              width: 48, height: 48,
+              borderRadius: 10,
+              background: r.color + '12',
+              color: r.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              marginBottom: 14,
+            }}>
+              {r.icon}
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', marginBottom: 6 }}>
+              {r.title}
+            </div>
+            <div style={{ fontSize: 12.5, color: '#64748b', lineHeight: 1.5 }}>
+              {r.description}
+            </div>
+            <div style={{
+              marginTop: 16,
+              fontSize: 12,
+              fontWeight: 600,
+              color: r.color,
+              display: 'flex', alignItems: 'center', gap: 4,
+            }}>
+              Open report
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}

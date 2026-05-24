@@ -12,7 +12,8 @@ import OperatorDashboard from '@/pages/OperatorDashboard'
 import SiteDirectory     from '@/pages/SiteDirectory'
 import SiteDetail        from '@/pages/SiteDetail'
 import DisasterResponse  from '@/pages/DisasterResponse'
-import FiberLineReport   from '@/pages/Reports/FiberLineReport'
+import Reports          from '@/pages/Reports'
+import FiberLineReport  from '@/pages/Reports/FiberLineReport'
 
 // ─── SimulationRunner ─────────────────────────────────────────────
 function SimulationRunner() {
@@ -26,6 +27,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/operators':           'Operator Dashboard',
   '/sites':               'Site Directory',
   '/disaster':            'Disaster Response Cell',
+  '/reports':             'Reports',
   '/reports/fiber':       'Fiber Line Report',
 }
 
@@ -67,7 +69,8 @@ function Layout() {
               <Route path="/operators"     element={<OperatorDashboard />} />
               <Route path="/sites"         element={<SiteDirectory />}     />
               <Route path="/sites/:siteId" element={<SiteDetail />}        />
-              <Route path="/disaster"        element={<DisasterResponse />}  />
+              <Route path="/disaster"       element={<DisasterResponse />}  />
+              <Route path="/reports"        element={<Reports />}           />
               <Route path="/reports/fiber"  element={<FiberLineReport />}   />
               <Route path="*"              element={<Navigate to="/" replace />} />
             </Routes>
