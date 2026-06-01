@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import type { AdminLevel, OperatorKey, FiberSegment } from '@/types/fiberReport'
 import { OPERATOR_LABELS } from '@/types/fiberReport'
 import { useFiberReport, loadAdminOptions } from '@/hooks/useFiberReport'
+import SimplePieChart from '@/components/charts/SimplePieChart'
 
 // ─── Colour helpers ───────────────────────────────────────────────
 const OP_COLOR: Record<OperatorKey, string> = {
@@ -252,6 +253,28 @@ function ResultTable({ rows, origin, destination }: {
 
 // ─── Filter panel ─────────────────────────────────────────────────
 const ALL_OPS: OperatorKey[] = ['btcl', 'banglalink', 'bahon', 'brfiber', 'is3', 'oprlines']
+
+// ─── Charts row ───────────────────────────────────────────────────
+function ChartsRow({ rows }: { rows: FiberSegment[] }) {
+  if (rows.length === 0) return null
+
+  const byOperator = ALL_OPS
+    .map(k => ({ name: OPERATOR_LABELS[k], value: rows.filter(r => r.operatorKey === k).length, color: OP_COLOR[k] }))
+    .filter(d => d.value > 0)
+
+  const byMatch = [
+    { name: 'Both endpoints', color: '#16a34a', value: rows.filter(r => r.matchSide === 'both').length },
+    { name: 'Origin only',    color: '#1d4ed8', value: rows.filter(r => r.matchSide === 'origin').length },
+    { name: 'Dest only',      color: '#d97706', value: rows.filter(r => r.matchSide === 'destination').length },
+  ].filter(d => d.value > 0)
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, marginBottom: 18 }}>
+      <SimplePieChart title="Segments by Operator" data={byOperator} />
+      {byMatch.length > 1 && <SimplePieChart title="Match Type" data={byMatch} />}
+    </div>
+  )
+}
 
 const selectStyle: React.CSSProperties = {
   width: '100%',
@@ -511,6 +534,7 @@ export default function FiberLineReport() {
               Clear
             </button>
           </div>
+          <ChartsRow rows={results} />
           <ResultTable rows={results} origin={lastOrigin} destination={lastDest} />
         </div>
       )}

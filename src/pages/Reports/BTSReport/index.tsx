@@ -3,6 +3,7 @@ import type { AdminLevel, BTSOperatorKey, BTSSite } from '@/types/btsReport'
 import { BTS_OPERATOR_LABELS, BTS_OPERATOR_COLOR } from '@/types/btsReport'
 import { useBTSReport } from '@/hooks/useBTSReport'
 import { loadAdminOptions } from '@/hooks/useFiberReport'
+import SimplePieChart from '@/components/charts/SimplePieChart'
 
 const ALL_OPS: BTSOperatorKey[] = ['gp', 'robi', 'banglalink', 'summit']
 
@@ -102,6 +103,29 @@ function SummaryBar({ rows }: { rows: BTSSite[] }) {
           {gen.g4   > 0 && card('4G Sites',     gen.g4,  'Banglalink only')}
         </div>
       )}
+    </div>
+  )
+}
+
+// ─── Charts row ───────────────────────────────────────────────────
+function ChartsRow({ rows }: { rows: BTSSite[] }) {
+  if (rows.length === 0) return null
+
+  const byOperator = ALL_OPS
+    .map(k => ({ name: BTS_OPERATOR_LABELS[k], value: rows.filter(r => r.operatorKey === k).length, color: BTS_OPERATOR_COLOR[k] }))
+    .filter(d => d.value > 0)
+
+  const txTypes = [
+    { name: 'Fiber',      color: '#1d4ed8', value: rows.filter(r => r.txType.toLowerCase() === 'fiber').length },
+    { name: 'Microwave',  color: '#f59e0b', value: rows.filter(r => r.txType.toLowerCase() === 'mw' || r.txType.toLowerCase() === 'microwave').length },
+    { name: 'Both',       color: '#059669', value: rows.filter(r => r.txType.toLowerCase() === 'both').length },
+    { name: 'Unknown',    color: '#cbd5e1', value: rows.filter(r => !r.txType).length },
+  ].filter(d => d.value > 0)
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, marginBottom: 18 }}>
+      <SimplePieChart title="Sites by Operator" data={byOperator} />
+      {txTypes.length > 1 && <SimplePieChart title="TX Type Distribution" data={txTypes} />}
     </div>
   )
 }
@@ -476,6 +500,7 @@ export default function BTSReport() {
             </button>
           </div>
           <SummaryBar rows={results} />
+          <ChartsRow rows={results} />
           <ResultTable rows={results} area={lastArea} />
         </div>
       )}
