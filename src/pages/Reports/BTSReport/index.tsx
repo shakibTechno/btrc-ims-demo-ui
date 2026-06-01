@@ -4,6 +4,7 @@ import { BTS_OPERATOR_LABELS, BTS_OPERATOR_COLOR } from '@/types/btsReport'
 import { useBTSReport } from '@/hooks/useBTSReport'
 import { loadAdminOptions } from '@/hooks/useFiberReport'
 import SimplePieChart from '@/components/charts/SimplePieChart'
+import Pagination from '@/components/shared/Pagination'
 
 const ALL_OPS: BTSOperatorKey[] = ['gp', 'robi', 'banglalink', 'summit']
 
@@ -135,13 +136,16 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
   const [sortCol, setSortCol] = useState<keyof BTSSite>('operator')
   const [sortAsc, setSortAsc] = useState(true)
   const [opFilter, setOpFilter] = useState<BTSOperatorKey | 'all'>('all')
+  const [page,     setPage]     = useState(1)
+  const [pageSize, setPageSize] = useState(50)
 
   const toggleSort = (col: keyof BTSSite) => {
     if (sortCol === col) setSortAsc(v => !v)
     else { setSortCol(col); setSortAsc(true) }
+    setPage(1)
   }
 
-  const visible = rows
+  const filtered = rows
     .filter(r => opFilter === 'all' || r.operatorKey === opFilter)
     .sort((a, b) => {
       const av = a[sortCol] ?? ''
@@ -149,6 +153,9 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
       const cmp = String(av).localeCompare(String(bv), undefined, { numeric: true })
       return sortAsc ? cmp : -cmp
     })
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
+  const visible    = filtered.slice((page - 1) * pageSize, page * pageSize)
 
   const presentOps = ALL_OPS.filter(k => rows.some(r => r.operatorKey === k))
 
@@ -204,7 +211,7 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
         ].map(p => (
           <button
             key={String(p.key)}
-            onClick={() => setOpFilter(p.key)}
+            onClick={() => { setOpFilter(p.key); setPage(1) }}
             style={{
               padding: '4px 12px',
               borderRadius: 9999,
@@ -221,7 +228,7 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
         ))}
 
         <button
-          onClick={() => exportCSV(visible, area)}
+          onClick={() => exportCSV(filtered, area)}
           style={{
             padding: '6px 14px',
             borderRadius: 7,
@@ -298,6 +305,14 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
             )}
           </tbody>
         </table>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={filtered.length}
+          onPageChange={setPage}
+          onPageSizeChange={s => { setPageSize(s); setPage(1) }}
+        />
       </div>
     </div>
   )

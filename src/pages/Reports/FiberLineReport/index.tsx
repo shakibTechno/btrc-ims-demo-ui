@@ -3,6 +3,7 @@ import type { AdminLevel, OperatorKey, FiberSegment } from '@/types/fiberReport'
 import { OPERATOR_LABELS } from '@/types/fiberReport'
 import { useFiberReport, loadAdminOptions } from '@/hooks/useFiberReport'
 import SimplePieChart from '@/components/charts/SimplePieChart'
+import Pagination from '@/components/shared/Pagination'
 
 // ─── Colour helpers ───────────────────────────────────────────────
 const OP_COLOR: Record<OperatorKey, string> = {
@@ -73,16 +74,19 @@ function ResultTable({ rows, origin, destination }: {
   origin:      string
   destination: string
 }) {
-  const [sortCol, setSortCol] = useState<keyof FiberSegment>('matchSide')
-  const [sortAsc, setSortAsc] = useState(true)
-  const [matchFilter, setMatchFilter] = useState<FiberSegment['matchSide'] | 'all'>('all')
+  const [sortCol,    setSortCol]    = useState<keyof FiberSegment>('matchSide')
+  const [sortAsc,    setSortAsc]    = useState(true)
+  const [matchFilter,setMatchFilter]= useState<FiberSegment['matchSide'] | 'all'>('all')
+  const [page,       setPage]       = useState(1)
+  const [pageSize,   setPageSize]   = useState(50)
 
   const toggleSort = (col: keyof FiberSegment) => {
     if (sortCol === col) setSortAsc(v => !v)
     else { setSortCol(col); setSortAsc(true) }
+    setPage(1)
   }
 
-  const visible = rows
+  const filtered = rows
     .filter(r => matchFilter === 'all' || r.matchSide === matchFilter)
     .sort((a, b) => {
       const av = a[sortCol] ?? ''
@@ -90,6 +94,9 @@ function ResultTable({ rows, origin, destination }: {
       const cmp = String(av).localeCompare(String(bv), undefined, { numeric: true })
       return sortAsc ? cmp : -cmp
     })
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
+  const visible    = filtered.slice((page - 1) * pageSize, page * pageSize)
 
   const both  = rows.filter(r => r.matchSide === 'both').length
   const ori   = rows.filter(r => r.matchSide === 'origin').length
@@ -138,7 +145,7 @@ function ResultTable({ rows, origin, destination }: {
         ].map(p => (
           <button
             key={p.key + p.label}
-            onClick={() => setMatchFilter(p.key)}
+            onClick={() => { setMatchFilter(p.key); setPage(1) }}
             style={{
               padding: '4px 12px',
               borderRadius: 9999,
@@ -155,7 +162,7 @@ function ResultTable({ rows, origin, destination }: {
         ))}
 
         <button
-          onClick={() => exportCSV(visible, origin, destination)}
+          onClick={() => exportCSV(filtered, origin, destination)}
           style={{
             display: 'flex', alignItems: 'center', gap: 6,
             padding: '6px 14px',
@@ -246,6 +253,14 @@ function ResultTable({ rows, origin, destination }: {
             )}
           </tbody>
         </table>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={filtered.length}
+          onPageChange={setPage}
+          onPageSizeChange={s => { setPageSize(s); setPage(1) }}
+        />
       </div>
     </div>
   )
