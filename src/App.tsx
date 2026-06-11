@@ -15,6 +15,7 @@ import DisasterResponse  from '@/pages/DisasterResponse'
 import Reports          from '@/pages/Reports'
 import FiberLineReport  from '@/pages/Reports/FiberLineReport'
 import BTSReport        from '@/pages/Reports/BTSReport'
+import TowerReport      from '@/pages/Reports/TowerReport'
 
 // ─── SimulationRunner ─────────────────────────────────────────────
 function SimulationRunner() {
@@ -31,6 +32,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/reports':             'Reports',
   '/reports/fiber':       'Fiber Line Report',
   '/reports/bts':         'BTS Report',
+  '/reports/tower':       'Tower Report',
 }
 
 function getPageTitle(pathname: string): string {
@@ -75,6 +77,7 @@ function Layout() {
               <Route path="/reports"        element={<Reports />}           />
               <Route path="/reports/fiber"  element={<FiberLineReport />}   />
               <Route path="/reports/bts"    element={<BTSReport />}         />
+              <Route path="/reports/tower"  element={<TowerReport />}       />
               <Route path="*"              element={<Navigate to="/" replace />} />
             </Routes>
           </ErrorBoundary>

@@ -35,6 +35,20 @@ const REPORTS: ReportCard[] = [
       </svg>
     ),
   },
+  {
+    title:       'Tower Report',
+    description: 'View towers within a Division, District, or Upazila across MNOs (GP, Robi, BL, Teletalk) and TowerCos (edotco, Summit, KBTL, Frontier).',
+    path:        '/reports/tower',
+    color:       '#7c3aed',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 21l4-16 4 16"/>
+        <path d="M6 21h12"/>
+        <path d="M9.5 15h5"/>
+        <path d="M10.5 9.5h3"/>
+      </svg>
+    ),
+  },
 ]
 
 export default function Reports() {
