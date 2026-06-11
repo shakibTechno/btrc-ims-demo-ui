@@ -24,6 +24,7 @@ import BTCLNewPointsOverlay, { type BTCLNewPointType, type BTCLNewTypeFilter } f
 import GPSitesOverlay,        { type GPTxType, type GPTxFilter }               from '@/components/map/GPSitesOverlay'
 import RobiSitesOverlay,     { type RobiTxType, type RobiTxFilter }            from '@/components/map/RobiSitesOverlay'
 import BLBTSSitesOverlay,   { type BLBTSTxType, type BLBTSTxFilter }          from '@/components/map/BLBTSSitesOverlay'
+import TowerOverlay, { type TowerOperatorKey, TOWER_OPERATORS } from '@/components/map/TowerOverlay'
 import RailwayOverlay        from '@/components/map/RailwayOverlay'
 import RailwayFiberOverlay   from '@/components/map/RailwayFiberOverlay'
 import OperatorLinesOverlay  from '@/components/map/OperatorLinesOverlay'
@@ -159,6 +160,15 @@ export default function NationalOverview() {
   const [showIS3Nodes,       setShowIS3Nodes]       = useState(false)
   const [fhlfonLineFilters,  setFhlfonLineFilters]  = useState(() => new Set<string>())
   const [fhlfonPointFilters, setFhlfonPointFilters] = useState(() => new Set<string>())
+  const [towerOps,           setTowerOps]           = useState(() => new Set<TowerOperatorKey>())
+
+  const toggleTowerOp = useCallback((key: TowerOperatorKey) => {
+    setTowerOps(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key); else next.add(key)
+      return next
+    })
+  }, [])
 
 
   const toggleOpgwFilter = useCallback((key: string) => {
@@ -338,6 +348,7 @@ export default function NationalOverview() {
     setBtclNewTypeFilter(new Set<BTCLNewPointType>())
     setFhlfonLineFilters(new Set<string>())
     setFhlfonPointFilters(new Set<string>())
+    setTowerOps(new Set<TowerOperatorKey>())
   }, [])
 
   const mapSites = useMemo(
@@ -423,6 +434,9 @@ export default function NationalOverview() {
             <GPSitesOverlay   visible={showGPSites}   txFilter={gpTxFilter} />
             <RobiSitesOverlay  visible={showRobiSites} txFilter={robiTxFilter} />
             <BLBTSSitesOverlay visible={showBLBTS}     txFilter={blBtsTxFilter} />
+            {(Object.keys(TOWER_OPERATORS) as TowerOperatorKey[]).map(op => (
+              <TowerOverlay key={op} operator={op} visible={towerOps.has(op)} />
+            ))}
             <SiteMarkerLayer sites={mapSites} />
             <MapLegend
               position="bottomleft"
@@ -488,6 +502,7 @@ export default function NationalOverview() {
               robiTxFilter={robiTxFilter}          onToggleRobiTx={toggleRobiTx}
               showBLBTS={showBLBTS}                onToggleBLBTS={() => setShowBLBTS(v => !v)}
               blBtsTxFilter={blBtsTxFilter}        onToggleBLBTSTx={toggleBLBTSTx}
+              towerOps={towerOps}                  onToggleTowerOp={toggleTowerOp}
               onReset={handleResetLayers}
             />
           </div>

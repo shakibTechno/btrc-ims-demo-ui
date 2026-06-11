@@ -10,6 +10,8 @@ import { BTCL_TENANT_COLORS, BTCL_TENANT_LABELS }  from '@/components/map/BTCLKm
 import type { GPTxType, GPTxFilter }               from '@/components/map/GPSitesOverlay'
 import type { RobiTxType, RobiTxFilter }           from '@/components/map/RobiSitesOverlay'
 import type { BLBTSTxType, BLBTSTxFilter }         from '@/components/map/BLBTSSitesOverlay'
+import type { TowerOperatorKey }                   from '@/components/map/TowerOverlay'
+import { TOWER_OPERATORS }                         from '@/components/map/TowerOverlay'
 
 interface Props {
   mapView:        'division' | 'district' | 'upazila' | null
@@ -92,6 +94,8 @@ interface Props {
   onToggleBLBTS:         () => void
   blBtsTxFilter:         BLBTSTxFilter
   onToggleBLBTSTx:       (key: BLBTSTxType) => void
+  towerOps:              Set<TowerOperatorKey>
+  onToggleTowerOp:       (key: TowerOperatorKey) => void
   onReset:               () => void
 }
 
@@ -311,6 +315,7 @@ export default function MapLayersPanel({
   showGPSites, onToggleGPSites, gpTxFilter, onToggleGPTx,
   showRobiSites, onToggleRobiSites, robiTxFilter, onToggleRobiTx,
   showBLBTS, onToggleBLBTS, blBtsTxFilter, onToggleBLBTSTx,
+  towerOps, onToggleTowerOp,
   onReset,
 }: Props) {
   const [collapsed,  setCollapsed]  = useState(true)
@@ -337,7 +342,7 @@ export default function MapLayersPanel({
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
          showOprLines, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion,
          showBTCLNew, showBTCLNewLines, showGPSites, showRobiSites]),
-  ].filter(Boolean).length
+  ].filter(Boolean).length + towerOps.size
 
   // ── Collapsed strip ───────────────────────────────────────────
   if (collapsed) {
@@ -807,11 +812,33 @@ export default function MapLayersPanel({
         <Divider />
 
         {/* ── 4. Tower Operator ── */}
-        <SectionHeader label="Tower Operator" open={secTowerOp} onToggle={() => setSecTowerOp(v => !v)} />
+        <SectionHeader label="Tower Operator" open={secTowerOp} onToggle={() => setSecTowerOp(v => !v)} badge={towerOps.size} />
         {secTowerOp && (
-          <div style={{ padding: '10px 8px', color: '#94a3b8', fontSize: 11,
-                        textAlign: 'center', fontStyle: 'italic', lineHeight: 1.6 }}>
-            No data available yet
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 3, padding: '2px 0' }}>
+            <SubLabel>MNO Towers</SubLabel>
+            {(Object.keys(TOWER_OPERATORS) as TowerOperatorKey[])
+              .filter(k => TOWER_OPERATORS[k].group === 'mno')
+              .map(k => (
+                <CheckItem
+                  key={k}
+                  checked={towerOps.has(k)}
+                  onClick={() => onToggleTowerOp(k)}
+                  label={TOWER_OPERATORS[k].label}
+                  dotColor={TOWER_OPERATORS[k].color}
+                />
+              ))}
+            <SubLabel>TowerCo</SubLabel>
+            {(Object.keys(TOWER_OPERATORS) as TowerOperatorKey[])
+              .filter(k => TOWER_OPERATORS[k].group === 'towerco')
+              .map(k => (
+                <CheckItem
+                  key={k}
+                  checked={towerOps.has(k)}
+                  onClick={() => onToggleTowerOp(k)}
+                  label={TOWER_OPERATORS[k].label}
+                  dotColor={TOWER_OPERATORS[k].color}
+                />
+              ))}
           </div>
         )}
 
