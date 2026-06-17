@@ -1,7 +1,8 @@
 import openpyxl, re, json, os
 
 def dms_to_dd(s):
-    m = re.search(r'(\d+)[^\d\'"NSEW]+(\d+)[^\d\'"NSEW]+([\d.]+)[^\d.NSEW]*([NSEW])', str(s), re.I)
+    # Anchor on ' (minutes) and " (seconds) — both ASCII, survive encoding corruption of °
+    m = re.search(r"(\d{1,3})\D+(\d{1,2})'([\d.]+)\"?\s*([NSEW])", str(s), re.I)
     if not m:
         return None
     d, mi, sec, hem = int(m.group(1)), int(m.group(2)), float(m.group(3)), m.group(4).upper()
@@ -12,7 +13,8 @@ def clean_coord(v):
     if v is None:
         return None
     s = str(v).strip()
-    if re.search(r'\d+[^\d\'"]+\d+[\'"]+\d', s):
+    # Detect DMS by presence of ' (minutes marker) followed by digits and hemisphere
+    if re.search(r"\d+\D+\d+'\d", s) or re.search(r'\d[^\d]*[NSEW]\s*$', s, re.I):
         dd = dms_to_dd(s)
         if dd is not None:
             return dd
