@@ -25,6 +25,7 @@ import GPSitesOverlay,        { type GPTxType, type GPTxFilter }               f
 import RobiSitesOverlay,     { type RobiTxType, type RobiTxFilter }            from '@/components/map/RobiSitesOverlay'
 import BLBTSSitesOverlay,   { type BLBTSTxType, type BLBTSTxFilter }          from '@/components/map/BLBTSSitesOverlay'
 import TowerOverlay, { type TowerOperatorKey, TOWER_OPERATORS } from '@/components/map/TowerOverlay'
+import ISPPOPsOverlay        from '@/components/map/ISPPOPsOverlay'
 import RailwayOverlay        from '@/components/map/RailwayOverlay'
 import RailwayFiberOverlay   from '@/components/map/RailwayFiberOverlay'
 import OperatorLinesOverlay  from '@/components/map/OperatorLinesOverlay'
@@ -150,6 +151,7 @@ export default function NationalOverview() {
   const [btclNewTypeFilter, setBtclNewTypeFilter] = useState<BTCLNewTypeFilter>(
     () => new Set<BTCLNewPointType>()
   )
+  const [showISPPOPs, setShowISPPOPs] = useState(false)
   const [mapView,     setMapView]    = useState<'division' | 'district' | 'upazila' | null>(null)
   const [visibleTypes, setVisibleTypes] = useState<Set<AssetType>>(() => new Set<AssetType>())
 
@@ -349,6 +351,7 @@ export default function NationalOverview() {
     setFhlfonLineFilters(new Set<string>())
     setFhlfonPointFilters(new Set<string>())
     setTowerOps(new Set<TowerOperatorKey>())
+    setShowISPPOPs(false)
   }, [])
 
   const mapSites = useMemo(
@@ -437,6 +440,7 @@ export default function NationalOverview() {
             {(Object.keys(TOWER_OPERATORS) as TowerOperatorKey[]).map(op => (
               <TowerOverlay key={op} operator={op} visible={towerOps.has(op)} />
             ))}
+            <ISPPOPsOverlay visible={showISPPOPs} />
             <SiteMarkerLayer sites={mapSites} />
             <MapLegend
               position="bottomleft"
@@ -450,6 +454,7 @@ export default function NationalOverview() {
               showGPSites={showGPSites}
               showRobiSites={showRobiSites}
               showBLBTS={showBLBTS}
+              showISPPOPs={showISPPOPs}
             />
           </BaseMap>
 
@@ -503,6 +508,7 @@ export default function NationalOverview() {
               showBLBTS={showBLBTS}                onToggleBLBTS={() => setShowBLBTS(v => !v)}
               blBtsTxFilter={blBtsTxFilter}        onToggleBLBTSTx={toggleBLBTSTx}
               towerOps={towerOps}                  onToggleTowerOp={toggleTowerOp}
+              showISPPOPs={showISPPOPs}            onToggleISPPOPs={() => setShowISPPOPs(v => !v)}
               onReset={handleResetLayers}
             />
           </div>

@@ -31,6 +31,7 @@ interface Props {
   showGPSites?:     boolean
   showRobiSites?:   boolean
   showBLBTS?:       boolean
+  showISPPOPs?:     boolean
 }
 
 export default function MapLegend({
@@ -45,6 +46,7 @@ export default function MapLegend({
   showGPSites = false,
   showRobiSites = false,
   showBLBTS = false,
+  showISPPOPs = false,
 }: Props) {
   const map        = useMap()
   const controlRef = useRef<L.Control | null>(null)
@@ -67,7 +69,7 @@ export default function MapLegend({
         // ── Conditionally built sections ──────────────────────
 
         const hasAnySite = showTower || showBTS || showPoP
-        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON || showRailway || showBRFiber || showOprLines || showSummit || showBLTowers || showBLLines || showBLBTS || showBTCL || showBTCLNodes || showBTCLUnion || showFiberLines || showFiberPoints || showBTCLNew || showGPSites || showRobiSites
+        const hasAnything = hasAnySite || showOPGW || showBahon || showIS3 || showFHLFON || showRailway || showBRFiber || showOprLines || showSummit || showBLTowers || showBLLines || showBLBTS || showBTCL || showBTCLNodes || showBTCLUnion || showFiberLines || showFiberPoints || showBTCLNew || showGPSites || showRobiSites || showISPPOPs
 
         // Hide legend entirely when nothing is active
         if (!hasAnything) {
@@ -656,6 +658,13 @@ export default function MapLegend({
           ${gpSection}
           ${fiberNetSection}
           ${btclNewSection}
+          ${showISPPOPs ? `
+          <div style="margin:7px 0 5px;border-top:1px solid #f1f5f9;padding-top:6px;font-weight:700;color:#475569;font-size:9px;text-transform:uppercase;letter-spacing:0.07em;">ISP POPs</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#059669;flex-shrink:0;border:1px solid white;box-shadow:0 0 0 1px #059669;"></span>
+            <span style="color:#334155">Point of Presence</span>
+          </div>
+          ` : ''}
         `
 
         L.DomEvent.disableClickPropagation(div)
@@ -668,7 +677,7 @@ export default function MapLegend({
     controlRef.current = control
 
     return () => { control.remove() }
-  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber, showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion, showFiberLines, showFiberPoints, showBTCLNew, showGPSites, showRobiSites, showBLBTS])
+  }, [map, position, showTower, showBTS, showPoP, showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber, showOprLines, showSummit, showBLTowers, showBLLines, showBTCL, showBTCLNodes, showBTCLUnion, showFiberLines, showFiberPoints, showBTCLNew, showGPSites, showRobiSites, showBLBTS, showISPPOPs])
 
   return null
 }

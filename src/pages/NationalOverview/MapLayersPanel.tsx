@@ -96,6 +96,8 @@ interface Props {
   onToggleBLBTSTx:       (key: BLBTSTxType) => void
   towerOps:              Set<TowerOperatorKey>
   onToggleTowerOp:       (key: TowerOperatorKey) => void
+  showISPPOPs:           boolean
+  onToggleISPPOPs:       () => void
   onReset:               () => void
 }
 
@@ -316,11 +318,13 @@ export default function MapLayersPanel({
   showRobiSites, onToggleRobiSites, robiTxFilter, onToggleRobiTx,
   showBLBTS, onToggleBLBTS, blBtsTxFilter, onToggleBLBTSTx,
   towerOps, onToggleTowerOp,
+  showISPPOPs, onToggleISPPOPs,
   onReset,
 }: Props) {
   const [collapsed,  setCollapsed]  = useState(true)
 
   // Section open/close state — all start collapsed
+  const [secISP,      setSecISP]      = useState(false)
   const [secBTCLNew,  setSecBTCLNew]  = useState(false)
   const [secGP,       setSecGP]       = useState(false)
   const [secRobi,     setSecRobi]     = useState(false)
@@ -341,7 +345,7 @@ export default function MapLayersPanel({
     mapView != null,
     ...([showOPGW, showBahon, showIS3, showFHLFON, showRailway, showBRFiber,
          showOprLines, showSummit, showBLTowers, showBLLines, showBLBTS, showBTCL, showBTCLNodes, showBTCLUnion,
-         showBTCLNew, showBTCLNewLines, showGPSites, showRobiSites]),
+         showBTCLNew, showBTCLNewLines, showGPSites, showRobiSites, showISPPOPs]),
   ].filter(Boolean).length + towerOps.size
 
   // ── Collapsed strip ───────────────────────────────────────────
@@ -839,6 +843,18 @@ export default function MapLayersPanel({
                   dotColor={TOWER_OPERATORS[k].color}
                 />
               ))}
+          </div>
+        )}
+
+        <Divider />
+
+        {/* ── 5. ISP ── */}
+        <SectionHeader label="ISP" open={secISP} onToggle={() => setSecISP(v => !v)}
+          badge={showISPPOPs ? 1 : undefined} />
+        {secISP && (
+          <div style={{ marginBottom: 4 }}>
+            <ToggleBtn on={showISPPOPs} onClick={onToggleISPPOPs} label="ISP POPs" emoji="🌐"
+              activeColor={{ border: '#059669', bg: '#ecfdf5', text: '#065f46' }} />
           </div>
         )}
 
