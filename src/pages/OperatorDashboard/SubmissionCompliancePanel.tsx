@@ -33,7 +33,7 @@ export default function SubmissionCompliancePanel({ operatorId }: Props) {
 
   return (
     <div style={{
-      background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
+      background: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--border)',
       padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     }}>
       <SectionHeader
@@ -58,7 +58,7 @@ export default function SubmissionCompliancePanel({ operatorId }: Props) {
       {/* Stats row */}
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: 8, marginTop: 12, paddingTop: 12, borderTop: '1px solid #f1f5f9',
+        gap: 8, marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border)',
       }}>
         {[
           { label: 'Total Expected', value: history.reduce((s, r) => s + r.totalExpected, 0).toLocaleString() },
@@ -67,7 +67,7 @@ export default function SubmissionCompliancePanel({ operatorId }: Props) {
         ].map(stat => (
           <div key={stat.label} style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 2 }}>{stat.label}</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>{stat.value}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{stat.value}</div>
           </div>
         ))}
       </div>

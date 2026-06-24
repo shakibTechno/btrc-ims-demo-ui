@@ -33,10 +33,10 @@ export default function KPICard({
 
   return (
     <div style={{
-      background: 'white',
+      background: 'var(--card-bg)',
       borderRadius: 4,
-      border: '1px solid #e2e8f0',
-      borderLeft: accentColor ? `2px solid ${accentColor}` : '1px solid #e2e8f0',
+      border: '1px solid var(--border)',
+      borderLeft: accentColor ? `2px solid ${accentColor}` : '1px solid var(--border)',
       padding: isSmall ? '4px 6px' : '6px 7px',
       boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
       display: 'flex', flexDirection: 'column',
@@ -44,7 +44,7 @@ export default function KPICard({
     }}>
       {/* Title row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-        <span style={{ fontSize: 8, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <span style={{ fontSize: 8, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           {title}
         </span>
         {icon && <span style={{ fontSize: isSmall ? 9 : 11 }}>{icon}</span>}
@@ -55,7 +55,7 @@ export default function KPICard({
         <span style={{
           fontSize: isSmall ? 13 : 16,
           fontWeight: 700,
-          color: accentColor ?? '#1e293b',
+          color: accentColor ?? 'var(--text-primary)',
           lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
         }}>

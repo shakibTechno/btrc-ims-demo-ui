@@ -13,7 +13,7 @@ export default function SectionHeader({ title, subtitle, action }: Props) {
     }}>
       <div>
         <div style={{
-          fontSize: 12, fontWeight: 700, color: '#475569',
+          fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)',
           textTransform: 'uppercase', letterSpacing: '0.07em',
         }}>
           {title}

@@ -47,14 +47,14 @@ export default function DataTable<T extends object>({
     return sortDir === 'asc' ? cmp : -cmp
   })
 
-  const cellPad = compact ? '6px 10px' : '9px 12px'
-  const fontSize = compact ? 12 : 13
+  const cellPad = compact ? '8px 12px' : '10px 14px'
+  const fontSize = compact ? 13 : 14
 
   return (
     <div style={{
       overflow: maxHeight ? 'auto' : undefined,
       maxHeight: maxHeight,
-      border: '1px solid #e2e8f0',
+      border: '1px solid var(--border)',
       borderRadius: 8,
     }}>
       <table style={{
@@ -63,21 +63,24 @@ export default function DataTable<T extends object>({
       }}>
         {/* Header */}
         <thead>
-          <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+          <tr style={{ background: 'var(--card-bg-2)', borderBottom: '1px solid var(--border)' }}>
             {columns.map(col => (
               <th
                 key={col.key}
                 onClick={() => col.sortable && handleSort(col.key)}
                 style={{
-                  padding: compact ? '7px 10px' : '9px 12px',
+                  padding: compact ? '9px 12px' : '11px 14px',
                   textAlign: col.align ?? 'left',
-                  fontSize: 11, fontWeight: 700, color: '#64748b',
+                  fontSize: 13, fontWeight: 800, color: 'var(--text-secondary)',
                   textTransform: 'uppercase', letterSpacing: '0.05em',
                   cursor: col.sortable ? 'pointer' : 'default',
                   userSelect: 'none',
                   whiteSpace: 'nowrap',
                   width: col.width,
-                  borderRight: '1px solid #f1f5f9',
+                  borderRight: '1px solid var(--border)',
+                  position: 'sticky', top: 0, zIndex: 2,
+                  background: 'var(--card-bg-2)',
+                  boxShadow: '0 1px 0 var(--border)',
                 }}
               >
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
@@ -110,13 +113,13 @@ export default function DataTable<T extends object>({
                 key={rowKey(row)}
                 onClick={() => onRowClick?.(row)}
                 style={{
-                  borderBottom: idx < sorted.length - 1 ? '1px solid #f1f5f9' : undefined,
+                  borderBottom: idx < sorted.length - 1 ? '1px solid var(--border)' : undefined,
                   cursor: onRowClick ? 'pointer' : 'default',
-                  background: 'white',
+                  background: 'var(--card-bg)',
                   transition: 'background 0.1s',
                 }}
-                onMouseEnter={e => { if (onRowClick) (e.currentTarget as HTMLElement).style.background = '#f8fafc' }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'white' }}
+                onMouseEnter={e => { if (onRowClick) (e.currentTarget as HTMLElement).style.background = 'var(--card-bg-2)' }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'var(--card-bg)' }}
               >
                 {columns.map(col => (
                   <td
@@ -124,11 +127,11 @@ export default function DataTable<T extends object>({
                     style={{
                       padding: cellPad,
                       textAlign: col.align ?? 'left',
-                      color: '#334155',
+                      color: 'var(--text-secondary)',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
-                      borderRight: '1px solid #f8fafc',
+                      borderRight: '1px solid var(--card-bg-2)',
                     }}
                   >
                     {col.render

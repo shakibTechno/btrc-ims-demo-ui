@@ -1,274 +1,119 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { SITES } from '@/data/sites'
-import { OPERATORS } from '@/data/operators'
 import { useAuthStore } from '@/store/authStore'
+import { useThemeStore } from '@/store/themeStore'
 import btrcLogo from '@/assets/Logo/btrcLogo.png'
 
-// ─── Nav item config ──────────────────────────────────────────────
 interface NavItem {
-  to:      string
-  label:   string
-  icon:    React.ReactNode
-  end?:    boolean
-  badge?:  React.ReactNode
+  to:     string
+  label:  string
+  icon:   React.ReactNode
+  end?:   boolean
+  badge?: React.ReactNode
 }
 
-// ─── SVG Icons ───────────────────────────────────────────────────
-function IconMap() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
-      <line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/>
-    </svg>
-  )
-}
-function IconBuilding() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2"/>
-      <path d="M3 9h18M9 21V9"/>
-    </svg>
-  )
-}
-function IconList() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-      <line x1="8" y1="18" x2="21" y2="18"/>
-      <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
-      <line x1="3" y1="18" x2="3.01" y2="18"/>
-    </svg>
-  )
-}
-function IconReport() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <line x1="16" y1="13" x2="8" y2="13"/>
-      <line x1="16" y1="17" x2="8" y2="17"/>
-      <polyline points="10 9 9 9 8 9"/>
-    </svg>
-  )
-}
-function IconDisaster() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-      <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-    </svg>
-  )
-}
+// ─── Icons ────────────────────────────────────────────────────────
+const I = ({ d, d2, fill }: { d: string; d2?: string; fill?: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill={fill ? 'currentColor' : 'none'}
+       stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d={d} />{d2 && <path d={d2} />}
+  </svg>
+)
 
-function IconHome() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-      <polyline points="9 22 9 12 15 12 15 22"/>
-    </svg>
-  )
-}
-function IconChevronLeft() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="15 18 9 12 15 6"/>
-    </svg>
-  )
-}
-function IconChevronRight() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6"/>
-    </svg>
-  )
-}
+function IconHome()     { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> }
+function IconMap()      { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg> }
+function IconBuilding() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> }
+function IconList()     { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> }
+function IconReport()   { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> }
+function IconDisaster() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> }
+function IconLogout()   { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> }
+void I
 
-// ─── Stats bar ────────────────────────────────────────────────────
-function SidebarStats() {
-  const total    = SITES.length
-  const active   = SITES.filter(s => s.status === 'active').length
-  const down     = SITES.filter(s => s.status === 'down').length
-  const degraded = SITES.filter(s => s.status === 'degraded').length
-
-  return (
-    <div style={{
-      margin: '12px 12px 4px',
-      background: 'rgba(255,255,255,0.04)',
-      borderRadius: 6,
-      padding: '10px 12px',
-      border: '1px solid rgba(255,255,255,0.06)',
-    }}>
-      <div style={{ color: '#475569', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
-        Network Status
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 8px' }}>
-        {[
-          { label: 'Total',    value: total,    color: '#94a3b8' },
-          { label: 'Active',   value: active,   color: '#22c55e' },
-          { label: 'Down',     value: down,     color: '#ef4444' },
-          { label: 'Degraded', value: degraded, color: '#f59e0b' },
-        ].map(({ label, value, color }) => (
-          <div key={label}>
-            <div style={{ color, fontSize: 16, fontWeight: 700, lineHeight: 1 }}>{value}</div>
-            <div style={{ color: '#475569', fontSize: 10, marginTop: 1 }}>{label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// ─── Operator list ────────────────────────────────────────────────
-function SidebarOperators() {
-  return (
-    <div style={{ margin: '4px 12px 0', padding: '10px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 6, border: '1px solid rgba(255,255,255,0.05)' }}>
-      <div style={{ color: '#475569', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
-        Licensed Operators
-      </div>
-      {OPERATORS.map(op => {
-        const siteCount = SITES.filter(s => s.operatorId === op.id).length
-        return (
-          <div key={op.id} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
-            <div style={{
-              width: 6, height: 6, borderRadius: '50%', flexShrink: 0,
-              background: op.color,
-            }} />
-            <div style={{ flex: 1, color: '#64748b', fontSize: 11, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-              {op.shortName}
-            </div>
-            <div style={{ color: '#475569', fontSize: 10, fontWeight: 600, fontFamily: 'monospace' }}>
-              {siteCount}
-            </div>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-// ─── Sidebar user menu ────────────────────────────────────────────
-function SidebarUserMenu({ collapsed }: { collapsed: boolean }) {
+// ─── User menu ────────────────────────────────────────────────────
+function UserMenu({ collapsed }: { collapsed: boolean }) {
   const user   = useAuthStore(s => s.user)
   const logout = useAuthStore(s => s.logout)
+  const isDark = useThemeStore(s => s.theme === 'dark')
   const [open, setOpen] = useState(false)
 
   if (!user) return null
 
-  const roleColor: Record<string, string> = {
-    admin: '#7c3aed', viewer: '#0284c7', operator: '#059669',
-  }
+  const roleColor: Record<string, string> = { admin: '#818cf8', viewer: '#38bdf8', operator: '#34d399' }
   const color = roleColor[user.role] ?? '#64748b'
 
-  if (collapsed) {
-    return (
-      <div style={{ padding: '10px 0', borderTop: '1px solid #1e293b', flexShrink: 0, position: 'relative', display: 'flex', justifyContent: 'center' }}>
-        <button
-          onClick={() => setOpen(v => !v)}
-          title={user.displayName}
-          style={{
-            width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-            background: color,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'white', fontSize: 10, fontWeight: 700,
-            border: 'none', cursor: 'pointer',
-          }}
-        >
-          {user.initials}
-        </button>
-
-        {open && (
-          <>
-            <div style={{ position: 'fixed', inset: 0, zIndex: 99 }} onClick={() => setOpen(false)} />
-            <div style={{
-              position: 'absolute', bottom: 'calc(100% + 6px)', left: 8, right: 8,
-              background: '#1e293b', borderRadius: 8, border: '1px solid #334155',
-              boxShadow: '0 -8px 24px rgba(0,0,0,0.3)', zIndex: 100, overflow: 'hidden',
-            }}>
-              <div style={{ padding: '10px 14px', borderBottom: '1px solid #334155' }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#f1f5f9' }}>{user.displayName}</div>
-                <div style={{
-                  display: 'inline-block', marginTop: 3, padding: '1px 7px', borderRadius: 9999,
-                  background: color + '28', color,
-                  fontSize: 10, fontWeight: 700, textTransform: 'capitalize',
-                }}>
-                  {user.role}
-                </div>
-              </div>
-              <button
-                onClick={() => { setOpen(false); logout() }}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8, width: '100%',
-                  padding: '9px 14px', border: 'none', background: 'none',
-                  cursor: 'pointer', fontSize: 12, color: '#f87171', fontWeight: 600,
-                  transition: 'background 0.1s',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                  <polyline points="16 17 21 12 16 7"/>
-                  <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                Sign Out
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-    )
-  }
+  const hoverBg      = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'
+  const hoverBorder  = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'
+  const activeBg     = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.04)'
+  const nameColor    = isDark ? '#e2e8f0' : '#1e293b'
+  const dropdownBg   = isDark ? 'linear-gradient(135deg, #1a2744 0%, #141e35 100%)' : '#ffffff'
+  const dropdownBdr  = isDark ? 'rgba(99,179,237,0.15)' : '#e2e8f0'
+  const dropdownShad = isDark ? '0 -12px 40px rgba(0,0,0,0.5)' : '0 -8px 24px rgba(0,0,0,0.12)'
+  const dividerColor = isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9'
+  const borderTop    = isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #e2e8f0'
 
   return (
-    <div style={{ padding: '10px 12px', borderTop: '1px solid #1e293b', flexShrink: 0, position: 'relative' }}>
+    <div style={{
+      padding: collapsed ? '10px 6px' : '10px 12px',
+      borderTop: borderTop,
+      flexShrink: 0, position: 'relative',
+    }}>
       <button
         onClick={() => setOpen(v => !v)}
+        title={collapsed ? user.displayName : undefined}
         style={{
-          display: 'flex', alignItems: 'center', gap: 8, width: '100%',
-          padding: '7px 10px', borderRadius: 7, cursor: 'pointer',
-          border: '1px solid rgba(255,255,255,0.07)',
-          background: open ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.03)',
-          transition: 'all 0.12s', outline: 'none',
+          display: 'flex', alignItems: 'center',
+          gap: collapsed ? 0 : 10,
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          width: '100%', padding: collapsed ? '6px' : '8px 10px',
+          borderRadius: 10, cursor: 'pointer',
+          background: open ? activeBg : 'transparent',
+          border: '1px solid transparent',
+          outline: 'none', transition: 'all 0.15s',
         }}
+        onMouseEnter={e => { e.currentTarget.style.background = hoverBg; e.currentTarget.style.borderColor = hoverBorder }}
+        onMouseLeave={e => { e.currentTarget.style.background = open ? activeBg : 'transparent'; e.currentTarget.style.borderColor = 'transparent' }}
       >
         <div style={{
-          width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-          background: color,
+          width: 32, height: 32, borderRadius: 10, flexShrink: 0,
+          background: `linear-gradient(135deg, ${color}cc, ${color}66)`,
+          border: `1px solid ${color}44`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'white', fontSize: 10, fontWeight: 700,
+          color: 'white', fontSize: 11, fontWeight: 800, letterSpacing: '0.03em',
         }}>
           {user.initials}
         </div>
-        <div style={{ flex: 1, textAlign: 'left', overflow: 'hidden' }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#e2e8f0', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {user.displayName}
+        {!collapsed && (
+          <div style={{ flex: 1, textAlign: 'left', overflow: 'hidden' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: nameColor, lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {user.displayName}
+            </div>
+            <div style={{
+              display: 'inline-block', marginTop: 3, fontSize: 9, fontWeight: 700,
+              color, textTransform: 'uppercase', letterSpacing: '0.08em',
+            }}>
+              {user.role}
+            </div>
           </div>
-          <div style={{ fontSize: 9, color: '#475569', textTransform: 'capitalize', marginTop: 1 }}>
-            {user.role}
-          </div>
-        </div>
-        <span style={{ fontSize: 10, color: '#475569' }}>▾</span>
+        )}
       </button>
 
       {open && (
         <>
-          <div
-            style={{ position: 'fixed', inset: 0, zIndex: 99 }}
-            onClick={() => setOpen(false)}
-          />
+          <div style={{ position: 'fixed', inset: 0, zIndex: 99 }} onClick={() => setOpen(false)} />
           <div style={{
-            position: 'absolute', bottom: 'calc(100% + 6px)', left: 12, right: 12,
-            background: '#1e293b', borderRadius: 8, border: '1px solid #334155',
-            boxShadow: '0 -8px 24px rgba(0,0,0,0.3)', zIndex: 100, overflow: 'hidden',
+            position: 'absolute', bottom: 'calc(100% + 8px)',
+            left: collapsed ? -8 : 12, right: collapsed ? -8 : 12,
+            background: dropdownBg,
+            borderRadius: 12, border: `1px solid ${dropdownBdr}`,
+            boxShadow: dropdownShad,
+            zIndex: 100, overflow: 'hidden',
           }}>
-            <div style={{ padding: '10px 14px', borderBottom: '1px solid #334155' }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#f1f5f9' }}>{user.displayName}</div>
+            <div style={{ padding: '12px 14px', borderBottom: `1px solid ${dividerColor}` }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: nameColor }}>{user.displayName}</div>
               <div style={{
-                display: 'inline-block', marginTop: 3, padding: '1px 7px', borderRadius: 9999,
-                background: color + '28', color,
-                fontSize: 10, fontWeight: 700, textTransform: 'capitalize',
+                display: 'inline-block', marginTop: 4, padding: '2px 8px',
+                borderRadius: 20, background: color + '22', color,
+                fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em',
               }}>
                 {user.role}
               </div>
@@ -277,20 +122,14 @@ function SidebarUserMenu({ collapsed }: { collapsed: boolean }) {
               onClick={() => { setOpen(false); logout() }}
               style={{
                 display: 'flex', alignItems: 'center', gap: 8, width: '100%',
-                padding: '9px 14px', border: 'none', background: 'none',
+                padding: '10px 14px', border: 'none', background: 'none',
                 cursor: 'pointer', fontSize: 12, color: '#f87171', fontWeight: 600,
                 transition: 'background 0.1s',
               }}
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.1)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'none')}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                <polyline points="16 17 21 12 16 7"/>
-                <line x1="21" y1="12" x2="9" y2="12"/>
-              </svg>
-              Sign Out
+              <IconLogout /> Sign Out
             </button>
           </div>
         </>
@@ -302,103 +141,145 @@ function SidebarUserMenu({ collapsed }: { collapsed: boolean }) {
 // ─── Main Sidebar ─────────────────────────────────────────────────
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(true)
+  const isDark = useThemeStore(s => s.theme === 'dark')
+
+  // Theme-derived constants (avoids inline ternary clutter)
+  const sidebarBg      = isDark ? 'linear-gradient(180deg, #080d1a 0%, #0b1221 50%, #0a1020 100%)' : '#ffffff'
+  const sidebarBorder  = isDark ? 'rgba(56,189,248,0.07)' : '#e2e8f0'
+  const brandBorder    = isDark ? 'rgba(255,255,255,0.04)' : '#e8edf2'
+  const titleColor     = isDark ? '#f0f6ff' : '#1e293b'
+  const subtitleColor  = isDark ? '#2d4a6e' : '#94a3b8'
+  const navLabelColor  = isDark ? '#1e3352' : '#94a3b8'
+  const navInactive    = isDark ? '#8db8d8' : '#64748b'
+  const navActive      = isDark ? '#e0f0ff' : '#1d4ed8'
+  const navActiveBg    = isDark
+    ? 'linear-gradient(90deg, rgba(0,90,160,0.5) 0%, rgba(0,90,160,0.1) 100%)'
+    : 'linear-gradient(90deg, rgba(59,130,246,0.12) 0%, rgba(59,130,246,0.04) 100%)'
+  const navHoverBg     = isDark ? 'rgba(56,189,248,0.07)' : 'rgba(59,130,246,0.06)'
+  const navHoverColor  = isDark ? '#c4e0f8' : '#1e40af'
+  const btnBg          = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'
+  const btnBorder      = isDark ? 'rgba(255,255,255,0.07)' : '#e2e8f0'
+  const btnColor       = isDark ? '#334155' : '#64748b'
+  const expandBg       = isDark ? 'rgba(56,189,248,0.05)' : 'rgba(59,130,246,0.04)'
+  const expandBorder   = isDark ? 'rgba(56,189,248,0.1)' : '#e2e8f0'
+  const expandColor    = isDark ? '#1e3352' : '#64748b'
 
   const NAV_ITEMS: NavItem[] = [
-    { to: '/',               label: 'Home',               icon: <IconHome />,     end: true  },
-    { to: '/overview',       label: 'National Overview',  icon: <IconMap />,      end: true  },
-    { to: '/operators',      label: 'Operator Dashboard', icon: <IconBuilding />, end: false },
-    { to: '/sites',          label: 'Site Directory',      icon: <IconList />,     end: false },
-    { to: '/reports',        label: 'Reports',             icon: <IconReport />,   end: false },
+    { to: '/',          label: 'Home',               icon: <IconHome />,     end: true  },
+    { to: '/overview',  label: 'National Overview',  icon: <IconMap />,      end: true  },
+    { to: '/operators', label: 'Operator Dashboard', icon: <IconBuilding />, end: false },
+    { to: '/sites',     label: 'Site Directory',     icon: <IconList />,     end: false },
+    { to: '/reports',   label: 'Reports',            icon: <IconReport />,   end: false },
     {
       to: '/disaster', label: 'Disaster Response', icon: <IconDisaster />, end: false,
       badge: (
         <span style={{
-          background: '#ef4444', color: 'white',
-          fontSize: 9, fontWeight: 700,
-          padding: '1px 5px', borderRadius: 9999,
-          whiteSpace: 'nowrap',
+          background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+          color: 'white', fontSize: 8, fontWeight: 800,
+          padding: '2px 6px', borderRadius: 20,
+          letterSpacing: '0.08em',
+          boxShadow: '0 0 8px rgba(239,68,68,0.5)',
         }}>
-          ACTIVE
+          LIVE
         </span>
       ),
     },
   ]
 
-  const W = collapsed ? 56 : 220
+  const W = collapsed ? 64 : 256
 
   return (
     <aside style={{
       width: W, minWidth: W,
-      background: '#0f172a',
+      background: sidebarBg,
       display: 'flex', flexDirection: 'column',
       height: '100%', overflow: 'hidden',
-      borderRight: '1px solid #1e293b',
-      transition: 'width 0.2s ease, min-width 0.2s ease',
+      borderRight: `1px solid ${sidebarBorder}`,
+      transition: 'width 0.22s cubic-bezier(0.4,0,0.2,1), min-width 0.22s cubic-bezier(0.4,0,0.2,1)',
+      position: 'relative',
     }}>
+
+      {/* Subtle vertical glow line on right edge (dark only) */}
+      {isDark && (
+        <div style={{
+          position: 'absolute', top: '10%', right: 0, width: 1, height: '80%',
+          background: 'linear-gradient(180deg, transparent, rgba(56,189,248,0.15), transparent)',
+          pointerEvents: 'none',
+        }} />
+      )}
 
       {/* ── Brand ── */}
       <div style={{
-        padding: collapsed ? '14px 10px' : '14px 16px',
-        borderBottom: '1px solid #1e293b', flexShrink: 0,
+        padding: collapsed ? '16px 10px 14px' : '16px 16px 14px',
+        borderBottom: `1px solid ${brandBorder}`,
+        flexShrink: 0,
         display: 'flex', alignItems: 'center',
         justifyContent: collapsed ? 'center' : 'space-between',
-        gap: collapsed ? 0 : 8,
+        gap: 10,
       }}>
-        {/* Logo + text */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, overflow: 'hidden', minWidth: 0 }}>
-          <img
-            src={btrcLogo}
-            alt="BTRC"
-            style={{
-              width: collapsed ? 32 : 36, height: collapsed ? 32 : 36,
-              objectFit: 'contain', flexShrink: 0,
-              filter: 'brightness(0) invert(1)',
-            }}
-          />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, overflow: 'hidden', minWidth: 0 }}>
+          {/* Logo */}
+          <div style={{
+            width: collapsed ? 40 : 44, height: collapsed ? 40 : 44,
+            borderRadius: 12, flexShrink: 0,
+            background: 'white',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 2,
+            boxShadow: '0 0 0 1px rgba(255,255,255,0.1), 0 4px 16px rgba(0,0,0,0.4)',
+            transition: 'width 0.22s, height 0.22s',
+          }}>
+            <img src={btrcLogo} alt="BTRC" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          </div>
+
           {!collapsed && (
             <div style={{ overflow: 'hidden' }}>
-              <div style={{ color: '#f1f5f9', fontSize: 13, fontWeight: 700, lineHeight: 1.2, whiteSpace: 'nowrap' }}>BTRC IMS</div>
-              <div style={{ color: '#475569', fontSize: 10, lineHeight: 1.4, whiteSpace: 'nowrap' }}>Infrastructure Monitor</div>
+              <div style={{
+                color: titleColor, fontSize: 14, fontWeight: 800, lineHeight: 1.2,
+                whiteSpace: 'nowrap', letterSpacing: '-0.3px',
+              }}>
+                BTRC IMS
+              </div>
+              <div style={{
+                color: subtitleColor, fontSize: 9.5, lineHeight: 1.4, whiteSpace: 'nowrap',
+                fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase',
+              }}>
+                Infrastructure Monitor
+              </div>
             </div>
           )}
         </div>
 
-        {/* Collapse toggle */}
         {!collapsed && (
           <button
             onClick={() => setCollapsed(true)}
-            title="Collapse sidebar"
             style={{
-              flexShrink: 0,
-              width: 24, height: 24,
+              flexShrink: 0, width: 26, height: 26,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 5, cursor: 'pointer',
-              color: '#64748b',
-              transition: 'all 0.12s',
+              background: btnBg,
+              border: `1px solid ${btnBorder}`,
+              borderRadius: 7, cursor: 'pointer', color: btnColor,
+              transition: 'all 0.15s',
             }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.09)'
-              e.currentTarget.style.color = '#94a3b8'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-              e.currentTarget.style.color = '#64748b'
-            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(56,189,248,0.1)'; e.currentTarget.style.color = '#38bdf8'; e.currentTarget.style.borderColor = 'rgba(56,189,248,0.25)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = btnBg; e.currentTarget.style.color = btnColor; e.currentTarget.style.borderColor = btnBorder }}
           >
-            <IconChevronLeft />
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
         )}
       </div>
 
       {/* ── Navigation ── */}
-      <nav style={{ padding: collapsed ? '10px 4px' : '10px 8px', flexShrink: 0 }}>
+      <nav style={{ padding: collapsed ? '12px 8px' : '12px 10px', flexShrink: 0 }}>
         {!collapsed && (
-          <div style={{ color: '#334155', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '0 8px', marginBottom: 4 }}>
-            Dashboards
+          <div style={{
+            fontSize: 9, fontWeight: 700, color: navLabelColor,
+            textTransform: 'uppercase', letterSpacing: '0.14em',
+            padding: '0 6px', marginBottom: 6,
+          }}>
+            Navigation
           </div>
         )}
+
         {NAV_ITEMS.map(({ to, label, icon, end, badge }) => (
           <NavLink
             key={to}
@@ -407,62 +288,64 @@ export default function Sidebar() {
             title={collapsed ? label : undefined}
             style={({ isActive }) => ({
               display: 'flex', alignItems: 'center',
-              gap: collapsed ? 0 : 9,
+              gap: collapsed ? 0 : 10,
               justifyContent: collapsed ? 'center' : 'flex-start',
-              padding: collapsed ? '9px 0' : '8px 10px',
-              borderRadius: 6, marginBottom: 1,
-              fontSize: 12.5, textDecoration: 'none', transition: 'all 0.12s',
-              background: isActive ? '#1e3a5f' : 'transparent',
-              color:      isActive ? '#e2e8f0' : '#64748b',
-              fontWeight: isActive ? 600 : 400,
-              borderLeft: (!collapsed && isActive) ? '2px solid #3b82f6' : '2px solid transparent',
+              padding: collapsed ? '10px 0' : '9px 10px',
+              borderRadius: 10, marginBottom: 2,
+              fontSize: 14, fontWeight: isActive ? 700 : 500,
+              textDecoration: 'none',
+              transition: 'all 0.15s',
+              background: isActive ? navActiveBg : 'transparent',
+              color: isActive ? navActive : navInactive,
+              boxShadow: isActive ? 'inset 3px 0 0 #3b82f6' : 'inset 3px 0 0 transparent',
+              position: 'relative',
             })}
+            onMouseEnter={e => {
+              const el = e.currentTarget
+              if (!el.classList.contains('active')) {
+                el.style.background = navHoverBg
+                el.style.color = navHoverColor
+              }
+            }}
+            onMouseLeave={e => {
+              const el = e.currentTarget
+              if (!el.classList.contains('active')) {
+                el.style.background = 'transparent'
+                el.style.color = navInactive
+              }
+            }}
           >
-            <span style={{ flexShrink: 0, opacity: 0.85 }}>{icon}</span>
-            {!collapsed && <span style={{ flex: 1 }}>{label}</span>}
+            <span style={{ flexShrink: 0 }}>{icon}</span>
+            {!collapsed && <span style={{ flex: 1, whiteSpace: 'nowrap' }}>{label}</span>}
             {!collapsed && badge}
           </NavLink>
         ))}
 
-        {/* Expand button in collapsed mode */}
+        {/* Expand button when collapsed */}
         {collapsed && (
           <button
             onClick={() => setCollapsed(false)}
             title="Expand sidebar"
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: '100%', padding: '9px 0', marginTop: 4,
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: 6, cursor: 'pointer',
-              color: '#475569',
-              transition: 'all 0.12s',
+              width: '100%', padding: '10px 0', marginTop: 6,
+              background: expandBg,
+              border: `1px solid ${expandBorder}`,
+              borderRadius: 10, cursor: 'pointer', color: expandColor,
+              transition: 'all 0.15s',
             }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.07)'
-              e.currentTarget.style.color = '#94a3b8'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
-              e.currentTarget.style.color = '#475569'
-            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(56,189,248,0.1)'; e.currentTarget.style.color = '#38bdf8'; e.currentTarget.style.borderColor = 'rgba(56,189,248,0.25)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = expandBg; e.currentTarget.style.color = expandColor; e.currentTarget.style.borderColor = expandBorder }}
           >
-            <IconChevronRight />
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         )}
       </nav>
 
-      {/* ── Stats + Operators (hidden when collapsed) ── */}
-      {!collapsed && (
-        <div style={{ flex: 1, overflow: 'auto' }}>
-          <SidebarStats />
-          <SidebarOperators />
-        </div>
-      )}
-      {collapsed && <div style={{ flex: 1 }} />}
+      <div style={{ flex: 1 }} />
 
       {/* ── User menu ── */}
-      <SidebarUserMenu collapsed={collapsed} />
+      <UserMenu collapsed={collapsed} />
 
     </aside>
   )

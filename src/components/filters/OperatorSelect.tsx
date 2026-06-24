@@ -4,8 +4,8 @@ import type { OperatorType } from '@/types/operator'
 
 function selectStyle(compact?: boolean): React.CSSProperties {
   return compact
-    ? { height: 20, padding: '0 5px', fontSize: 10, borderRadius: 4, border: '1px solid #e2e8f0', background: 'white', color: '#374151', cursor: 'pointer', outline: 'none', minWidth: 90 }
-    : { height: 32, padding: '0 8px', fontSize: 12, borderRadius: 6, border: '1px solid #e2e8f0', background: 'white', color: '#374151', cursor: 'pointer', outline: 'none', minWidth: 120 }
+    ? { height: 20, padding: '0 5px', fontSize: 10, borderRadius: 4, border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text-primary)', cursor: 'pointer', outline: 'none', minWidth: 90 }
+    : { height: 32, padding: '0 8px', fontSize: 12, borderRadius: 6, border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text-primary)', cursor: 'pointer', outline: 'none', minWidth: 120 }
 }
 
 const TYPE_LABELS: Record<OperatorType, string> = {

@@ -74,16 +74,16 @@ function SummaryBar({ rows }: { rows: BTSSite[] }) {
     g4: rows.filter(r => r.has4G === true).length,
   }
 
-  const card = (label: string, value: number, sub?: string, color = '#1e293b') => (
+  const card = (label: string, value: number, sub?: string, color = 'var(--text-primary)') => (
     <div style={{
-      background: 'white',
-      border: '1px solid #e2e8f0',
+      background: 'var(--card-bg)',
+      border: '1px solid var(--border)',
       borderRadius: 8,
       padding: '12px 16px',
       minWidth: 100,
     }}>
       <div style={{ fontSize: 22, fontWeight: 800, color, lineHeight: 1 }}>{value.toLocaleString()}</div>
-      <div style={{ fontSize: 11, color: '#64748b', marginTop: 3 }}>{label}</div>
+      <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 3 }}>{label}</div>
       {sub && <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 1 }}>{sub}</div>}
     </div>
   )
@@ -174,8 +174,8 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
         cursor: 'pointer',
         userSelect: 'none',
         whiteSpace: 'nowrap',
-        borderBottom: '2px solid #e2e8f0',
-        background: '#f8fafc',
+        borderBottom: '2px solid var(--border)',
+        background: 'var(--card-bg-2)',
       }}
     >
       {label} {sortCol === col ? (sortAsc ? '↑' : '↓') : ''}
@@ -185,8 +185,8 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
   const td: React.CSSProperties = {
     padding: '7px 12px',
     fontSize: 12.5,
-    color: '#1e293b',
-    borderBottom: '1px solid #f1f5f9',
+    color: 'var(--text-primary)',
+    borderBottom: '1px solid var(--border)',
     whiteSpace: 'nowrap',
     maxWidth: 180,
     overflow: 'hidden',
@@ -197,8 +197,8 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
     <div>
       {/* Controls */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ fontSize: 13, color: '#475569', flex: 1 }}>
-          <strong style={{ color: '#1e293b' }}>{rows.length.toLocaleString()}</strong> sites found
+        <div style={{ fontSize: 13, color: 'var(--text-secondary)', flex: 1 }}>
+          <strong style={{ color: 'var(--text-primary)' }}>{rows.length.toLocaleString()}</strong> sites found
         </div>
 
         {/* Operator filter */}
@@ -215,8 +215,8 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
             style={{
               padding: '4px 12px',
               borderRadius: 9999,
-              border: opFilter === p.key ? `2px solid ${p.key !== 'all' ? BTS_OPERATOR_COLOR[p.key] : '#1d4ed8'}` : '1px solid #e2e8f0',
-              background: opFilter === p.key ? (p.key !== 'all' ? BTS_OPERATOR_COLOR[p.key] + '14' : '#eff6ff') : 'white',
+              border: opFilter === p.key ? `2px solid ${p.key !== 'all' ? BTS_OPERATOR_COLOR[p.key] : '#1d4ed8'}` : '1px solid var(--border)',
+              background: opFilter === p.key ? (p.key !== 'all' ? BTS_OPERATOR_COLOR[p.key] + '14' : '#eff6ff') : 'var(--card-bg)',
               color: opFilter === p.key ? (p.key !== 'all' ? BTS_OPERATOR_COLOR[p.key] : '#1d4ed8') : '#64748b',
               fontSize: 12,
               fontWeight: 600,
@@ -245,7 +245,7 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
       </div>
 
       {/* Table */}
-      <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+      <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid var(--border)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
@@ -262,7 +262,7 @@ function ResultTable({ rows, area }: { rows: BTSSite[]; area: string }) {
           </thead>
           <tbody>
             {visible.map((r, idx) => (
-              <tr key={r.id} style={{ background: idx % 2 === 0 ? 'white' : '#fafafa' }}>
+              <tr key={r.id} style={{ background: idx % 2 === 0 ? 'var(--card-bg)' : 'var(--card-bg-2)' }}>
                 <td style={td}>
                   <span style={{
                     display: 'inline-block',
@@ -323,10 +323,10 @@ const selectStyle: React.CSSProperties = {
   width: '100%',
   padding: '8px 12px',
   borderRadius: 7,
-  border: '1px solid #e2e8f0',
-  background: 'white',
+  border: '1px solid var(--border)',
+  background: 'var(--card-bg)',
   fontSize: 13,
-  color: '#1e293b',
+  color: 'var(--text-primary)',
   outline: 'none',
   cursor: 'pointer',
 }
@@ -362,13 +362,13 @@ function FilterPanel({ onGenerate, loading }: {
 
   return (
     <div style={{
-      background: 'white',
+      background: 'var(--card-bg)',
       borderRadius: 10,
-      border: '1px solid #e2e8f0',
+      border: '1px solid var(--border)',
       padding: 20,
       marginBottom: 20,
     }}>
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 16 }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>
         Filter Parameters
       </div>
 
@@ -420,8 +420,8 @@ function FilterPanel({ onGenerate, loading }: {
                 style={{
                   padding: '5px 13px',
                   borderRadius: 6,
-                  border:     active ? `2px solid ${color}` : '1px solid #e2e8f0',
-                  background: active ? color + '14' : '#f8fafc',
+                  border:     active ? `2px solid ${color}` : '1px solid var(--border)',
+                  background: active ? color + '14' : 'var(--card-bg-2)',
                   color:      active ? color        : '#94a3b8',
                   fontSize: 12,
                   fontWeight: 600,
@@ -475,10 +475,10 @@ export default function BTSReport() {
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 1400, margin: '0 auto' }}>
+    <div style={{ padding: 24, maxWidth: 1400, margin: '0 auto', background: 'var(--bg-base)', minHeight: '100%' }}>
       <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a', margin: 0 }}>BTS Report</h1>
-        <p style={{ fontSize: 13, color: '#64748b', margin: '4px 0 0' }}>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>BTS Report</h1>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '4px 0 0' }}>
           View BTS sites within a geographic area across Grameenphone, Robi, Banglalink, and Summit.
         </p>
       </div>
@@ -496,7 +496,7 @@ export default function BTSReport() {
       )}
 
       {loading && (
-        <div style={{ padding: 40, textAlign: 'center', color: '#64748b', fontSize: 13 }}>
+        <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-secondary)', fontSize: 13 }}>
           Loading BTS data…
         </div>
       )}
@@ -504,12 +504,12 @@ export default function BTSReport() {
       {hasGenerated && !loading && (
         <div ref={tableRef}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', margin: 0 }}>
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
               Results — {lastArea}
             </h2>
             <button
               onClick={() => { clear(); setHasGenerated(false) }}
-              style={{ fontSize: 12, color: '#64748b', background: 'none', border: '1px solid #e2e8f0', borderRadius: 6, padding: '3px 10px', cursor: 'pointer' }}
+              style={{ fontSize: 12, color: 'var(--text-secondary)', background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '3px 10px', cursor: 'pointer' }}
             >
               Clear
             </button>

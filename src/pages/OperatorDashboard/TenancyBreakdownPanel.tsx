@@ -56,7 +56,7 @@ export default function TenancyBreakdownPanel({ operatorId }: Props) {
 
   return (
     <div style={{
-      background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
+      background: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--border)',
       padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     }}>
       <SectionHeader
@@ -73,11 +73,11 @@ export default function TenancyBreakdownPanel({ operatorId }: Props) {
         {assetBreakdown.map(([type, count]) => (
           <div key={type} style={{
             display: 'flex', alignItems: 'center', gap: 4,
-            background: '#f8fafc', border: '1px solid #e2e8f0',
+            background: 'var(--card-bg-2)', border: '1px solid var(--border)',
             borderRadius: 6, padding: '4px 10px',
           }}>
-            <span style={{ fontSize: 12, fontWeight: 600, color: '#1e293b' }}>{count}</span>
-            <span style={{ fontSize: 11, color: '#64748b' }}>{formatAssetType(type)}</span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>{count}</span>
+            <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{formatAssetType(type)}</span>
           </div>
         ))}
       </div>
@@ -104,12 +104,12 @@ export default function TenancyBreakdownPanel({ operatorId }: Props) {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                      <span style={{ fontSize: 12, fontWeight: 500, color: '#374151' }}>{op.shortName}</span>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: '#1e293b' }}>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)' }}>{op.shortName}</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
                         {count} tower{count !== 1 ? 's' : ''}
                       </span>
                     </div>
-                    <div style={{ height: 4, background: '#f1f5f9', borderRadius: 2, overflow: 'hidden' }}>
+                    <div style={{ height: 4, background: 'var(--card-bg-2)', borderRadius: 2, overflow: 'hidden' }}>
                       <div style={{ width: `${pct}%`, height: '100%', background: op.color, borderRadius: 2 }} />
                     </div>
                   </div>
@@ -136,10 +136,10 @@ export default function TenancyBreakdownPanel({ operatorId }: Props) {
                 return (
                   <div key={site.id} style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '5px 8px', background: '#f8fafc', borderRadius: 5,
+                    padding: '5px 8px', background: 'var(--card-bg-2)', borderRadius: 5,
                   }}>
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 500, color: '#1e293b',
+                      <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)',
                         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {site.name}
                       </div>

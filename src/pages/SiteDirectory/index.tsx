@@ -8,6 +8,7 @@ import PowerBadge    from '@/components/cards/PowerBadge'
 import EmptyState    from '@/components/shared/EmptyState'
 import { useFilteredSites } from '@/hooks/useFilteredSites'
 import { useFilterStore }   from '@/store/filterStore'
+import { useThemeStore }    from '@/store/themeStore'
 import { OPERATOR_MAP } from '@/data/operators'
 import OperatorLogo     from '@/components/cards/OperatorLogo'
 import { formatTimeAgo, formatAssetType } from '@/utils/formatters'
@@ -22,8 +23,8 @@ const COLUMNS: Column<Site>[] = [
   {
     key: 'id', header: 'Site ID', width: 100, sortable: true,
     render: row => (
-      <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#475569',
-        background: '#f1f5f9', borderRadius: 4, padding: '2px 6px' }}>
+      <span style={{ fontFamily: 'monospace', fontSize: 11, color: 'var(--text-secondary)',
+        background: 'var(--card-bg-2)', borderRadius: 4, padding: '2px 6px' }}>
         {row.id}
       </span>
     ),
@@ -31,14 +32,14 @@ const COLUMNS: Column<Site>[] = [
   {
     key: 'name', header: 'Site Name', sortable: true,
     render: row => (
-      <span style={{ fontWeight: 500, color: '#1e293b' }}>{row.name}</span>
+      <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{row.name}</span>
     ),
   },
   {
     key: 'type', header: 'Type', width: 90, sortable: true,
     render: row => (
-      <span style={{ fontSize: 11, color: '#64748b',
-        background: '#f8fafc', border: '1px solid #e2e8f0',
+      <span style={{ fontSize: 11, color: 'var(--text-secondary)',
+        background: 'var(--card-bg-2)', border: '1px solid var(--border)',
         borderRadius: 4, padding: '2px 7px' }}>
         {formatAssetType(row.type)}
       </span>
@@ -59,11 +60,11 @@ const COLUMNS: Column<Site>[] = [
   },
   {
     key: 'division', header: 'Division', width: 110, sortable: true,
-    render: row => <span style={{ color: '#374151' }}>{row.division}</span>,
+    render: row => <span style={{ color: 'var(--text-primary)' }}>{row.division}</span>,
   },
   {
     key: 'district', header: 'District', width: 120, sortable: true,
-    render: row => <span style={{ color: '#374151' }}>{row.district}</span>,
+    render: row => <span style={{ color: 'var(--text-primary)' }}>{row.district}</span>,
   },
   {
     key: 'status', header: 'Status', width: 100, sortable: true,
@@ -95,6 +96,7 @@ const COLUMNS: Column<Site>[] = [
 
 export default function SiteDirectory() {
   const navigate      = useNavigate()
+  const isDark        = useThemeStore(s => s.theme === 'dark')
   const sites          = useFilteredSites()
   const resetFilters   = useFilterStore(s => s.resetFilters)
   const statusFilter   = useFilterStore(s => s.statusFilter)
@@ -138,10 +140,10 @@ export default function SiteDirectory() {
     <PageWrapper>
       {/* ── Header ─────────────────────────────────────────────── */}
       <div style={{ marginBottom: 12 }}>
-        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#1e293b' }}>
+        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
           Site Directory
         </h2>
-        <p style={{ margin: '3px 0 0', fontSize: 12, color: '#64748b' }}>
+        <p style={{ margin: '3px 0 0', fontSize: 12, color: 'var(--text-secondary)' }}>
           All monitored telecommunications infrastructure sites
         </p>
       </div>
@@ -154,10 +156,10 @@ export default function SiteDirectory() {
         <FilterBar show={{ period: false }} />
 
         {/* Divider */}
-        <div style={{ width: 1, height: 24, background: '#e2e8f0', flexShrink: 0 }} />
+        <div style={{ width: 1, height: 24, background: 'var(--border)', flexShrink: 0 }} />
 
         {/* Status filter label */}
-        <span style={{ fontSize: 11, fontWeight: 600, color: '#64748b', flexShrink: 0 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', flexShrink: 0 }}>
           Status:
         </span>
 
@@ -176,8 +178,8 @@ export default function SiteDirectory() {
               style={{
                 display: 'flex', alignItems: 'center', gap: 5,
                 padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
-                background: isActive ? s.bg : 'white',
-                border: isActive ? `1px solid ${s.border}` : '1px solid #e2e8f0',
+                background: isActive ? s.bg : 'var(--card-bg)',
+                border: isActive ? `1px solid ${s.border}` : '1px solid var(--border)',
                 opacity: isActive ? 1 : 0.5,
                 transition: 'all 0.15s', outline: 'none',
               }}
@@ -202,8 +204,9 @@ export default function SiteDirectory() {
             onClick={() => setStatusFilter(null)}
             style={{
               padding: '4px 8px', borderRadius: 6, cursor: 'pointer',
-              border: '1px solid #fca5a5', background: '#fef2f2',
-              fontSize: 11, fontWeight: 600, color: '#ef4444',
+              border: isDark ? '1px solid rgba(239,68,68,0.3)' : '1px solid #fca5a5',
+              background: isDark ? 'rgba(239,68,68,0.1)' : '#fef2f2',
+              fontSize: 11, fontWeight: 600, color: isDark ? '#f87171' : '#ef4444',
               transition: 'all 0.15s', outline: 'none',
             }}
           >
@@ -223,8 +226,8 @@ export default function SiteDirectory() {
             onChange={e => setSearch(e.target.value)}
             style={{
               height: 32, padding: '0 10px 0 30px', fontSize: 12,
-              borderRadius: 6, border: '1px solid #e2e8f0',
-              background: 'white', color: '#374151', outline: 'none',
+              borderRadius: 6, border: '1px solid var(--border)',
+              background: 'var(--card-bg)', color: 'var(--text-primary)', outline: 'none',
               width: 260,
             }}
           />
@@ -251,9 +254,9 @@ export default function SiteDirectory() {
       <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 8 }}>
         Showing {filtered.length} of {sites.length} sites
         {statusFilter && (
-          <span> — status: <strong style={{ color: '#475569' }}>{statusFilter.join(', ')}</strong></span>
+          <span> — status: <strong style={{ color: 'var(--text-secondary)' }}>{statusFilter.join(', ')}</strong></span>
         )}
-        {search && <span> matching "<strong style={{ color: '#475569' }}>{search}</strong>"</span>}
+        {search && <span> matching "<strong style={{ color: 'var(--text-secondary)' }}>{search}</strong>"</span>}
       </div>
 
       {/* ── Site table / empty state ───────────────────────────── */}
@@ -285,10 +288,10 @@ export default function SiteDirectory() {
             data={filtered}
             rowKey={s => s.id}
             onRowClick={s => navigate(`/sites/${s.id}`)}
-            maxHeight={560}
+            maxHeight={720}
             compact
           />
-          <div style={{ marginTop: 8, fontSize: 11, color: '#94a3b8', textAlign: 'right' }}>
+          <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>
             Click any row to view site detail
           </div>
         </>

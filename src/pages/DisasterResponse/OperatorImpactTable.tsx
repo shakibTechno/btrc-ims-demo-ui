@@ -13,7 +13,7 @@ export default function OperatorImpactTable({ stats }: Props) {
 
   return (
     <div style={{
-      background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
+      background: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--border)',
       padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     }}>
       <SectionHeader
@@ -35,8 +35,8 @@ export default function OperatorImpactTable({ stats }: Props) {
           return (
             <div key={op.operatorId} style={{
               padding: '10px 12px', borderRadius: 7,
-              border: '1px solid #f1f5f9',
-              background: op.affectedSites > 0 ? '#fffbeb' : '#f0fdf4',
+              border: '1px solid var(--border)',
+              background: op.affectedSites > 0 ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.08)',
             }}>
               {/* Operator header */}
               <div style={{
@@ -52,7 +52,7 @@ export default function OperatorImpactTable({ stats }: Props) {
                   }}>
                     {op.operatorId.replace('OP-', '')}
                   </div>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1e293b' }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                     {op.operatorName}
                   </span>
                 </div>
@@ -87,7 +87,7 @@ export default function OperatorImpactTable({ stats }: Props) {
               </div>
 
               {/* Recovery bar */}
-              <div style={{ height: 6, background: '#e2e8f0', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{ height: 6, background: 'var(--card-bg-2)', borderRadius: 3, overflow: 'hidden' }}>
                 <div style={{
                   height: '100%', borderRadius: 3,
                   width: `${pct}%`,

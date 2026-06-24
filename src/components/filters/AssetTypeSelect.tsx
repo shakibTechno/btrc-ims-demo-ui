@@ -9,8 +9,8 @@ const OPTIONS: { value: AssetType; label: string }[] = [
 
 export default function AssetTypeSelect({ compact }: { compact?: boolean }) {
   const style: React.CSSProperties = compact
-    ? { height: 20, padding: '0 5px', fontSize: 10, borderRadius: 4, border: '1px solid #e2e8f0', background: 'white', color: '#374151', cursor: 'pointer', outline: 'none', minWidth: 85 }
-    : { height: 32, padding: '0 8px', fontSize: 12, borderRadius: 6, border: '1px solid #e2e8f0', background: 'white', color: '#374151', cursor: 'pointer', outline: 'none', minWidth: 110 }
+    ? { height: 20, padding: '0 5px', fontSize: 10, borderRadius: 4, border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text-primary)', cursor: 'pointer', outline: 'none', minWidth: 85 }
+    : { height: 32, padding: '0 8px', fontSize: 12, borderRadius: 6, border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text-primary)', cursor: 'pointer', outline: 'none', minWidth: 110 }
   const assetType    = useFilterStore(s => s.assetType)
   const setAssetType = useFilterStore(s => s.setAssetType)
 

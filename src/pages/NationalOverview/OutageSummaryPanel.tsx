@@ -26,7 +26,6 @@ export default function OutageSummaryPanel() {
   const navigate = useNavigate()
 
   const incidents = useMemo(() => {
-    // Ongoing first, then by most-recent start
     return [...OUTAGE_LOG]
       .sort((a, b) => {
         if (!a.resolved && b.resolved) return -1
@@ -38,14 +37,14 @@ export default function OutageSummaryPanel() {
 
   return (
     <div style={{
-      background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
+      background: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--border)',
       padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     }}>
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         marginBottom: 10,
       }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#475569',
+        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)',
           textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           Recent Outages
         </span>
@@ -69,22 +68,22 @@ export default function OutageSummaryPanel() {
               onClick={() => navigate(`/sites/${inc.siteId}`)}
               style={{
                 padding: '7px 8px', borderRadius: 6, cursor: 'pointer',
-                borderLeft: isOngoing ? '3px solid #ef4444' : '3px solid #e2e8f0',
-                background: isOngoing ? '#fef9f9' : 'transparent',
+                borderLeft: isOngoing ? '3px solid #ef4444' : '3px solid var(--border)',
+                background: isOngoing ? 'rgba(239,68,68,0.07)' : 'transparent',
                 transition: 'background 0.15s',
               }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#f8fafc')}
-              onMouseLeave={e => (e.currentTarget.style.background = isOngoing ? '#fef9f9' : 'transparent')}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--card-bg-2)')}
+              onMouseLeave={e => (e.currentTarget.style.background = isOngoing ? 'rgba(239,68,68,0.07)' : 'transparent')}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
                   <span style={{ fontSize: 14, flexShrink: 0 }}>{TYPE_ICON[inc.type]}</span>
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#1e293b',
+                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)',
                       overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {site?.name ?? inc.siteId}
                     </div>
-                    <div style={{ fontSize: 11, color: '#64748b' }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
                       {TYPE_LABEL[inc.type]} · {op?.shortName ?? inc.operatorId}
                     </div>
                   </div>

@@ -41,7 +41,7 @@ export default function FilterBar({ show = {}, direction = 'row', compact }: Pro
       padding: isColumn ? '4px 0' : '8px 0',
     }}>
       {isColumn && (
-        <div style={{ fontSize: 9, fontWeight: 700, color: '#334155', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+        <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
           Filters
         </div>
       )}
@@ -54,7 +54,7 @@ export default function FilterBar({ show = {}, direction = 'row', compact }: Pro
       )}
 
       {showPeriod && !isColumn && (showLocation || showOperator || showAsset) && (
-        <div style={{ width: 1, height: 24, background: '#e2e8f0', flexShrink: 0 }} />
+        <div style={{ width: 1, height: 24, background: 'var(--border)', flexShrink: 0 }} />
       )}
 
       {showLocation && <DistrictSelect compact={compact} />}

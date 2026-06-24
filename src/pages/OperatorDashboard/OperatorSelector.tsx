@@ -31,8 +31,8 @@ export default function OperatorSelector({ selectedId, onChange }: Props) {
             style={{
               display: 'flex', alignItems: 'center', gap: 9,
               padding: '8px 14px', borderRadius: 8, cursor: 'pointer',
-              border: isSelected ? `2px solid ${op.color}` : '1px solid #e2e8f0',
-              background: isSelected ? `${op.color}12` : 'white',
+              border: isSelected ? `2px solid ${op.color}` : '1px solid var(--border)',
+              background: isSelected ? `${op.color}12` : 'var(--card-bg)',
               boxShadow: isSelected ? `0 0 0 3px ${op.color}22` : '0 1px 2px rgba(0,0,0,0.04)',
               transition: 'all 0.15s',
               outline: 'none',
@@ -43,7 +43,7 @@ export default function OperatorSelector({ selectedId, onChange }: Props) {
             <div style={{ textAlign: 'left' }}>
               <div style={{
                 fontSize: 13, fontWeight: isSelected ? 700 : 500,
-                color: isSelected ? op.color : '#1e293b',
+                color: isSelected ? op.color : 'var(--text-primary)',
               }}>
                 {op.shortName}
               </div>

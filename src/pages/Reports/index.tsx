@@ -55,10 +55,10 @@ export default function Reports() {
   const navigate = useNavigate()
 
   return (
-    <div style={{ padding: 32, maxWidth: 900, margin: '0 auto' }}>
+    <div style={{ padding: 32, maxWidth: 900, margin: '0 auto', background: 'var(--bg-base)', minHeight: '100%' }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', margin: 0 }}>Reports</h1>
-        <p style={{ fontSize: 13, color: '#64748b', margin: '5px 0 0' }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Reports</h1>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '5px 0 0' }}>
           Select a report type to get started.
         </p>
       </div>
@@ -71,39 +71,39 @@ export default function Reports() {
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
               padding: 24,
-              background: 'white',
-              border: '1px solid #e2e8f0',
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border)',
               borderRadius: 12,
               cursor: 'pointer',
               textAlign: 'left',
               transition: 'all 0.15s',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
             }}
             onMouseEnter={e => {
               e.currentTarget.style.borderColor = r.color
-              e.currentTarget.style.boxShadow = `0 4px 16px ${r.color}20`
+              e.currentTarget.style.boxShadow = `0 4px 16px ${r.color}30`
               e.currentTarget.style.transform = 'translateY(-2px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.borderColor = '#e2e8f0'
-              e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)'
+              e.currentTarget.style.borderColor = 'var(--border)'
+              e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
             <div style={{
               width: 48, height: 48,
               borderRadius: 10,
-              background: r.color + '12',
+              background: r.color + '18',
               color: r.color,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               marginBottom: 14,
             }}>
               {r.icon}
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', marginBottom: 6 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>
               {r.title}
             </div>
-            <div style={{ fontSize: 12.5, color: '#64748b', lineHeight: 1.5 }}>
+            <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
               {r.description}
             </div>
             <div style={{

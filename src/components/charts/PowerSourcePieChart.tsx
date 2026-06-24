@@ -3,6 +3,7 @@ import {
 } from 'recharts'
 import type { PowerSource } from '@/types/site'
 import { POWER_COLORS } from '@/utils/statusColors'
+import { useThemeStore } from '@/store/themeStore'
 
 interface DataPoint {
   source: PowerSource
@@ -23,13 +24,13 @@ function CustomTooltip({ active, payload }: {
   const p = payload[0]
   return (
     <div style={{
-      background: 'white', border: '1px solid #e2e8f0', borderRadius: 7,
-      padding: '7px 11px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', fontSize: 12,
+      background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: 7,
+      padding: '7px 11px', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', fontSize: 12,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         <span style={{ width: 8, height: 8, borderRadius: '50%', background: p.payload.color, flexShrink: 0 }} />
-        <span style={{ fontWeight: 600, color: '#1e293b' }}>{p.name}</span>
-        <span style={{ color: '#64748b' }}>{p.value} sites</span>
+        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{p.name}</span>
+        <span style={{ color: 'var(--text-secondary)' }}>{p.value} sites</span>
         <span style={{ color: '#94a3b8', fontSize: 11 }}>({p.payload.pct}%)</span>
       </div>
     </div>
@@ -37,6 +38,7 @@ function CustomTooltip({ active, payload }: {
 }
 
 export default function PowerSourcePieChart({ data, height = 200, showLegend = true }: Props) {
+  const isDark = useThemeStore(s => s.theme === 'dark')
   const total = data.reduce((s, d) => s + d.count, 0)
 
   const chartData = data.map(d => ({
@@ -60,7 +62,7 @@ export default function PowerSourcePieChart({ data, height = 200, showLegend = t
             paddingAngle={2}
             dataKey="value"
             strokeWidth={1}
-            stroke="white"
+            stroke={isDark ? '#0f1a2e' : 'white'}
             isAnimationActive={false}
           >
             {chartData.map((entry, i) => (

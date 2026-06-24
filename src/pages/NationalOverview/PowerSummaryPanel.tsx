@@ -20,10 +20,10 @@ export default function PowerSummaryPanel({ kpis }: Props) {
 
   return (
     <div style={{
-      background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
+      background: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--border)',
       padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 10,
+      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 10,
         textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         Power Sources
       </div>
@@ -43,14 +43,14 @@ export default function PowerSummaryPanel({ kpis }: Props) {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{ fontSize: 14 }}>{c.icon}</span>
-                <span style={{ fontSize: 12, color: '#374151' }}>{c.label}</span>
+                <span style={{ fontSize: 12, color: 'var(--text-primary)' }}>{c.label}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {/* Progress bar */}
-                <div style={{ width: 60, height: 4, background: '#f1f5f9', borderRadius: 2, overflow: 'hidden' }}>
+                <div style={{ width: 60, height: 4, background: 'var(--card-bg-2)', borderRadius: 2, overflow: 'hidden' }}>
                   <div style={{ width: `${pct}%`, height: '100%', background: c.hex, borderRadius: 2 }} />
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 600, color: '#1e293b',
+                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)',
                   minWidth: 24, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
                   {count}
                 </span>

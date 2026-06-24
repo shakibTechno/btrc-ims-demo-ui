@@ -44,7 +44,7 @@ export default function OperatorDashboard() {
 
       {/* ── Operator header banner ────────────────────────────── */}
       <div style={{
-        background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
+        background: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--border)',
         borderLeft: `4px solid ${operator.color}`,
         padding: '12px 16px', marginBottom: 14,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -59,8 +59,8 @@ export default function OperatorDashboard() {
             {operator.initials}
           </div>
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#1e293b' }}>{operator.name}</div>
-            <div style={{ fontSize: 12, color: '#64748b', marginTop: 1 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{operator.name}</div>
+            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 1 }}>
               {formatOperatorType(operator.type)} · {ownedSites.length} sites across{' '}
               {divisionCounts.length} division{divisionCounts.length !== 1 ? 's' : ''}
             </div>

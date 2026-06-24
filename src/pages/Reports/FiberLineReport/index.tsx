@@ -113,15 +113,15 @@ function ResultTable({ rows, origin, destination }: {
     cursor: 'pointer',
     userSelect: 'none',
     whiteSpace: 'nowrap',
-    borderBottom: '2px solid #e2e8f0',
-    background: '#f8fafc',
+    borderBottom: '2px solid var(--border)',
+    background: 'var(--card-bg-2)',
   })
 
   const tdStyle: React.CSSProperties = {
     padding: '8px 12px',
     fontSize: 12.5,
-    color: '#1e293b',
-    borderBottom: '1px solid #f1f5f9',
+    color: 'var(--text-primary)',
+    borderBottom: '1px solid var(--border)',
     whiteSpace: 'nowrap',
     maxWidth: 200,
     overflow: 'hidden',
@@ -132,8 +132,8 @@ function ResultTable({ rows, origin, destination }: {
     <div>
       {/* Summary bar */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ fontSize: 13, color: '#475569', flex: 1 }}>
-          <strong style={{ color: '#1e293b' }}>{rows.length}</strong> segment{rows.length !== 1 ? 's' : ''} found
+        <div style={{ fontSize: 13, color: 'var(--text-secondary)', flex: 1 }}>
+          <strong style={{ color: 'var(--text-primary)' }}>{rows.length}</strong> segment{rows.length !== 1 ? 's' : ''} found
         </div>
 
         {/* Match filter pills */}
@@ -149,8 +149,8 @@ function ResultTable({ rows, origin, destination }: {
             style={{
               padding: '4px 12px',
               borderRadius: 9999,
-              border: matchFilter === p.key ? '2px solid #1d4ed8' : '1px solid #e2e8f0',
-              background: matchFilter === p.key ? '#eff6ff' : 'white',
+              border: matchFilter === p.key ? '2px solid #1d4ed8' : '1px solid var(--border)',
+              background: matchFilter === p.key ? '#eff6ff' : 'var(--card-bg)',
               color: matchFilter === p.key ? '#1d4ed8' : '#64748b',
               fontSize: 12,
               fontWeight: 600,
@@ -180,7 +180,7 @@ function ResultTable({ rows, origin, destination }: {
       </div>
 
       {/* Table */}
-      <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+      <div style={{ overflowX: 'auto', borderRadius: 8, border: '1px solid var(--border)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'auto' }}>
           <thead>
             <tr>
@@ -208,7 +208,7 @@ function ResultTable({ rows, origin, destination }: {
             {visible.map((r, idx) => (
               <tr
                 key={r.id}
-                style={{ background: idx % 2 === 0 ? 'white' : '#fafafa' }}
+                style={{ background: idx % 2 === 0 ? 'var(--card-bg)' : 'var(--card-bg-2)' }}
               >
                 <td style={tdStyle}>
                   <span style={{
@@ -295,10 +295,10 @@ const selectStyle: React.CSSProperties = {
   width: '100%',
   padding: '8px 12px',
   borderRadius: 7,
-  border: '1px solid #e2e8f0',
-  background: 'white',
+  border: '1px solid var(--border)',
+  background: 'var(--card-bg)',
   fontSize: 13,
-  color: '#1e293b',
+  color: 'var(--text-primary)',
   outline: 'none',
   cursor: 'pointer',
 }
@@ -348,13 +348,13 @@ function FilterPanel({ onGenerate, loading }: {
 
   return (
     <div style={{
-      background: 'white',
+      background: 'var(--card-bg)',
       borderRadius: 10,
-      border: '1px solid #e2e8f0',
+      border: '1px solid var(--border)',
       padding: 20,
       marginBottom: 20,
     }}>
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 16 }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>
         Filter Parameters
       </div>
 
@@ -437,8 +437,8 @@ function FilterPanel({ onGenerate, loading }: {
                 style={{
                   padding: '5px 13px',
                   borderRadius: 6,
-                  border: active ? `2px solid ${OP_COLOR[key]}` : '1px solid #e2e8f0',
-                  background: active ? OP_COLOR[key] + '14' : '#f8fafc',
+                  border: active ? `2px solid ${OP_COLOR[key]}` : '1px solid var(--border)',
+                  background: active ? OP_COLOR[key] + '14' : 'var(--card-bg-2)',
                   color: active ? OP_COLOR[key] : '#94a3b8',
                   fontSize: 12,
                   fontWeight: 600,
@@ -499,13 +499,13 @@ export default function FiberLineReport() {
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 1400, margin: '0 auto' }}>
+    <div style={{ padding: 24, maxWidth: 1400, margin: '0 auto', background: 'var(--bg-base)', minHeight: '100%' }}>
       {/* Header */}
       <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
           Fiber Line Report
         </h1>
-        <p style={{ fontSize: 13, color: '#64748b', margin: '4px 0 0' }}>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '4px 0 0' }}>
           Find fiber segments connecting two geographic areas across operators.
         </p>
       </div>
@@ -527,7 +527,7 @@ export default function FiberLineReport() {
       )}
 
       {loading && (
-        <div style={{ padding: 40, textAlign: 'center', color: '#64748b', fontSize: 13 }}>
+        <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-secondary)', fontSize: 13 }}>
           Loading fiber data…
         </div>
       )}
@@ -535,14 +535,14 @@ export default function FiberLineReport() {
       {hasGenerated && !loading && (
         <div ref={tableRef}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#1e293b', margin: 0 }}>
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
               Results — {lastOrigin} → {lastDest}
             </h2>
             <button
               onClick={() => { clear(); setHasGenerated(false) }}
               style={{
-                fontSize: 12, color: '#64748b', background: 'none',
-                border: '1px solid #e2e8f0', borderRadius: 6,
+                fontSize: 12, color: 'var(--text-secondary)', background: 'none',
+                border: '1px solid var(--border)', borderRadius: 6,
                 padding: '3px 10px', cursor: 'pointer',
               }}
             >

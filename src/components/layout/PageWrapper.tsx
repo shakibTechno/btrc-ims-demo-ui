@@ -17,7 +17,7 @@ export default function PageWrapper({ children, maxWidth, padding, noPadding }: 
     <div style={{
       height: '100%',
       overflow: 'auto',
-      background: '#f8fafc',
+      background: 'var(--bg-base)',
     }}>
       <div style={{
         maxWidth: maxWidth ?? undefined,

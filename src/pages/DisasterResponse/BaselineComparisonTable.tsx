@@ -14,7 +14,7 @@ export default function BaselineComparisonTable({ stats }: Props) {
 
   return (
     <div style={{
-      background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
+      background: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--border)',
       padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     }}>
       <SectionHeader
@@ -26,7 +26,7 @@ export default function BaselineComparisonTable({ stats }: Props) {
       <div style={{
         display: 'grid', gridTemplateColumns: '1fr 100px 100px 80px',
         gap: 8, padding: '6px 10px', marginBottom: 2,
-        borderBottom: '2px solid #f1f5f9',
+        borderBottom: '2px solid var(--border)',
       }}>
         {['Metric', 'Baseline', 'Current', 'Δ Change'].map(h => (
           <span key={h} style={{
@@ -46,19 +46,19 @@ export default function BaselineComparisonTable({ stats }: Props) {
           style={{
             display: 'grid', gridTemplateColumns: '1fr 100px 100px 80px',
             gap: 8, padding: '9px 10px',
-            background: i % 2 === 0 ? 'white' : '#fafafa',
+            background: i % 2 === 0 ? 'var(--card-bg)' : 'var(--card-bg-2)',
             borderRadius: 5,
             alignItems: 'center',
           }}
         >
-          <span style={{ fontSize: 13, color: '#374151', fontWeight: 500 }}>
+          <span style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500 }}>
             {row.metric}
           </span>
-          <span style={{ fontSize: 12, color: '#64748b', textAlign: 'right',
+          <span style={{ fontSize: 12, color: 'var(--text-secondary)', textAlign: 'right',
             fontVariantNumeric: 'tabular-nums' }}>
             {row.baseline}
           </span>
-          <span style={{ fontSize: 12, fontWeight: 600, color: '#1e293b',
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)',
             textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
             {row.current}
           </span>
@@ -79,7 +79,7 @@ export default function BaselineComparisonTable({ stats }: Props) {
 
       {/* Footer note */}
       <div style={{
-        marginTop: 10, paddingTop: 8, borderTop: '1px solid #f1f5f9',
+        marginTop: 10, paddingTop: 8, borderTop: '1px solid var(--border)',
         fontSize: 10, color: '#94a3b8',
       }}>
         Disaster ID: {scenario.id} · Last updated:{' '}

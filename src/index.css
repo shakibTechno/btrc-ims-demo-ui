@@ -112,6 +112,35 @@
   }
 }
 
+/* ─── Theme Tokens ───────────────────────────────────────────── */
+:root, [data-theme="light"] {
+  --bg-base:          #f8fafc;
+  --card-bg:          #ffffff;
+  --card-bg-2:        #f1f5f9;
+  --border:           #e2e8f0;
+  --text-primary:     #0f172a;
+  --text-secondary:   #64748b;
+  --text-muted:       #94a3b8;
+  --topbar-bg:        #ffffff;
+  --topbar-border:    #e2e8f0;
+  --topbar-title:     #1e293b;
+  --topbar-divider:   #e2e8f0;
+}
+
+[data-theme="dark"] {
+  --bg-base:          #080d1a;
+  --card-bg:          #0f1a2e;
+  --card-bg-2:        #162032;
+  --border:           #1e3352;
+  --text-primary:     #e2e8f0;
+  --text-secondary:   #7fa8c8;
+  --text-muted:       #3d5a7a;
+  --topbar-bg:        #0b1221;
+  --topbar-border:    rgba(56,189,248,0.08);
+  --topbar-title:     #e2e8f0;
+  --topbar-divider:   rgba(255,255,255,0.07);
+}
+
 /* ─── Base Reset ─────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -123,8 +152,8 @@ html, body, #root {
   padding: 0;
   font-family: system-ui, 'Segoe UI', Roboto, -apple-system, sans-serif;
   font-size: 14px;
-  color: #1e293b;
-  background: #f8fafc;
+  color: var(--text-primary);
+  background: var(--bg-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
+import { useThemeStore } from '@/store/themeStore'
 
 import Sidebar           from '@/components/layout/Sidebar'
 import TopBar            from '@/components/layout/TopBar'
@@ -17,6 +18,15 @@ import Reports          from '@/pages/Reports'
 import FiberLineReport  from '@/pages/Reports/FiberLineReport'
 import BTSReport        from '@/pages/Reports/BTSReport'
 import TowerReport      from '@/pages/Reports/TowerReport'
+
+// ─── ThemeApplier — writes data-theme to <html> on every change ──
+function ThemeApplier() {
+  const theme = useThemeStore(s => s.theme)
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+  }, [theme])
+  return null
+}
 
 // ─── SimulationRunner ─────────────────────────────────────────────
 function SimulationRunner() {
@@ -68,7 +78,7 @@ function Layout() {
       <Sidebar />
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, overflow: 'hidden' }}>
         <TopBar title={title} />
-        <main style={{ flex: 1, overflow: 'auto', background: '#f8fafc' }}>
+        <main style={{ flex: 1, overflow: 'auto', background: 'var(--bg-base)' }}>
           <ErrorBoundary>
             <Routes>
               <Route path="/"              element={<LandingPage />}       />
@@ -94,6 +104,7 @@ function Layout() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ThemeApplier />
       <SimulationRunner />
       <Routes>
         <Route path="/login" element={<Login />} />

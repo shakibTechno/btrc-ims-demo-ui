@@ -24,11 +24,11 @@ export default function RecoveryProgressPanel({ stats }: Props) {
 
   return (
     <div style={{
-      background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
+      background: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--border)',
       padding: '20px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
     }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: '#475569',
+      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)',
         textTransform: 'uppercase', letterSpacing: '0.05em', alignSelf: 'flex-start' }}>
         Recovery Progress
       </div>
@@ -37,14 +37,14 @@ export default function RecoveryProgressPanel({ stats }: Props) {
       <div style={{ position: 'relative', width: 140, height: 140 }}>
         <div style={{
           width: 140, height: 140, borderRadius: '50%',
-          background: `conic-gradient(${ringColor} 0deg ${ringDeg}deg, #f1f5f9 ${ringDeg}deg 360deg)`,
+          background: `conic-gradient(${ringColor} 0deg ${ringDeg}deg, var(--card-bg-2) ${ringDeg}deg 360deg)`,
         }} />
         {/* Inner white circle for donut effect */}
         <div style={{
           position: 'absolute', top: '50%', left: '50%',
           transform: 'translate(-50%, -50%)',
           width: 100, height: 100, borderRadius: '50%',
-          background: 'white',
+          background: 'var(--card-bg)',
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center',
         }}>
@@ -69,7 +69,7 @@ export default function RecoveryProgressPanel({ stats }: Props) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
               <span style={{ fontSize: 14 }}>{row.icon}</span>
-              <span style={{ fontSize: 12, color: '#374151' }}>{row.label}</span>
+              <span style={{ fontSize: 12, color: 'var(--text-primary)' }}>{row.label}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span style={{ fontSize: 18, fontWeight: 800, color: row.color,
@@ -84,7 +84,7 @@ export default function RecoveryProgressPanel({ stats }: Props) {
 
       {/* Progress bar */}
       <div style={{ width: '100%' }}>
-        <div style={{ height: 8, background: '#f1f5f9', borderRadius: 4, overflow: 'hidden' }}>
+        <div style={{ height: 8, background: 'var(--card-bg-2)', borderRadius: 4, overflow: 'hidden' }}>
           <div style={{
             height: '100%', borderRadius: 4,
             width: `${recoveryPercent}%`,

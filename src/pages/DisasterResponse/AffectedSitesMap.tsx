@@ -30,16 +30,16 @@ export default function AffectedSitesMap({ stats }: Props) {
 
   return (
     <div style={{
-      background: 'white', borderRadius: 8, border: '1px solid #e2e8f0',
+      background: 'var(--card-bg)', borderRadius: 8, border: '1px solid var(--border)',
       overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     }}>
       {/* Header */}
       <div style={{
-        padding: '10px 14px', borderBottom: '1px solid #f1f5f9',
+        padding: '10px 14px', borderBottom: '1px solid var(--border)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <div>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#475569',
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)',
             textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {scenario.affectedDivision} Division — Site Map
           </span>
