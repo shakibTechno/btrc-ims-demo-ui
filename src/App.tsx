@@ -7,6 +7,7 @@ import ErrorBoundary     from '@/components/shared/ErrorBoundary'
 import { useSimulation } from '@/hooks/useSimulation'
 import { useAuthStore }  from '@/store/authStore'
 import Login             from '@/pages/Login'
+import LandingPage       from '@/pages/LandingPage'
 import NationalOverview  from '@/pages/NationalOverview'
 import OperatorDashboard from '@/pages/OperatorDashboard'
 import SiteDirectory     from '@/pages/SiteDirectory'
@@ -25,7 +26,8 @@ function SimulationRunner() {
 
 // ─── Page title mapping ───────────────────────────────────────────
 const PAGE_TITLES: Record<string, string> = {
-  '/':                    'National Overview',
+  '/':                    'Dashboard',
+  '/overview':            'National Overview',
   '/operators':           'Operator Dashboard',
   '/sites':               'Site Directory',
   '/disaster':            'Disaster Response Cell',
@@ -69,7 +71,8 @@ function Layout() {
         <main style={{ flex: 1, overflow: 'auto', background: '#f8fafc' }}>
           <ErrorBoundary>
             <Routes>
-              <Route path="/"              element={<NationalOverview />}  />
+              <Route path="/"              element={<LandingPage />}       />
+              <Route path="/overview"      element={<NationalOverview />}  />
               <Route path="/operators"     element={<OperatorDashboard />} />
               <Route path="/sites"         element={<SiteDirectory />}     />
               <Route path="/sites/:siteId" element={<SiteDetail />}        />

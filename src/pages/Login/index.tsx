@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import btrcLogo from '@/assets/Logo/btrcLogo.png'
 
 // ─── Login ────────────────────────────────────────────────────────
 // Full-screen login page. Redirects to the originally requested URL
@@ -62,16 +63,16 @@ export default function Login() {
           background: '#003D7A', padding: '28px 32px 24px',
           textAlign: 'center',
         }}>
-          {/* IMS logo mark */}
-          <div style={{
-            width: 56, height: 56, borderRadius: 14,
-            background: 'rgba(255,255,255,0.12)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 14px',
-          }}>
-            <span style={{ color: 'white', fontSize: 18, fontWeight: 900, letterSpacing: 1 }}>IMS</span>
-          </div>
+          {/* BTRC logo */}
+          <img
+            src={btrcLogo}
+            alt="BTRC"
+            style={{
+              width: 72, height: 72, objectFit: 'contain',
+              display: 'block', margin: '0 auto 14px',
+              filter: 'brightness(0) invert(1)',
+            }}
+          />
           <div style={{ color: 'white', fontSize: 18, fontWeight: 700, marginBottom: 4 }}>
             BTRC IMS
           </div>

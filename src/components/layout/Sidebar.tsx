@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { SITES } from '@/data/sites'
 import { OPERATORS } from '@/data/operators'
 import { useAuthStore } from '@/store/authStore'
+import btrcLogo from '@/assets/Logo/btrcLogo.png'
 
 // ─── Nav item config ──────────────────────────────────────────────
 interface NavItem {
@@ -60,6 +61,14 @@ function IconDisaster() {
   )
 }
 
+function IconHome() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  )
+}
 function IconChevronLeft() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -295,7 +304,8 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(true)
 
   const NAV_ITEMS: NavItem[] = [
-    { to: '/',               label: 'National Overview',  icon: <IconMap />,      end: true  },
+    { to: '/',               label: 'Home',               icon: <IconHome />,     end: true  },
+    { to: '/overview',       label: 'National Overview',  icon: <IconMap />,      end: true  },
     { to: '/operators',      label: 'Operator Dashboard', icon: <IconBuilding />, end: false },
     { to: '/sites',          label: 'Site Directory',      icon: <IconList />,     end: false },
     { to: '/reports',        label: 'Reports',             icon: <IconReport />,   end: false },
@@ -336,13 +346,15 @@ export default function Sidebar() {
       }}>
         {/* Logo + text */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, overflow: 'hidden', minWidth: 0 }}>
-          <div style={{
-            background: '#003D7A', borderRadius: 7, width: 36, height: 36,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0, flexDirection: 'column',
-          }}>
-            <span style={{ color: 'white', fontSize: 10, fontWeight: 800, letterSpacing: 1, lineHeight: 1 }}>IMS</span>
-          </div>
+          <img
+            src={btrcLogo}
+            alt="BTRC"
+            style={{
+              width: collapsed ? 32 : 36, height: collapsed ? 32 : 36,
+              objectFit: 'contain', flexShrink: 0,
+              filter: 'brightness(0) invert(1)',
+            }}
+          />
           {!collapsed && (
             <div style={{ overflow: 'hidden' }}>
               <div style={{ color: '#f1f5f9', fontSize: 13, fontWeight: 700, lineHeight: 1.2, whiteSpace: 'nowrap' }}>BTRC IMS</div>

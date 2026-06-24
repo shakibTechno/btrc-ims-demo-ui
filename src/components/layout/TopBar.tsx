@@ -2,6 +2,7 @@ import { useState, useEffect, type ReactNode } from 'react'
 import AlertBell from '@/components/alerts/AlertBell'
 import { useFilterStore } from '@/store/filterStore'
 import { useSiteStore }   from '@/store/siteStore'
+import btrcLogo from '@/assets/Logo/btrcLogo.png'
 
 // ─── Live clock fixed at demo reference timezone (UTC+6) ─────────
 function LiveClock() {
@@ -92,8 +93,10 @@ export default function TopBar({ title, extra }: Props) {
       gap: 8,
     }}>
 
-      {/* Left: title + LIVE + synced + extra controls (filters/period) */}
+      {/* Left: BTRC logo + title + LIVE + synced + extra controls */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
+        <img src={btrcLogo} alt="BTRC" style={{ height: 22, width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
+        <div style={{ width: 1, height: 14, background: '#e2e8f0', flexShrink: 0 }} />
         <h1 style={{
           margin: 0, fontSize: 10, fontWeight: 600,
           color: '#1e293b', whiteSpace: 'nowrap',
