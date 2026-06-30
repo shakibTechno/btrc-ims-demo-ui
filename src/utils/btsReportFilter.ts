@@ -1,9 +1,9 @@
 import type { BTSSite, BTSOperatorKey, AdminLevel } from '@/types/btsReport'
+import { pointInGeometry, type Geometry } from '@/utils/geo'
 
-type Props    = Record<string, unknown>
-type Coord    = [number, number]
-type Ring     = Coord[]
-type Geometry = { type: string; coordinates?: unknown; geometries?: Geometry[] }
+export { pointInGeometry }
+
+type Props = Record<string, unknown>
 
 function s(v: unknown): string { return v == null ? '' : String(v) }
 function n(v: unknown): number | null { return typeof v === 'number' ? v : null }
@@ -14,41 +14,6 @@ function b(v: unknown): boolean | null {
 }
 function ci(a: string, x: string): boolean {
   return a.toLowerCase() === x.toLowerCase()
-}
-
-// ─── Point-in-polygon (ray casting) ──────────────────────────────
-function raycast(pt: Coord, ring: Ring): boolean {
-  let inside = false
-  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-    const [xi, yi] = ring[i] as Coord
-    const [xj, yj] = ring[j] as Coord
-    if ((yi > pt[1]) !== (yj > pt[1]) &&
-        pt[0] < ((xj - xi) * (pt[1] - yi)) / (yj - yi) + xi) {
-      inside = !inside
-    }
-  }
-  return inside
-}
-
-function pipPolygon(pt: Coord, rings: Ring[]): boolean {
-  if (!raycast(pt, rings[0])) return false
-  for (let i = 1; i < rings.length; i++) {
-    if (raycast(pt, rings[i])) return false // inside a hole
-  }
-  return true
-}
-
-export function pointInGeometry(pt: Coord, geo: Geometry): boolean {
-  if (geo.type === 'Polygon') {
-    return pipPolygon(pt, geo.coordinates as Ring[])
-  }
-  if (geo.type === 'MultiPolygon') {
-    return (geo.coordinates as Ring[][]).some(rings => pipPolygon(pt, rings))
-  }
-  if (geo.type === 'GeometryCollection') {
-    return (geo.geometries ?? []).some(g => pointInGeometry(pt, g))
-  }
-  return false
 }
 
 // ─── GP (gp-sites.geojson) ────────────────────────────────────────

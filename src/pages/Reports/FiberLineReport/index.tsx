@@ -269,6 +269,56 @@ function ResultTable({ rows, origin, destination }: {
 // ─── Filter panel ─────────────────────────────────────────────────
 const ALL_OPS: OperatorKey[] = ['btcl', 'banglalink', 'bahon', 'brfiber', 'is3', 'oprlines']
 
+// ─── Summary bar (Tower Report style) ─────────────────────────────
+function SummaryBar({ rows, bothSelected }: { rows: FiberSegment[]; bothSelected: boolean }) {
+  if (rows.length === 0) return null
+
+  const sum = (pick: (r: FiberSegment) => number | null) =>
+    rows.reduce((acc, r) => acc + (pick(r) ?? 0), 0)
+
+  const totalKm    = Math.round(sum(r => r.routeKm) * 10) / 10
+  const totalCores = sum(r => r.coreCount)
+  const totalFree  = sum(r => r.coresFree)
+  const connecting = rows.filter(r => r.matchSide === 'both').length
+
+  const byOp = ALL_OPS.map(k => ({
+    label: OPERATOR_LABELS[k],
+    color: OP_COLOR[k],
+    count: rows.filter(r => r.operatorKey === k).length,
+  })).filter(o => o.count > 0)
+
+  const card = (label: string, value: string | number, sub?: string, color = 'var(--text-primary)') => (
+    <div key={label} style={{
+      background: 'var(--card-bg)',
+      border: '1px solid var(--border)',
+      borderRadius: 8,
+      padding: '12px 16px',
+      minWidth: 100,
+    }}>
+      <div style={{ fontSize: 22, fontWeight: 800, color, lineHeight: 1 }}>
+        {typeof value === 'number' ? value.toLocaleString() : value}
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 3 }}>{label}</div>
+      {sub && <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 1 }}>{sub}</div>}
+    </div>
+  )
+
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
+        {card('Total Segments', rows.length)}
+        {totalKm    > 0 && card('Route Length', `${totalKm.toLocaleString()} km`)}
+        {totalCores > 0 && card('Total Cores',  totalCores)}
+        {totalFree  > 0 && card('Cores Free',   totalFree, undefined, '#16a34a')}
+        {bothSelected   && card('Connecting',   connecting, 'both endpoints', '#1d4ed8')}
+      </div>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        {byOp.map(o => card(o.label, o.count, undefined, o.color))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Charts row ───────────────────────────────────────────────────
 function ChartsRow({ rows }: { rows: FiberSegment[] }) {
   if (rows.length === 0) return null
@@ -340,11 +390,11 @@ function FilterPanel({ onGenerate, loading }: {
   }
 
   function handleGenerate() {
-    if (!origin || !destination || operators.size === 0) return
+    if ((!origin && !destination) || operators.size === 0) return
     onGenerate({ level, origin, destination, operators })
   }
 
-  const canGenerate = !!origin && !!destination && operators.size > 0 && !loading
+  const canGenerate = (!!origin || !!destination) && operators.size > 0 && !loading
 
   return (
     <div style={{
@@ -378,7 +428,7 @@ function FilterPanel({ onGenerate, loading }: {
         {/* Origin */}
         <div>
           <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 5 }}>
-            Origin {level.charAt(0).toUpperCase() + level.slice(1)}
+            Origin {level.charAt(0).toUpperCase() + level.slice(1)} <span style={{ color: '#cbd5e1', fontWeight: 600 }}>(optional)</span>
           </label>
           <select
             value={origin}
@@ -394,7 +444,7 @@ function FilterPanel({ onGenerate, loading }: {
         {/* Destination */}
         <div>
           <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 5 }}>
-            Destination {level.charAt(0).toUpperCase() + level.slice(1)}
+            Destination {level.charAt(0).toUpperCase() + level.slice(1)} <span style={{ color: '#cbd5e1', fontWeight: 600 }}>(optional)</span>
           </label>
           <select
             value={destination}
@@ -474,7 +524,7 @@ function FilterPanel({ onGenerate, loading }: {
 
       {!origin && !destination && (
         <span style={{ marginLeft: 12, fontSize: 12, color: '#94a3b8' }}>
-          Select origin and destination to continue
+          Select at least one area — origin or destination
         </span>
       )}
     </div>
@@ -536,7 +586,11 @@ export default function FiberLineReport() {
         <div ref={tableRef}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
             <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
-              Results — {lastOrigin} → {lastDest}
+              Results — {lastOrigin && lastDest
+                ? `${lastOrigin} → ${lastDest}`
+                : lastOrigin
+                  ? `From ${lastOrigin}`
+                  : `To ${lastDest}`}
             </h2>
             <button
               onClick={() => { clear(); setHasGenerated(false) }}
@@ -549,6 +603,7 @@ export default function FiberLineReport() {
               Clear
             </button>
           </div>
+          <SummaryBar rows={results} bothSelected={!!lastOrigin && !!lastDest} />
           <ChartsRow rows={results} />
           <ResultTable rows={results} origin={lastOrigin} destination={lastDest} />
         </div>

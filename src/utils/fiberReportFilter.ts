@@ -1,6 +1,14 @@
-import type { FiberSegment, OperatorKey, AdminLevel } from '@/types/fiberReport'
+import type { FiberSegment, OperatorKey } from '@/types/fiberReport'
+import { lineTouchesArea, type Geometry, type BBox } from '@/utils/geo'
 
 type Props = Record<string, unknown>
+type Feat  = { properties: Props; geometry: Geometry | null }
+
+// A selected admin area: its boundary geometry + precomputed bbox.
+export interface AreaSel {
+  geo:  Geometry
+  bbox: BBox
+}
 
 function n(v: unknown): number | null {
   return typeof v === 'number' ? v : null
@@ -9,36 +17,37 @@ function s(v: unknown): string {
   return v == null ? '' : String(v)
 }
 
-function ci(a: string, b: string): boolean {
-  return a.toLowerCase() === b.toLowerCase()
-}
-function contains(haystack: unknown, needle: string): boolean {
-  if (typeof haystack !== 'string') return false
-  return haystack.toLowerCase().includes(needle.toLowerCase())
-}
-
-function side(
-  mo: boolean,
-  md: boolean,
+// ─── Geo match ────────────────────────────────────────────────────
+// A line is matched if a vertex falls inside a selected area. Origin
+// and/or destination may be null (single-point filtering). Returns the
+// matchSide label, or null when the line touches no selected area.
+function matchSideFor(
+  geometry: Geometry | null,
+  origin: AreaSel | null,
+  dest:   AreaSel | null,
 ): FiberSegment['matchSide'] | null {
-  if (mo && md) return 'both'
-  if (mo)       return 'origin'
-  if (md)       return 'destination'
+  if (!geometry) return null
+  const inO = origin ? lineTouchesArea(geometry, origin.geo, origin.bbox) : false
+  const inD = dest   ? lineTouchesArea(geometry, dest.geo,   dest.bbox)   : false
+
+  if (origin && dest) {
+    if (inO && inD) return 'both'
+    if (inO)        return 'origin'
+    if (inD)        return 'destination'
+    return null
+  }
+  if (origin) return inO ? 'origin' : null
+  if (dest)   return inD ? 'destination' : null
   return null
 }
 
 // ─── BTCL (fiber-lines.geojson) ───────────────────────────────────
-// name: "Ghatail - Madhupur (19 Km)" — text search only
-export function filterBTCL(
-  features: { properties: Props }[],
-  origin: string,
-  destination: string,
-): FiberSegment[] {
+export function filterBTCL(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
   return features.flatMap((f, i) => {
+    const ms = matchSideFor(f.geometry, origin, dest)
+    if (!ms) return []
     const p = f.properties
     const name = s(p.name)
-    const ms = side(contains(name, origin), contains(name, destination))
-    if (!ms) return []
     const parts = name.split(' - ')
     const from = parts[0]?.trim() || name
     const to   = parts[1]?.replace(/\s*\(.*\)/, '').trim() || from
@@ -63,30 +72,11 @@ export function filterBTCL(
 }
 
 // ─── Banglalink (bl-lines.geojson) ───────────────────────────────
-// Has division/district/upazila fields — direct equality match
-export function filterBanglalink(
-  features: { properties: Props }[],
-  level: AdminLevel,
-  origin: string,
-  destination: string,
-): FiberSegment[] {
-  const fieldMap: Record<AdminLevel, string> = {
-    division: 'division',
-    district: 'district',
-    upazila:  'upazila',
-  }
-  const field = fieldMap[level]
-
+export function filterBanglalink(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
   return features.flatMap((f, i) => {
-    const p = f.properties
-    const val = s(p[field])
-    const mo = ci(val, origin)
-    const md = ci(val, destination)
-    const ms = side(mo, md)
+    const ms = matchSideFor(f.geometry, origin, dest)
     if (!ms) return []
-    const coreno = n(p.coreno)
-    const coreuse = n(p.coreuse)
-    const coreready = n(p.coreready)
+    const p = f.properties
     const district = s(p.district)
     const upazila  = s(p.upazila)
     const division = s(p.division)
@@ -98,9 +88,9 @@ export function filterBanglalink(
       lineType:    s(p.linetype),
       fromNode:    district || division,
       toNode:      upazila  || district || division,
-      coreCount:   coreno,
-      coresUsed:   coreuse,
-      coresFree:   coreready,
+      coreCount:   n(p.coreno),
+      coresUsed:   n(p.coreuse),
+      coresFree:   n(p.coreready),
       routeKm:     n(p.routelenkm),
       division,
       district,
@@ -111,32 +101,11 @@ export function filterBanglalink(
 }
 
 // ─── Bahon (bahon-lines.geojson) ─────────────────────────────────
-// div/dist — direct match for div/dist level; text search in a/b for upazila
-export function filterBahon(
-  features: { properties: Props }[],
-  level: AdminLevel,
-  origin: string,
-  destination: string,
-): FiberSegment[] {
+export function filterBahon(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
   return features.flatMap((f, i) => {
-    const p = f.properties
-    let mo = false
-    let md = false
-
-    if (level === 'division') {
-      mo = ci(s(p.div), origin)
-      md = ci(s(p.div), destination)
-    } else if (level === 'district') {
-      mo = ci(s(p.dist), origin)
-      md = ci(s(p.dist), destination)
-    } else {
-      // upazila — fall back to text search in node names
-      mo = contains(p.a, origin) || contains(p.b, origin)
-      md = contains(p.a, destination) || contains(p.b, destination)
-    }
-
-    const ms = side(mo, md)
+    const ms = matchSideFor(f.geometry, origin, dest)
     if (!ms) return []
+    const p = f.properties
     const cn   = n(p.cn)
     const cu   = n(p.cu)
     const a    = s(p.a)
@@ -144,16 +113,14 @@ export function filterBahon(
     const div  = s(p.div)
     const dist = s(p.dist)
     const fallback = dist || div
-    const from = a || fallback
-    const to   = b || fallback
     return [{
       id:          `bahon-${i}`,
       operatorKey: 'bahon' as OperatorKey,
       operator:    'Bahon',
       lineName:    (a && b) ? a + ' – ' + b : fallback,
       lineType:    s(p.ct),
-      fromNode:    from,
-      toNode:      to,
+      fromNode:    a || fallback,
+      toNode:      b || fallback,
       coreCount:   cn,
       coresUsed:   cu,
       coresFree:   cn !== null && cu !== null ? cn - cu : null,
@@ -167,23 +134,13 @@ export function filterBahon(
 }
 
 // ─── BR Fiber (br-fiber-lines.geojson) ───────────────────────────
-// name_a, name_b — text search
-export function filterBRFiber(
-  features: { properties: Props }[],
-  origin: string,
-  destination: string,
-): FiberSegment[] {
+export function filterBRFiber(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
   return features.flatMap((f, i) => {
+    const ms = matchSideFor(f.geometry, origin, dest)
+    if (!ms) return []
     const p = f.properties
     const na = s(p.name_a)
     const nb = s(p.name_b)
-    const mo = contains(na, origin)  || contains(nb, origin)
-    const md = contains(na, destination) || contains(nb, destination)
-    const ms = side(mo, md)
-    if (!ms) return []
-    const total  = n(p.total_core)
-    const used   = n(p.used_core)
-    const unused = n(p.unused_core)
     return [{
       id:          `br-${i}`,
       operatorKey: 'brfiber' as OperatorKey,
@@ -192,9 +149,9 @@ export function filterBRFiber(
       lineType:    '',
       fromNode:    na,
       toNode:      nb,
-      coreCount:   total,
-      coresUsed:   used,
-      coresFree:   unused,
+      coreCount:   n(p.total_core),
+      coresUsed:   n(p.used_core),
+      coresFree:   n(p.unused_core),
       routeKm:     n(p.len_km),
       division:    '',
       district:    '',
@@ -205,22 +162,16 @@ export function filterBRFiber(
 }
 
 // ─── IS3 (is3-lines.geojson) ─────────────────────────────────────
-// name — text search
-export function filterIS3(
-  features: { properties: Props }[],
-  origin: string,
-  destination: string,
-): FiberSegment[] {
+export function filterIS3(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
   return features.flatMap((f, i) => {
+    const ms = matchSideFor(f.geometry, origin, dest)
+    if (!ms) return []
     const p = f.properties
     const name = s(p.name)
-    const ms = side(contains(name, origin), contains(name, destination))
-    if (!ms) return []
     const cores = typeof p.cores === 'number' ? p.cores : (parseInt(String(p.cores)) || null)
     const layer = s(p.layer)
-    // names like "Deluti union to Dacope POP" — split on " to " (case-insensitive)
     const toIdx = name.toLowerCase().indexOf(' to ')
-    const from  = toIdx >= 0 ? name.slice(0, toIdx).trim() : (layer || name)
+    const from  = toIdx >= 0 ? name.slice(0, toIdx).trim()  : (layer || name)
     const to    = toIdx >= 0 ? name.slice(toIdx + 4).trim() : (layer || name)
     return [{
       id:          `is3-${i}`,
@@ -243,20 +194,15 @@ export function filterIS3(
 }
 
 // ─── Operator Lines (opr-lines.geojson) ──────────────────────────
-// line_name — text search
-export function filterOprLines(
-  features: { properties: Props }[],
-  origin: string,
-  destination: string,
-): FiberSegment[] {
+export function filterOprLines(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
   return features.flatMap((f, i) => {
+    const ms = matchSideFor(f.geometry, origin, dest)
+    if (!ms) return []
     const p = f.properties
     const lname = s(p.line_name)
-    const ms = side(contains(lname, origin), contains(lname, destination))
-    if (!ms) return []
     const dashIdx = lname.indexOf('-')
-    const from    = dashIdx >= 0 ? lname.slice(0, dashIdx).trim() : lname
-    const to      = dashIdx >= 0 ? lname.slice(dashIdx + 1).trim() : lname
+    const from = dashIdx >= 0 ? lname.slice(0, dashIdx).trim()  : lname
+    const to   = dashIdx >= 0 ? lname.slice(dashIdx + 1).trim() : lname
     return [{
       id:          `opr-${i}`,
       operatorKey: 'oprlines' as OperatorKey,
