@@ -25,10 +25,11 @@ function matchSideFor(
   geometry: Geometry | null,
   origin: AreaSel | null,
   dest:   AreaSel | null,
+  endpointsOnly: boolean,
 ): FiberSegment['matchSide'] | null {
   if (!geometry) return null
-  const inO = origin ? lineTouchesArea(geometry, origin.geo, origin.bbox) : false
-  const inD = dest   ? lineTouchesArea(geometry, dest.geo,   dest.bbox)   : false
+  const inO = origin ? lineTouchesArea(geometry, origin.geo, origin.bbox, endpointsOnly) : false
+  const inD = dest   ? lineTouchesArea(geometry, dest.geo,   dest.bbox,   endpointsOnly) : false
 
   if (origin && dest) {
     if (inO && inD) return 'both'
@@ -42,9 +43,9 @@ function matchSideFor(
 }
 
 // ─── BTCL (fiber-lines.geojson) ───────────────────────────────────
-export function filterBTCL(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
+export function filterBTCL(features: Feat[], origin: AreaSel | null, dest: AreaSel | null, endpointsOnly: boolean): FiberSegment[] {
   return features.flatMap((f, i) => {
-    const ms = matchSideFor(f.geometry, origin, dest)
+    const ms = matchSideFor(f.geometry, origin, dest, endpointsOnly)
     if (!ms) return []
     const p = f.properties
     const name = s(p.name)
@@ -72,9 +73,9 @@ export function filterBTCL(features: Feat[], origin: AreaSel | null, dest: AreaS
 }
 
 // ─── Banglalink (bl-lines.geojson) ───────────────────────────────
-export function filterBanglalink(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
+export function filterBanglalink(features: Feat[], origin: AreaSel | null, dest: AreaSel | null, endpointsOnly: boolean): FiberSegment[] {
   return features.flatMap((f, i) => {
-    const ms = matchSideFor(f.geometry, origin, dest)
+    const ms = matchSideFor(f.geometry, origin, dest, endpointsOnly)
     if (!ms) return []
     const p = f.properties
     const district = s(p.district)
@@ -101,9 +102,9 @@ export function filterBanglalink(features: Feat[], origin: AreaSel | null, dest:
 }
 
 // ─── Bahon (bahon-lines.geojson) ─────────────────────────────────
-export function filterBahon(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
+export function filterBahon(features: Feat[], origin: AreaSel | null, dest: AreaSel | null, endpointsOnly: boolean): FiberSegment[] {
   return features.flatMap((f, i) => {
-    const ms = matchSideFor(f.geometry, origin, dest)
+    const ms = matchSideFor(f.geometry, origin, dest, endpointsOnly)
     if (!ms) return []
     const p = f.properties
     const cn   = n(p.cn)
@@ -134,9 +135,9 @@ export function filterBahon(features: Feat[], origin: AreaSel | null, dest: Area
 }
 
 // ─── BR Fiber (br-fiber-lines.geojson) ───────────────────────────
-export function filterBRFiber(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
+export function filterBRFiber(features: Feat[], origin: AreaSel | null, dest: AreaSel | null, endpointsOnly: boolean): FiberSegment[] {
   return features.flatMap((f, i) => {
-    const ms = matchSideFor(f.geometry, origin, dest)
+    const ms = matchSideFor(f.geometry, origin, dest, endpointsOnly)
     if (!ms) return []
     const p = f.properties
     const na = s(p.name_a)
@@ -162,9 +163,9 @@ export function filterBRFiber(features: Feat[], origin: AreaSel | null, dest: Ar
 }
 
 // ─── IS3 (is3-lines.geojson) ─────────────────────────────────────
-export function filterIS3(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
+export function filterIS3(features: Feat[], origin: AreaSel | null, dest: AreaSel | null, endpointsOnly: boolean): FiberSegment[] {
   return features.flatMap((f, i) => {
-    const ms = matchSideFor(f.geometry, origin, dest)
+    const ms = matchSideFor(f.geometry, origin, dest, endpointsOnly)
     if (!ms) return []
     const p = f.properties
     const name = s(p.name)
@@ -194,9 +195,9 @@ export function filterIS3(features: Feat[], origin: AreaSel | null, dest: AreaSe
 }
 
 // ─── Operator Lines (opr-lines.geojson) ──────────────────────────
-export function filterOprLines(features: Feat[], origin: AreaSel | null, dest: AreaSel | null): FiberSegment[] {
+export function filterOprLines(features: Feat[], origin: AreaSel | null, dest: AreaSel | null, endpointsOnly: boolean): FiberSegment[] {
   return features.flatMap((f, i) => {
-    const ms = matchSideFor(f.geometry, origin, dest)
+    const ms = matchSideFor(f.geometry, origin, dest, endpointsOnly)
     if (!ms) return []
     const p = f.properties
     const lname = s(p.line_name)

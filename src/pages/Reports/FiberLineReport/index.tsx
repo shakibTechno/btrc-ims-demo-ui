@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import type { AdminLevel, OperatorKey, FiberSegment } from '@/types/fiberReport'
+import type { AdminLevel, OperatorKey, FiberSegment, MatchMode } from '@/types/fiberReport'
 import { OPERATOR_LABELS } from '@/types/fiberReport'
 import { useFiberReport, loadAdminOptions } from '@/hooks/useFiberReport'
 import SimplePieChart from '@/components/charts/SimplePieChart'
@@ -359,6 +359,7 @@ function FilterPanel({ onGenerate, loading }: {
     origin: string
     destination: string
     operators: Set<OperatorKey>
+    matchMode: MatchMode
   }) => void
   loading: boolean
 }) {
@@ -367,6 +368,7 @@ function FilterPanel({ onGenerate, loading }: {
   const [optLoading, setOptLoading] = useState(false)
   const [origin, setOrigin]     = useState('')
   const [destination, setDest]  = useState('')
+  const [matchMode, setMatchMode] = useState<MatchMode>('passthrough')
   const [operators, setOperators] = useState<Set<OperatorKey>>(
     new Set(ALL_OPS)
   )
@@ -391,7 +393,7 @@ function FilterPanel({ onGenerate, loading }: {
 
   function handleGenerate() {
     if ((!origin && !destination) || operators.size === 0) return
-    onGenerate({ level, origin, destination, operators })
+    onGenerate({ level, origin, destination, operators, matchMode })
   }
 
   const canGenerate = (!!origin || !!destination) && operators.size > 0 && !loading
@@ -501,6 +503,46 @@ function FilterPanel({ onGenerate, loading }: {
             )
           })}
         </div>
+      </div>
+
+      {/* Match mode */}
+      <div style={{ marginBottom: 18 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
+          Match Mode
+        </div>
+        <div style={{ display: 'inline-flex', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+          {([
+            { key: 'passthrough' as MatchMode, label: 'Pass-through', hint: 'any point of the line inside the area' },
+            { key: 'endpoints'   as MatchMode, label: 'Endpoints only', hint: 'line starts or ends in the area' },
+          ]).map((m, idx) => {
+            const active = matchMode === m.key
+            return (
+              <button
+                key={m.key}
+                onClick={() => setMatchMode(m.key)}
+                title={m.hint}
+                style={{
+                  padding: '7px 16px',
+                  border: 'none',
+                  borderLeft: idx === 1 ? '1px solid var(--border)' : 'none',
+                  background: active ? '#1d4ed8' : 'var(--card-bg)',
+                  color: active ? 'white' : 'var(--text-secondary)',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.12s',
+                }}
+              >
+                {m.label}
+              </button>
+            )
+          })}
+        </div>
+        <p style={{ fontSize: 11, color: '#94a3b8', margin: '6px 0 0' }}>
+          {matchMode === 'passthrough'
+            ? 'Includes lines that traverse the area, even without a station there.'
+            : 'Only lines that originate or terminate in the area.'}
+        </p>
       </div>
 
       {/* Generate */}

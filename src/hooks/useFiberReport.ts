@@ -70,7 +70,8 @@ export function useFiberReport(): UseFiberReportResult {
   const [error,   setError]   = useState<string | null>(null)
 
   const generate = useCallback(async (filters: ReportFilters) => {
-    const { level, origin, destination, operators } = filters
+    const { level, origin, destination, operators, matchMode } = filters
+    const endpointsOnly = matchMode === 'endpoints'
     // Single-point filtering: at least one of origin/destination is enough.
     if ((!origin && !destination) || operators.size === 0) return
 
@@ -90,22 +91,22 @@ export function useFiberReport(): UseFiberReportResult {
       for (const { key, features } of loaded) {
         switch (key) {
           case 'btcl':
-            segments.push(...filterBTCL(features, originSel, destSel))
+            segments.push(...filterBTCL(features, originSel, destSel, endpointsOnly))
             break
           case 'banglalink':
-            segments.push(...filterBanglalink(features, originSel, destSel))
+            segments.push(...filterBanglalink(features, originSel, destSel, endpointsOnly))
             break
           case 'bahon':
-            segments.push(...filterBahon(features, originSel, destSel))
+            segments.push(...filterBahon(features, originSel, destSel, endpointsOnly))
             break
           case 'brfiber':
-            segments.push(...filterBRFiber(features, originSel, destSel))
+            segments.push(...filterBRFiber(features, originSel, destSel, endpointsOnly))
             break
           case 'is3':
-            segments.push(...filterIS3(features, originSel, destSel))
+            segments.push(...filterIS3(features, originSel, destSel, endpointsOnly))
             break
           case 'oprlines':
-            segments.push(...filterOprLines(features, originSel, destSel))
+            segments.push(...filterOprLines(features, originSel, destSel, endpointsOnly))
             break
         }
       }

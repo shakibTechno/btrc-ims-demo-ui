@@ -35,9 +35,12 @@ export interface FiberSegment {
   matchSide:   'both' | 'origin' | 'destination' | 'all'
 }
 
+export type MatchMode = 'passthrough' | 'endpoints'
+
 export interface ReportFilters {
   level:       AdminLevel
   origin:      string
   destination: string
   operators:   Set<OperatorKey>
+  matchMode:   MatchMode
 }

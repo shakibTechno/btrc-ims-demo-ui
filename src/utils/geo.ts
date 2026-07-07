@@ -92,11 +92,39 @@ function lineVertices(geo: Geometry): Coord[] {
   return []
 }
 
-// Does any vertex of `lineGeo` fall inside `polyGeo`?
+// The terminal vertices of a route — where it originates/terminates.
+// LineString → [first, last]; MultiLineString → [start of first part,
+// end of last part]; Point → itself.
+function lineEndpoints(geo: Geometry): Coord[] {
+  if (geo.type === 'LineString') {
+    const c = geo.coordinates as Coord[]
+    return c.length ? [c[0], c[c.length - 1]] : []
+  }
+  if (geo.type === 'MultiLineString') {
+    const parts = geo.coordinates as Coord[][]
+    const first = parts[0]
+    const last  = parts[parts.length - 1]
+    if (!first?.length || !last?.length) return []
+    return [first[0], last[last.length - 1]]
+  }
+  if (geo.type === 'Point') {
+    return [geo.coordinates as Coord]
+  }
+  return []
+}
+
+// Does `lineGeo` fall inside `polyGeo`?
 // `polyBBox` is the precomputed bounding box of the polygon — used as
 // a fast reject so most lines never reach the per-vertex test.
-export function lineTouchesArea(lineGeo: Geometry, polyGeo: Geometry, polyBBox: BBox): boolean {
-  const verts = lineVertices(lineGeo)
+// `endpointsOnly` restricts the test to the route's terminal vertices
+// (originate/terminate) rather than any vertex along it (pass-through).
+export function lineTouchesArea(
+  lineGeo: Geometry,
+  polyGeo: Geometry,
+  polyBBox: BBox,
+  endpointsOnly = false,
+): boolean {
+  const verts = endpointsOnly ? lineEndpoints(lineGeo) : lineVertices(lineGeo)
   if (verts.length === 0) return false
 
   // bbox pre-filter
