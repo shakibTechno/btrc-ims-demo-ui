@@ -658,7 +658,7 @@ export default function MapLayersPanel({
 
             {/* Summit */}
             <div>
-              <ToggleBtn on={showSummit} onClick={onToggleSummit} label="Summit" emoji="🔶"
+              <ToggleBtn on={showSummit} onClick={onToggleSummit} label="Summit"
                 activeColor={{ border: '#7c3aed', bg: '#f5f3ff', text: '#4c1d95' }} />
               {showSummit && (
                 <SubFilters>

@@ -1,6 +1,5 @@
 import { OPERATORS } from '@/data/operators'
 import { SITES } from '@/data/sites'
-import OperatorLogo from '@/components/cards/OperatorLogo'
 interface Props {
   selectedId: string
   onChange:   (id: string) => void
@@ -38,8 +37,6 @@ export default function OperatorSelector({ selectedId, onChange }: Props) {
               outline: 'none',
             }}
           >
-            <OperatorLogo operator={op} size={32} />
-
             <div style={{ textAlign: 'left' }}>
               <div style={{
                 fontSize: 13, fontWeight: isSelected ? 700 : 500,

@@ -10,7 +10,6 @@ import { useFilteredSites } from '@/hooks/useFilteredSites'
 import { useFilterStore }   from '@/store/filterStore'
 import { useThemeStore }    from '@/store/themeStore'
 import { OPERATOR_MAP } from '@/data/operators'
-import OperatorLogo     from '@/components/cards/OperatorLogo'
 import { formatTimeAgo, formatAssetType } from '@/utils/formatters'
 import type { Site, SiteStatus } from '@/types/site'
 
@@ -51,10 +50,7 @@ const COLUMNS: Column<Site>[] = [
       const op = OPERATOR_MAP[row.operatorId]
       if (!op) return row.operatorId
       return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-          <OperatorLogo operator={op} size={20} />
-          <span style={{ fontSize: 12, color: op.color, fontWeight: 600 }}>{op.shortName}</span>
-        </div>
+        <span style={{ fontSize: 12, color: op.color, fontWeight: 600 }}>{op.shortName}</span>
       )
     },
   },
